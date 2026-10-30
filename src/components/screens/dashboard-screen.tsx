@@ -13,13 +13,19 @@ import {
   YAxis,
 } from "recharts";
 import {
+  AtSign,
   CalendarCheck,
+  CheckCheck,
   Copy,
+  Download,
   LayoutDashboard,
   Lock,
   Mail,
+  MessageSquareQuote,
   ShieldAlert,
   ShoppingBag,
+  Star,
+  Trash2,
   UserRound,
   Users,
   Wallet,
@@ -59,12 +65,18 @@ import { useAppRouter } from "@/lib/router";
 import { useAppStore } from "@/lib/store";
 import { sendJson, useApi } from "@/lib/use-api";
 import type {
+  AdminCommentItem,
   AdminStats,
+  AdminUser,
   Booking,
   ContactMessageItem,
   MonthlyPoint,
   Order,
+  SubscriberItem,
+  Testimonial,
 } from "@/lib/types";
+import { SOCIAL_BY_ID } from "@/lib/social";
+import { WhatsAppIcon } from "@/components/social-icons";
 
 /* ── helpers ── */
 const fmtPrice = (n: number) => n.toLocaleString("en-US") + " ر.س";
@@ -158,8 +170,37 @@ export function DashboardScreen() {
     reload: reloadMessages,
   } = useApi<ContactMessageItem[]>("/api/contact");
 
+  const {
+    data: users,
+    loading: usersLoading,
+    error: usersError,
+    reload: reloadUsers,
+  } = useApi<AdminUser[]>("/api/admin/users");
+
+  const {
+    data: subscribers,
+    loading: subscribersLoading,
+    error: subscribersError,
+    reload: reloadSubscribers,
+  } = useApi<SubscriberItem[]>("/api/admin/subscribers");
+
+  const {
+    data: comments,
+    loading: commentsLoading,
+    error: commentsError,
+    reload: reloadComments,
+  } = useApi<AdminCommentItem[]>("/api/admin/comments");
+
+  const {
+    data: testimonials,
+    loading: testimonialsLoading,
+    error: testimonialsError,
+    reload: reloadTestimonials,
+  } = useApi<Testimonial[]>("/api/testimonials");
+
   const [selectedMessage, setSelectedMessage] = useState<ContactMessageItem | null>(null);
   const [patchingId, setPatchingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function updateBookingStatus(id: string, status: Booking["status"]) {
     setPatchingId(id);
@@ -193,6 +234,153 @@ export function DashboardScreen() {
         description: selectedMessage.email,
         variant: "destructive",
       });
+    }
+  }
+
+  async function toggleMessageRead(message: ContactMessageItem) {
+    setPatchingId(message.id);
+    try {
+      await sendJson(`/api/contact/${message.id}`, { read: !message.read }, "PATCH");
+      toast({
+        title: message.read ? "أعيدت كغير مقروءة" : "تم تعليمها كمقروءة",
+        description: `رسالة ${message.name}`,
+      });
+      setSelectedMessage(null);
+      reloadMessages();
+      reloadStats();
+    } catch (err) {
+      toast({
+        title: "فشل التحديث",
+        description: err instanceof Error ? err.message : "حاول مرة أخرى",
+        variant: "destructive",
+      });
+    } finally {
+      setPatchingId(null);
+    }
+  }
+
+  async function deleteMessage(message: ContactMessageItem) {
+    setDeletingId(message.id);
+    try {
+      await sendJson(`/api/contact/${message.id}`, null, "DELETE");
+      toast({ title: "تم حذف الرسالة", description: `رسالة ${message.name}` });
+      setSelectedMessage(null);
+      reloadMessages();
+      reloadStats();
+    } catch (err) {
+      toast({
+        title: "فشل الحذف",
+        description: err instanceof Error ? err.message : "حاول مرة أخرى",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  async function changeUserRole(id: string, role: AdminUser["role"], name: string) {
+    setPatchingId(id);
+    try {
+      await sendJson(`/api/admin/users/${id}`, { role }, "PATCH");
+      toast({
+        title: "تم تحديث الصلاحية",
+        description: `${name} أصبح ${role === "admin" ? "مديراً" : "مستخدماً عادياً"}`,
+      });
+      reloadUsers();
+      reloadStats();
+    } catch (err) {
+      toast({
+        title: "فشل تحديث الصلاحية",
+        description: err instanceof Error ? err.message : "حاول مرة أخرى",
+        variant: "destructive",
+      });
+    } finally {
+      setPatchingId(null);
+    }
+  }
+
+  async function deleteUser(id: string, name: string) {
+    setDeletingId(id);
+    try {
+      await sendJson(`/api/admin/users/${id}`, null, "DELETE");
+      toast({ title: "تم حذف المستخدم", description: name });
+      reloadUsers();
+      reloadStats();
+    } catch (err) {
+      toast({
+        title: "فشل الحذف",
+        description: err instanceof Error ? err.message : "حاول مرة أخرى",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  async function deleteSubscriber(id: string) {
+    setDeletingId(id);
+    try {
+      await sendJson(`/api/admin/subscribers/${id}`, null, "DELETE");
+      toast({ title: "تمت إزالة المشترك" });
+      reloadSubscribers();
+      reloadStats();
+    } catch (err) {
+      toast({
+        title: "فشل الحذف",
+        description: err instanceof Error ? err.message : "حاول مرة أخرى",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  function exportSubscribersCsv() {
+    if (!subscribers || subscribers.length === 0) return;
+    const rows = ["email,subscribed_at", ...subscribers.map((s) => `${s.email},${s.createdAt}`)];
+    const blob = new Blob([`\ufeff${rows.join("\n")}`], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `cto-drs-subscribers-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "تم تصدير القائمة", description: `${subscribers.length} مشترك بصيغة CSV` });
+  }
+
+  async function deleteComment(id: string) {
+    setDeletingId(id);
+    try {
+      await sendJson(`/api/admin/comments/${id}`, null, "DELETE");
+      toast({ title: "تم حذف التعليق" });
+      reloadComments();
+      reloadStats();
+    } catch (err) {
+      toast({
+        title: "فشل الحذف",
+        description: err instanceof Error ? err.message : "حاول مرة أخرى",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  async function deleteTestimonial(id: string, name: string) {
+    setDeletingId(id);
+    try {
+      await sendJson(`/api/testimonials/${id}`, null, "DELETE");
+      toast({ title: "تم حذف الرأي", description: name });
+      reloadTestimonials();
+      reloadStats();
+    } catch (err) {
+      toast({
+        title: "فشل الحذف",
+        description: err instanceof Error ? err.message : "حاول مرة أخرى",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -289,7 +477,7 @@ export function DashboardScreen() {
 
             {/* ── main tabs ── */}
             <Tabs defaultValue="overview">
-              <TabsList className="grid h-auto w-full grid-cols-2 sm:inline-grid sm:w-auto">
+              <TabsList className="grid h-auto w-full grid-cols-4 gap-1 sm:grid-cols-4 lg:grid-cols-8">
                 <TabsTrigger value="overview" className="h-9 text-xs sm:text-sm">
                   <LayoutDashboard className="h-4 w-4" />
                   نظرة عامة
@@ -305,6 +493,22 @@ export function DashboardScreen() {
                 <TabsTrigger value="messages" className="h-9 text-xs sm:text-sm">
                   <Mail className="h-4 w-4" />
                   الرسائل
+                </TabsTrigger>
+                <TabsTrigger value="users" className="h-9 text-xs sm:text-sm">
+                  <UserRound className="h-4 w-4" />
+                  المستخدمون
+                </TabsTrigger>
+                <TabsTrigger value="subscribers" className="h-9 text-xs sm:text-sm">
+                  <AtSign className="h-4 w-4" />
+                  المشتركون
+                </TabsTrigger>
+                <TabsTrigger value="comments" className="h-9 text-xs sm:text-sm">
+                  <MessageSquareQuote className="h-4 w-4" />
+                  التعليقات
+                </TabsTrigger>
+                <TabsTrigger value="testimonials" className="h-9 text-xs sm:text-sm">
+                  <Star className="h-4 w-4" />
+                  آراء العملاء
                 </TabsTrigger>
               </TabsList>
 
@@ -613,6 +817,236 @@ export function DashboardScreen() {
                   </div>
                 )}
               </TabsContent>
+
+              {/* ═════ users ═════ */}
+              <TabsContent value="users" className="mt-5">
+                {usersLoading ? (
+                  <ScreenLoader label="جارٍ تحميل المستخدمين..." />
+                ) : usersError ? (
+                  <ErrorState message={usersError} onRetry={reloadUsers} />
+                ) : !users || users.length === 0 ? (
+                  <EmptyState
+                    icon={UserRound}
+                    title="لا يوجد مستخدمون"
+                    description="لم يسجل أي مستخدم في المنصة حتى الآن."
+                  />
+                ) : (
+                  <div className="max-h-[480px] overflow-y-auto rounded-2xl border border-border-soft">
+                    <Table className="text-xs">
+                      <TableHeader className="sticky top-0 z-10 bg-elev">
+                        <TableRow className="border-border-soft">
+                          <TableHead className="text-right">المستخدم</TableHead>
+                          <TableHead className="text-right">الطلبات</TableHead>
+                          <TableHead className="text-right">الحجوزات</TableHead>
+                          <TableHead className="text-right">التعليقات</TableHead>
+                          <TableHead className="text-right">الصلاحية</TableHead>
+                          <TableHead className="text-right">إجراءات</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users.map((u) => (
+                          <TableRow key={u.id} className="border-border-soft">
+                            <TableCell>
+                              <p className="font-bold text-main">{u.name}</p>
+                              <p dir="ltr" className="text-right text-[11px] text-mute">
+                                {u.email}
+                              </p>
+                            </TableCell>
+                            <TableCell className="text-sec">{u.orders}</TableCell>
+                            <TableCell className="text-sec">{u.bookings}</TableCell>
+                            <TableCell className="text-sec">{u.comments}</TableCell>
+                            <TableCell>
+                              <Select
+                                value={u.role}
+                                onValueChange={(value) =>
+                                  changeUserRole(u.id, value as AdminUser["role"], u.name)
+                                }
+                              >
+                                <SelectTrigger
+                                  size="sm"
+                                  disabled={patchingId === u.id}
+                                  aria-label={`تغيير صلاحية ${u.name}`}
+                                  className="h-8 min-w-28 border-border-strong bg-elev-2/60 text-xs"
+                                >
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="user">عميل</SelectItem>
+                                  <SelectItem value="admin">مدير النظام</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                disabled={deletingId === u.id}
+                                onClick={() => deleteUser(u.id, u.name)}
+                                aria-label={`حذف المستخدم ${u.name}`}
+                                className="h-8 gap-1.5 rounded-lg px-2.5 text-[#ff2a6d] hover:bg-[rgba(255,42,109,0.08)] hover:text-[#ff2a6d]"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                حذف
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* ═════ subscribers ═════ */}
+              <TabsContent value="subscribers" className="mt-5">
+                {subscribersLoading ? (
+                  <ScreenLoader label="جارٍ تحميل المشتركين..." />
+                ) : subscribersError ? (
+                  <ErrorState message={subscribersError} onRetry={reloadSubscribers} />
+                ) : !subscribers || subscribers.length === 0 ? (
+                  <EmptyState
+                    icon={AtSign}
+                    title="لا يوجد مشتركون"
+                    description="لم يشترك أحد في النشرة البريدية حتى الآن."
+                  />
+                ) : (
+                  <div className="card-glow rounded-2xl p-5">
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-sm font-bold text-main">
+                        {subscribers.length} مشترك في النشرة البريدية
+                      </p>
+                      <Button
+                        onClick={exportSubscribersCsv}
+                        className="btn-outline-cyber h-9 rounded-xl px-4 text-xs"
+                      >
+                        <Download className="h-4 w-4" />
+                        تصدير CSV
+                      </Button>
+                    </div>
+                    <ul className="max-h-[400px] space-y-2 overflow-y-auto pl-1">
+                      {subscribers.map((s) => (
+                        <li
+                          key={s.id}
+                          className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-elev-2/40 px-4 py-2.5"
+                        >
+                          <div className="flex min-w-0 items-center gap-3">
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,240,255,0.08)] text-cyber">
+                              <AtSign className="h-4 w-4" />
+                            </span>
+                            <div className="min-w-0">
+                              <p dir="ltr" className="truncate text-right text-sm font-bold text-main">
+                                {s.email}
+                              </p>
+                              <p className="text-[11px] text-mute">{fmtDate(s.createdAt)}</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={deletingId === s.id}
+                            onClick={() => deleteSubscriber(s.id)}
+                            aria-label={`إزالة المشترك ${s.email}`}
+                            className="h-8 w-8 shrink-0 rounded-lg text-mute hover:bg-[rgba(255,42,109,0.08)] hover:text-[#ff2a6d]"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* ═════ comments ═════ */}
+              <TabsContent value="comments" className="mt-5">
+                {commentsLoading ? (
+                  <ScreenLoader label="جارٍ تحميل التعليقات..." />
+                ) : commentsError ? (
+                  <ErrorState message={commentsError} onRetry={reloadComments} />
+                ) : !comments || comments.length === 0 ? (
+                  <EmptyState
+                    icon={MessageSquareQuote}
+                    title="لا توجد تعليقات"
+                    description="لا توجد تعليقات على المقالات حتى الآن."
+                  />
+                ) : (
+                  <div className="grid max-h-[520px] gap-4 overflow-y-auto pl-1 lg:grid-cols-2">
+                    {comments.map((c) => (
+                      <div key={c.id} className="card-glow rounded-2xl p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-bold text-main">{c.authorName}</p>
+                            <p className="truncate text-[11px] text-mute">
+                              على مقال: <span className="text-cyber">{c.postTitle}</span> ·{" "}
+                              {fmtDate(c.createdAt)}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={deletingId === c.id}
+                            onClick={() => deleteComment(c.id)}
+                            aria-label={`حذف تعليق ${c.authorName}`}
+                            className="h-8 w-8 shrink-0 rounded-lg text-mute hover:bg-[rgba(255,42,109,0.08)] hover:text-[#ff2a6d]"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                        <p className="mt-2 line-clamp-3 text-xs leading-6 text-sec">{c.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* ═════ testimonials ═════ */}
+              <TabsContent value="testimonials" className="mt-5">
+                {testimonialsLoading ? (
+                  <ScreenLoader label="جارٍ تحميل آراء العملاء..." />
+                ) : testimonialsError ? (
+                  <ErrorState message={testimonialsError} onRetry={reloadTestimonials} />
+                ) : !testimonials || testimonials.length === 0 ? (
+                  <EmptyState
+                    icon={Star}
+                    title="لا توجد آراء"
+                    description="لا توجد آراء عملاء منشورة حتى الآن."
+                  />
+                ) : (
+                  <div className="grid max-h-[520px] gap-4 overflow-y-auto pl-1 sm:grid-cols-2 lg:grid-cols-3">
+                    {testimonials.map((t) => (
+                      <div key={t.id} className="card-glow flex flex-col rounded-2xl p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-bold text-main">{t.name}</p>
+                            <p className="truncate text-[11px] text-mute">{t.role}</p>
+                          </div>
+                          <span className="shrink-0 text-xs font-bold text-[#ffd700]">
+                            {"★".repeat(t.rating)}
+                            <span className="text-mute">{"★".repeat(5 - t.rating)}</span>
+                          </span>
+                        </div>
+                        <p className="mt-2 line-clamp-4 flex-1 text-xs leading-6 text-sec">
+                          {t.content}
+                        </p>
+                        <div className="mt-3 flex items-center justify-between border-t border-border-soft pt-3">
+                          <span className="text-[11px] text-mute">{fmtDate(t.createdAt)}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={deletingId === t.id}
+                            onClick={() => deleteTestimonial(t.id, t.name)}
+                            aria-label={`حذف رأي ${t.name}`}
+                            className="h-8 gap-1.5 rounded-lg px-2.5 text-[#ff2a6d] hover:bg-[rgba(255,42,109,0.08)] hover:text-[#ff2a6d]"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            حذف
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
             </Tabs>
           </div>
         )}
@@ -633,10 +1067,37 @@ export function DashboardScreen() {
           <div className="max-h-72 overflow-y-auto rounded-xl border border-border-soft bg-elev-2/60 p-4">
             <p className="whitespace-pre-wrap text-sm leading-7 text-sec">{selectedMessage?.message}</p>
           </div>
-          <DialogFooter className="flex-row justify-start gap-2.5 sm:justify-start">
+          <DialogFooter className="flex-row flex-wrap justify-start gap-2.5 sm:justify-start">
             <Button onClick={copyEmail} className="btn-outline-cyber h-10 rounded-xl">
               <Copy className="h-4 w-4" />
               نسخ البريد
+            </Button>
+            <a
+              href={selectedMessage ? `${SOCIAL_BY_ID.whatsapp.url}` : "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-10 items-center gap-1.5 rounded-xl border border-[rgba(37,211,102,0.35)] bg-[rgba(37,211,102,0.08)] px-4 text-sm font-bold text-[#25d366] transition hover:bg-[rgba(37,211,102,0.18)]"
+            >
+              <WhatsAppIcon className="h-4 w-4" />
+              رد عبر واتساب
+            </a>
+            <Button
+              onClick={() => selectedMessage && toggleMessageRead(selectedMessage)}
+              disabled={!!selectedMessage && patchingId === selectedMessage.id}
+              className="h-10 rounded-xl border border-[rgba(0,240,255,0.35)] bg-transparent text-cyber hover:bg-[rgba(0,240,255,0.08)]"
+              variant="outline"
+            >
+              <CheckCheck className="h-4 w-4" />
+              {selectedMessage?.read ? "تعليم كغير مقروءة" : "تعليم كمقروءة"}
+            </Button>
+            <Button
+              onClick={() => selectedMessage && deleteMessage(selectedMessage)}
+              disabled={!!selectedMessage && deletingId === selectedMessage.id}
+              className="h-10 rounded-xl border border-[rgba(255,42,109,0.35)] bg-transparent text-[#ff2a6d] hover:bg-[rgba(255,42,109,0.08)]"
+              variant="outline"
+            >
+              <Trash2 className="h-4 w-4" />
+              حذف
             </Button>
             <Button
               variant="ghost"
