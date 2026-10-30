@@ -17,7 +17,9 @@ model ContactMessage {
   id        String   @id @default(cuid())
   name      String
   email     String
+  subject   String?
   message   String
+  read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
@@ -27,4 +29,137 @@ model ChatLog {
   role      String
   content   String
   createdAt DateTime @default(now())
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      String    @default("user")
+  avatar    String?
+  createdAt DateTime  @default(now())
+  bookings  Booking[]
+  comments  Comment[]
+  orders    Order[]
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String
+  icon        String
+  price       Int
+  duration    String
+  features    String
+  category    String
+  featured    Boolean @default(false)
+}
+
+model Project {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String
+  image       String
+  tags        String
+  category    String
+  demoUrl     String?
+  githubUrl   String?
+  year        Int
+  featured    Boolean @default(false)
+}
+
+model Course {
+  id            String  @id @default(cuid())
+  title         String
+  slug          String  @unique
+  description   String
+  image         String
+  instructor    String
+  level         String
+  durationHours Float
+  lessons       Int
+  price         Int
+  oldPrice      Int?
+  rating        Float
+  students      Int
+  category      String
+  featured      Boolean @default(false)
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String
+  content     String
+  cover       String
+  author      String
+  tags        String
+  views       Int       @default(0)
+  publishedAt DateTime  @default(now())
+  comments    Comment[]
+}
+
+model Product {
+  id          String @id @default(cuid())
+  name        String
+  slug        String @unique
+  description String
+  price       Int
+  oldPrice    Int?
+  image       String
+  category    String
+  rating      Float
+  sales       Int
+  featured    Boolean @default(false)
+}
+
+model Order {
+  id           String   @id @default(cuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id])
+  customerName String
+  email        String
+  items        String
+  total        Int
+  status       String   @default("pending")
+  createdAt    DateTime @default(now())
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  name        String
+  email       String
+  phone       String?
+  serviceType String
+  date        String
+  timeSlot    String
+  notes       String?
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  content   String
+  rating    Int
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  postId     String
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  authorName String
+  content    String
+  createdAt  DateTime @default(now())
 }

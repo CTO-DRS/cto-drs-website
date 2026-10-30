@@ -2,21 +2,44 @@
 
 import { useState } from "react";
 import { Terminal, Github, Send, MessageCircle, Mail, Loader2, CheckCircle2 } from "lucide-react";
-import { SERVICES } from "@/lib/data";
 import { toast } from "@/hooks/use-toast";
+import { useAppRouter, routeHref, type AppRoute } from "@/lib/router";
 
-const QUICK = [
-  { href: "#home", label: "الرئيسية" },
-  { href: "#about", label: "نبذة عني" },
-  { href: "#projects", label: "المشاريع" },
-  { href: "#blog", label: "المدونة" },
-  { href: "#dashboard", label: "مركز المعرفة" },
-  { href: "#contact", label: "التواصل" },
+const QUICK: { route: AppRoute; label: string }[] = [
+  { route: { name: "home" }, label: "الرئيسية" },
+  { route: { name: "services" }, label: "الخدمات" },
+  { route: { name: "projects" }, label: "المشاريع" },
+  { route: { name: "courses" }, label: "الدورات" },
+  { route: { name: "store" }, label: "المتجر الرقمي" },
+  { route: { name: "blog" }, label: "المدونة" },
+];
+
+const MORE_LINKS: { route: AppRoute; label: string }[] = [
+  { route: { name: "booking" }, label: "احجز استشارة" },
+  { route: { name: "testimonials" }, label: "آراء العملاء" },
+  { route: { name: "faq" }, label: "الأسئلة الشائعة" },
+  { route: { name: "contact" }, label: "تواصل معي" },
+  { route: { name: "account" }, label: "حسابي" },
+  { route: { name: "cart" }, label: "سلة المشتريات" },
+];
+
+const SERVICE_LINKS = [
+  "تطوير مواقع الويب",
+  "المتاجر الإلكترونية",
+  "اختبار الاختراق",
+  "تطبيقات الجوال",
+  "الاستشارات التقنية",
 ];
 
 export function Footer() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const { navigate } = useAppRouter();
+
+  const go = (r: AppRoute) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(r);
+  };
 
   const subscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +77,11 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           {/* brand */}
           <div>
-            <a href="#home" className="flex items-center gap-2">
+            <a
+              href={routeHref({ name: "home" })}
+              onClick={go({ name: "home" })}
+              className="flex items-center gap-2"
+            >
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#00f0ff] via-[#7c3aed] to-[#ff2a6d] text-[#030303]">
                 <Terminal className="h-4.5 w-4.5" strokeWidth={2.5} />
               </span>
@@ -69,13 +96,14 @@ export function Footer() {
             </p>
             <div className="mt-5 flex items-center gap-2">
               {[
-                { icon: Mail, label: "البريد الإلكتروني" },
-                { icon: MessageCircle, label: "واتساب" },
-                { icon: Github, label: "GitHub" },
+                { icon: Mail, label: "البريد الإلكتروني", route: { name: "contact" } as AppRoute },
+                { icon: MessageCircle, label: "استشارة", route: { name: "booking" } as AppRoute },
+                { icon: Github, label: "GitHub", route: { name: "projects" } as AppRoute },
               ].map((s) => (
                 <a
                   key={s.label}
-                  href="#contact"
+                  href={routeHref(s.route)}
+                  onClick={go(s.route)}
                   aria-label={s.label}
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-border-soft bg-elev-2/60 text-sec transition hover:border-[rgba(0,240,255,0.4)] hover:text-cyber hover:shadow-[0_0_14px_rgba(0,240,255,0.2)]"
                 >
@@ -90,8 +118,12 @@ export function Footer() {
             <h4 className="font-heading-cyber mb-4 text-sm font-bold text-main">روابط سريعة</h4>
             <ul className="space-y-2.5">
               {QUICK.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="text-xs text-sec transition hover:pr-1 hover:text-cyber">
+                <li key={l.route.name}>
+                  <a
+                    href={routeHref(l.route)}
+                    onClick={go(l.route)}
+                    className="text-xs text-sec transition hover:pr-1 hover:text-cyber"
+                  >
                     {l.label}
                   </a>
                 </li>
@@ -99,14 +131,29 @@ export function Footer() {
             </ul>
           </nav>
 
-          {/* services */}
-          <nav aria-label="الخدمات">
-            <h4 className="font-heading-cyber mb-4 text-sm font-bold text-main">الخدمات</h4>
+          {/* services + more */}
+          <nav aria-label="الخدمات والمزيد">
+            <h4 className="font-heading-cyber mb-4 text-sm font-bold text-main">الخدمات والمزيد</h4>
             <ul className="space-y-2.5">
-              {SERVICES.map((s) => (
+              {SERVICE_LINKS.map((s) => (
                 <li key={s}>
-                  <a href="#services" className="text-xs text-sec transition hover:pr-1 hover:text-cyber">
+                  <a
+                    href={routeHref({ name: "services" })}
+                    onClick={go({ name: "services" })}
+                    className="text-xs text-sec transition hover:pr-1 hover:text-cyber"
+                  >
                     {s}
+                  </a>
+                </li>
+              ))}
+              {MORE_LINKS.slice(0, 2).map((l) => (
+                <li key={l.route.name}>
+                  <a
+                    href={routeHref(l.route)}
+                    onClick={go(l.route)}
+                    className="text-xs text-sec transition hover:pr-1 hover:text-cyber"
+                  >
+                    {l.label}
                   </a>
                 </li>
               ))}
@@ -142,6 +189,18 @@ export function Footer() {
             <p className="font-mono-cyber mt-3 text-[10px] text-mute" dir="ltr">
               NO SPAM • UNSUBSCRIBE ANYTIME
             </p>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+              {MORE_LINKS.slice(2).map((l) => (
+                <a
+                  key={l.route.name}
+                  href={routeHref(l.route)}
+                  onClick={go(l.route)}
+                  className="text-[11px] text-mute transition hover:text-cyber"
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 

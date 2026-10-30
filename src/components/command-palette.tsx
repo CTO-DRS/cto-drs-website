@@ -16,18 +16,29 @@ import {
   Package,
   Mail,
   Search,
-  Calculator,
-  Download,
+  ShoppingBag,
   Moon,
   Sun,
   Terminal,
   Wrench,
   BookOpen,
+  GraduationCap,
+  Store,
+  CalendarCheck,
+  HelpCircle,
+  MessageSquareQuote,
+  ShoppingCart,
+  LogIn,
+  LayoutDashboard,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useAppRouter, type AppRoute } from "@/lib/router";
+import { useAppStore } from "@/lib/store";
 
 export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: boolean) => void }) {
   const { theme, setTheme } = useTheme();
+  const { navigate } = useAppRouter();
+  const { user, cart } = useAppStore();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -37,12 +48,12 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
       }
     };
     document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+    return () => window.removeEventListener("keydown", down);
   }, [open, setOpen]);
 
-  const go = (href: string) => {
+  const go = (r: AppRoute) => {
     setOpen(false);
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+    navigate(r);
   };
 
   return (
@@ -54,36 +65,58 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
       <CommandInput placeholder="ابحث أو نفذ أمراً... (Esc للإغلاق)" />
       <CommandList className="max-h-80">
         <CommandEmpty>لا توجد نتائج مطابقة.</CommandEmpty>
-        <CommandGroup heading="التنقل">
-          <CommandItem onSelect={() => go("#home")}>
+        <CommandGroup heading="الصفحات">
+          <CommandItem onSelect={() => go({ name: "home" })}>
             <Home className="h-4 w-4 text-cyber" /> الرئيسية
           </CommandItem>
-          <CommandItem onSelect={() => go("#about")}>
-            <User className="h-4 w-4 text-cyber" /> نبذة عني
+          <CommandItem onSelect={() => go({ name: "services" })}>
+            <Wrench className="h-4 w-4 text-cyber" /> الخدمات
           </CommandItem>
-          <CommandItem onSelect={() => go("#projects")}>
+          <CommandItem onSelect={() => go({ name: "projects" })}>
             <Package className="h-4 w-4 text-cyber" /> المشاريع
           </CommandItem>
-          <CommandItem onSelect={() => go("#services")}>
-            <Wrench className="h-4 w-4 text-cyber" /> الخدمات والمهارات
+          <CommandItem onSelect={() => go({ name: "courses" })}>
+            <GraduationCap className="h-4 w-4 text-cyber" /> الدورات
           </CommandItem>
-          <CommandItem onSelect={() => go("#blog")}>
-            <BookOpen className="h-4 w-4 text-cyber" /> المدونة والفيديوهات
+          <CommandItem onSelect={() => go({ name: "store" })}>
+            <Store className="h-4 w-4 text-cyber" /> المتجر الرقمي
           </CommandItem>
-          <CommandItem onSelect={() => go("#contact")}>
-            <Mail className="h-4 w-4 text-cyber" /> التواصل
+          <CommandItem onSelect={() => go({ name: "blog" })}>
+            <BookOpen className="h-4 w-4 text-cyber" /> المدونة
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "testimonials" })}>
+            <MessageSquareQuote className="h-4 w-4 text-cyber" /> آراء العملاء
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "faq" })}>
+            <HelpCircle className="h-4 w-4 text-cyber" /> الأسئلة الشائعة
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "contact" })}>
+            <Mail className="h-4 w-4 text-cyber" /> تواصل معي
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="أدوات سريعة">
-          <CommandItem onSelect={() => go("#contact")}>
-            <Calculator className="h-4 w-4 text-[#a78bfa]" /> حاسبة التكلفة
+        <CommandGroup heading="إجراءات سريعة">
+          <CommandItem onSelect={() => go({ name: "booking" })}>
+            <CalendarCheck className="h-4 w-4 text-[#00ff88]" /> احجز استشارة
           </CommandItem>
-          <CommandItem onSelect={() => go("#projects")}>
+          <CommandItem onSelect={() => go({ name: "cart" })}>
+            <ShoppingCart className="h-4 w-4 text-[#00ff88]" />
+            السلة {cart.length ? `(${cart.length})` : ""}
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: user ? "account" : "login" })}>
+            {user ? <User className="h-4 w-4 text-[#a78bfa]" /> : <LogIn className="h-4 w-4 text-[#a78bfa]" />}
+            {user ? "حسابي" : "تسجيل الدخول"}
+          </CommandItem>
+          {user?.role === "admin" && (
+            <CommandItem onSelect={() => go({ name: "dashboard" })}>
+              <LayoutDashboard className="h-4 w-4 text-[#a78bfa]" /> لوحة التحكم
+            </CommandItem>
+          )}
+          <CommandItem onSelect={() => go({ name: "projects" })}>
             <Terminal className="h-4 w-4 text-[#a78bfa]" /> استعرض الأعمال
           </CommandItem>
-          <CommandItem onSelect={() => go("#contact")}>
-            <Download className="h-4 w-4 text-[#a78bfa]" /> تحميل السيرة الذاتية
+          <CommandItem onSelect={() => go({ name: "store" })}>
+            <ShoppingBag className="h-4 w-4 text-[#a78bfa]" /> تسوّق المنتجات
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
