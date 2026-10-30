@@ -146,6 +146,33 @@ export interface ContactMessageItem {
   createdAt: string;
 }
 
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  role: "user" | "admin";
+  avatar?: string | null;
+  createdAt: string;
+  orders: number;
+  bookings: number;
+  comments: number;
+}
+
+export interface SubscriberItem {
+  id: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface AdminCommentItem {
+  id: string;
+  postId: string;
+  postTitle: string;
+  authorName: string;
+  content: string;
+  createdAt: string;
+}
+
 export interface MonthlyPoint {
   label: string;
   orders: number;
