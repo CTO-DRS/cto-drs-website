@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Bot, X, Send, Loader2, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/social-icons";
+import { SOCIAL_BY_ID } from "@/lib/social";
 
 interface Msg {
   role: "user" | "assistant";
@@ -104,6 +106,17 @@ export function ChatWidget() {
               ONLINE • AI POWERED
             </p>
           </div>
+          <a
+            href={SOCIAL_BY_ID.whatsapp.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="تواصل عبر واتساب — حساب تجاري"
+            title="تواصل عبر واتساب — حساب تجاري"
+            className="flex h-8 items-center gap-1.5 rounded-full border border-[rgba(37,211,102,0.35)] bg-[rgba(37,211,102,0.08)] px-3 text-[10px] font-bold text-[#25d366] transition hover:bg-[rgba(37,211,102,0.18)]"
+          >
+            <WhatsAppIcon className="h-3.5 w-3.5" />
+            واتساب
+          </a>
           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setOpen(false)} aria-label="إغلاق">
             <X className="h-4 w-4" />
           </Button>

@@ -1,16 +1,42 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Mail, MessageCircle, Github, MapPin, Clock3, Loader2, CheckCircle2 } from "lucide-react";
+import { Send, Clock3, Loader2, CheckCircle2, ExternalLink } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
+import { SocialChannels, SocialIcon } from "@/components/social-channels";
+import { SOCIAL_BY_ID } from "@/lib/social";
 import { toast } from "@/hooks/use-toast";
 
 const INFO = [
-  { icon: Mail, label: "البريد الإلكتروني", value: "hello@cto-drs.dev", ltr: true },
-  { icon: MessageCircle, label: "واتساب", value: "+000 000 0000", ltr: true },
-  { icon: MapPin, label: "الموقع", value: "الشرق الأوسط — عن بُعد", ltr: false },
-  { icon: Clock3, label: "أوقات الرد", value: "خلال 24 ساعة", ltr: false },
+  {
+    id: "whatsapp",
+    label: "واتساب — حساب تجاري",
+    value: "محادثة مباشرة الآن",
+    href: SOCIAL_BY_ID.whatsapp.url,
+    ltr: false,
+  },
+  {
+    id: "telegram",
+    label: "تيليجرام",
+    value: "@CTO_DRS",
+    href: SOCIAL_BY_ID.telegram.url,
+    ltr: true,
+  },
+  {
+    id: "website",
+    label: "الموقع الرسمي",
+    value: "cto-drs.xo.je",
+    href: SOCIAL_BY_ID.website.url,
+    ltr: true,
+  },
+  {
+    id: "reply",
+    label: "أوقات الرد",
+    value: "خلال 24 ساعة",
+    href: undefined,
+    ltr: false,
+  },
 ];
 
 export function ContactSection() {
@@ -55,11 +81,22 @@ export function ContactSection() {
         <div className="grid gap-6 lg:grid-cols-5">
           {/* info cards */}
           <div className="flex flex-col gap-4 lg:col-span-2">
-            {INFO.map((info, i) => (
-              <Reveal key={info.label} delay={i * 80}>
-                <div className="card-glow flex items-center gap-4 rounded-2xl p-4">
+            {INFO.map((info, i) => {
+              const card = (
+                <div
+                  className="card-glow flex items-center gap-4 rounded-2xl p-4"
+                  style={
+                    info.id === "whatsapp"
+                      ? { backgroundColor: "rgba(37,211,102,0.05)", borderColor: "rgba(37,211,102,0.25)" }
+                      : undefined
+                  }
+                >
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(0,240,255,0.07)] text-cyber">
-                    <info.icon className="h-5 w-5" />
+                    {info.id === "reply" ? (
+                      <Clock3 className="h-5 w-5" />
+                    ) : (
+                      <SocialIcon id={info.id} className="h-5 w-5" />
+                    )}
                   </span>
                   <div>
                     <p className="text-[11px] text-mute">{info.label}</p>
@@ -67,9 +104,21 @@ export function ContactSection() {
                       {info.value}
                     </p>
                   </div>
+                  {info.href && <ExternalLink className="mr-auto h-4 w-4 shrink-0 text-mute" aria-hidden="true" />}
                 </div>
-              </Reveal>
-            ))}
+              );
+              return (
+                <Reveal key={info.id} delay={i * 80}>
+                  {info.href ? (
+                    <a href={info.href} target="_blank" rel="noopener noreferrer" className="block">
+                      {card}
+                    </a>
+                  ) : (
+                    card
+                  )}
+                </Reveal>
+              );
+            })}
             <Reveal delay={340}>
               <div className="card-glow rounded-2xl p-5">
                 <p className="font-mono-cyber text-[10px] tracking-[0.25em] text-cyber" dir="ltr">
@@ -148,6 +197,11 @@ export function ContactSection() {
             </form>
           </Reveal>
         </div>
+
+        {/* قنوات التواصل الرسمية */}
+        <Reveal delay={200} className="mt-10">
+          <SocialChannels />
+        </Reveal>
       </div>
     </section>
   );

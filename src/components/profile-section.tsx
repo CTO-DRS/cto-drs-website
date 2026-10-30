@@ -5,6 +5,7 @@ import { ArrowLeft, Quote } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { Counter } from "@/components/counter";
+import { SocialRow } from "@/components/social-channels";
 import { PROFILE } from "@/lib/data";
 
 const MINI_STATS = [
@@ -88,6 +89,10 @@ export function ProfileSection() {
                   اقرأ السيرة الكاملة
                   <ArrowLeft className="h-4 w-4" />
                 </a>
+                <div className="mt-5 border-t border-border-soft pt-5">
+                  <p className="mb-3 text-[11px] text-mute">تابعني على منصات التواصل</p>
+                  <SocialRow />
+                </div>
               </div>
             </div>
           </Reveal>
