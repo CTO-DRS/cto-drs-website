@@ -5,6 +5,7 @@ import { Rocket, FolderGit2, UserRound, ChevronDown } from "lucide-react";
 import { PROFILE, HERO_STATS, TYPING_ROLES } from "@/lib/data";
 import { Counter } from "@/components/counter";
 import { Reveal } from "@/components/reveal";
+import { SocialRow } from "@/components/social-channels";
 
 function useTypingEffect(words: string[], typeMs = 70, deleteMs = 32, holdMs = 1900) {
   const [text, setText] = useState("");
@@ -97,6 +98,13 @@ export function Hero() {
               <UserRound className="h-4 w-4" />
               تعرف علي
             </a>
+          </div>
+        </Reveal>
+
+        <Reveal delay={560}>
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <span className="font-mono-cyber text-[10px] tracking-[0.3em] text-mute">FIND ME EVERYWHERE</span>
+            <SocialRow />
           </div>
         </Reveal>
 

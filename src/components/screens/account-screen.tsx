@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
+import { SocialChannels } from "@/components/social-channels";
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/screen-state";
 import { toast } from "@/hooks/use-toast";
 import { useAppRouter } from "@/lib/router";
@@ -120,6 +121,9 @@ export function AccountScreen() {
               </div>
             }
           />
+          <Reveal delay={160} className="mt-12">
+            <SocialChannels />
+          </Reveal>
         </section>
       </>
     );
@@ -418,6 +422,11 @@ export function AccountScreen() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* official channels */}
+        <Reveal delay={140} className="mt-12">
+          <SocialChannels />
+        </Reveal>
       </section>
     </>
   );

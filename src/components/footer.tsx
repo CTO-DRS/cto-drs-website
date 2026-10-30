@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Terminal, Github, Send, MessageCircle, Mail, Loader2, CheckCircle2 } from "lucide-react";
+import { Terminal, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAppRouter, routeHref, type AppRoute } from "@/lib/router";
+import { SocialRow } from "@/components/social-channels";
+import { BRAND } from "@/lib/social";
 
 const QUICK: { route: AppRoute; label: string }[] = [
   { route: { name: "home" }, label: "الرئيسية" },
@@ -94,23 +96,10 @@ export function Footer() {
             <p className="mt-4 text-xs leading-6 text-sec">
               حلول برمجية متكاملة وأمن رقمي مستدام. مبني بأسلوب Cyber Dashboard حديث.
             </p>
-            <div className="mt-5 flex items-center gap-2">
-              {[
-                { icon: Mail, label: "البريد الإلكتروني", route: { name: "contact" } as AppRoute },
-                { icon: MessageCircle, label: "استشارة", route: { name: "booking" } as AppRoute },
-                { icon: Github, label: "GitHub", route: { name: "projects" } as AppRoute },
-              ].map((s) => (
-                <a
-                  key={s.label}
-                  href={routeHref(s.route)}
-                  onClick={go(s.route)}
-                  aria-label={s.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border-soft bg-elev-2/60 text-sec transition hover:border-[rgba(0,240,255,0.4)] hover:text-cyber hover:shadow-[0_0_14px_rgba(0,240,255,0.2)]"
-                >
-                  <s.icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
+            <p className="font-mono-cyber mt-3 text-[10px] tracking-[0.2em] text-mute" dir="ltr">
+              {BRAND.websiteLabel}
+            </p>
+            <SocialRow size="sm" className="mt-5" />
           </div>
 
           {/* quick links */}
