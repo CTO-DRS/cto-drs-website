@@ -1,5 +1,32 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export async function GET(_req: NextRequest) {
+  try {
+    const messages = await db.contactMessage.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    const parsed = messages.map((m) => ({
+      id: m.id,
+      name: m.name,
+      email: m.email,
+      subject: m.subject,
+      message: m.message,
+      read: m.read,
+      createdAt: m.createdAt.toISOString(),
+    }));
+
+    return NextResponse.json(parsed);
+  } catch (err) {
+    console.error("contact GET error:", err);
+    return NextResponse.json({ error: "حدث خطأ داخلي، حاول لاحقاً" }, { status: 500 });
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -7,11 +34,12 @@ export async function POST(req: Request) {
     const name = typeof body.name === "string" ? body.name.trim() : "";
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const message = typeof body.message === "string" ? body.message.trim() : "";
+    const subject = typeof body.subject === "string" ? body.subject.trim() : "";
 
     if (name.length < 2) {
       return NextResponse.json({ error: "الرجاء إدخال الاسم الكامل" }, { status: 400 });
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!EMAIL_RE.test(email)) {
       return NextResponse.json({ error: "الرجاء إدخال بريد إلكتروني صحيح" }, { status: 400 });
     }
     if (message.length < 10) {
@@ -19,7 +47,12 @@ export async function POST(req: Request) {
     }
 
     const saved = await db.contactMessage.create({
-      data: { name, email, message: message.slice(0, 5000) },
+      data: {
+        name,
+        email,
+        subject: subject ? subject.slice(0, 200) : null,
+        message: message.slice(0, 5000),
+      },
     });
 
     return NextResponse.json({ ok: true, id: saved.id });

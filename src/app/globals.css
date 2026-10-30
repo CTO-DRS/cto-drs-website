@@ -58,6 +58,8 @@
   --color-elev-2: var(--bg-elev-2);
   --color-app: var(--bg-app);
   --color-app-2: var(--bg-app-2);
+  --color-border-soft: var(--border-soft);
+  --color-border-strong: var(--border-strong);
 }
 
 /* ═══════════════ CYBER DASHBOARD DESIGN TOKENS ═══════════════ */
