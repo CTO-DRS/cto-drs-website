@@ -39,6 +39,7 @@ import { LoginScreen } from "@/components/screens/login-screen";
 import { RegisterScreen } from "@/components/screens/register-screen";
 import { AccountScreen } from "@/components/screens/account-screen";
 import { DashboardScreen } from "@/components/screens/dashboard-screen";
+import { ContactScreen } from "@/components/screens/contact-screen";
 
 function HomeView() {
   return (
@@ -113,6 +114,9 @@ function ScreenSwitch() {
       break;
     case "dashboard":
       screen = <DashboardScreen />;
+      break;
+    case "contact":
+      screen = <ContactScreen />;
       break;
     default:
       screen = <HomeView />;
