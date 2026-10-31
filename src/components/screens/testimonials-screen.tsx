@@ -283,7 +283,7 @@ export function TestimonialsScreen() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="مثال: سارة العتيبي"
+                placeholder="اسمك الكريم"
                 className={INPUT_CLS}
                 aria-invalid={!!errors.name}
               />

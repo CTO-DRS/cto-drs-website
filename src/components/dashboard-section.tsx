@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { FolderGit2, Clock, Users, Cpu, Globe, Network, Sparkles } from "lucide-react";
+import { FolderGit2, Clock, Users, Cpu, Globe, Network, Sparkles, ShieldCheck } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { Counter } from "@/components/counter";
@@ -12,6 +12,7 @@ const ICONS: Record<string, typeof FolderGit2> = {
   Clock,
   Users,
   Cpu,
+  ShieldCheck,
 };
 
 const COLOR_MAP: Record<string, { text: string; bg: string; border: string }> = {

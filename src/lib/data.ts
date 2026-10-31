@@ -14,6 +14,8 @@ export interface Project {
   description: string;
   image: string;
   tags: string[];
+  url?: string;
+  language?: string;
   stars?: number;
   forks?: number;
   featured?: boolean;
@@ -55,133 +57,148 @@ export interface Achievement {
   year: string;
 }
 
+/**
+ * الملف التعريفي الرسمي — المصدر: GitHub Profile README (CTO-DRS/CTO-DRS)
+ * https://github.com/CTO-DRS
+ */
 export const PROFILE = {
-  brand: "CTO.DRS",
-  name: "رشيد نجيب الحداد",
-  fullName: "رشيد نجيب سنان الحداد",
-  role: "خبير أمن سيبراني دفاعي",
-  roleEn: "Security Architect",
-  tagline: "حلول برمجية متكاملة وأمن رقمي مستدام",
-  bio1: "مطور برمجيات متكامل وخبير أمن سيبراني دفاعي، أؤمن بأن البرمجة ليست مجرد كتابة كود، بل هندسة لحلول مستدامة تدوم وتتطور مع نمو الأعمال. شغوف بكتابة كود نظيف وآمن وقابل للتوسع، مع التزام تام بمعايير الجودة العالمية.",
-  bio2: "أعمل على مشاريع متنوعة من المواقع الشخصية وحتى الأنظمة المؤسسية المعقدة، مع تركيز خاص على دمج الأمان في كل مرحلة من مراحل التطوير. فلسفتي:",
-  philosophy: "Security by Design",
+  brand: "CTO-DRS",
+  name: "CTO-DRS",
+  fullName: "CTO-DRS",
+  role: "مهندس برمجيات وأمن سيبراني",
+  roleEn: "Software Engineering • Cybersecurity • Innovation",
+  tagline: "هندسة تجارب رقمية آمنة — تقنية مفيدة وقابلة للصيانة ومتاحة للجميع",
+  bio1:
+    "مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر. يجمع أسلوبي بين الاستكشاف التقني وحل المشكلات العملية ومبادئ الهندسة الآمنة والتعلم المستمر — أسعى لفهم كيف تعمل الأنظمة البرمجية، وتحسين موثوقيتها، وتقوية أمنها، وتحويل الأفكار إلى منتجات رقمية مفيدة.",
+  bio2:
+    "أؤمن بأن البرمجيات العظيمة يجب أن تكون أكثر من مجرد مظهر جذاب: موثوقة، سهلة الصيانة، واعية بالخصوصية، ومصممة بهدف واضح. هدفي:",
+  philosophy: "Useful • Secure • Maintainable • Accessible",
   heroDesc:
-    "مطور Full-Stack بخبرة تتجاوز 3 سنوات في بناء الأنظمة الرقمية وحلول الأمن السيبراني الدفاعي. متخصص في PHP و JavaScript و Python مع التزام تام بأعلى معايير الجودة والأمان.",
+    "مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر — أجمع بين الاستكشاف التقني وحل المشكلات العملية ومبادئ الهندسة الآمنة في مشاريع مفتوحة المصدر.",
 };
 
+/** إحصائيات حقيقية: 26 مستودعاً عاماً + 14 تقنية + 8 مجالات + 7 مبادئ (GitHub + Profile README) */
 export const HERO_STATS = [
-  { value: 266, suffix: "+", label: "PROJECTS" },
-  { value: 4450, suffix: "+", label: "HOURS" },
-  { value: 244, suffix: "+", label: "CLIENTS" },
+  { value: 26, suffix: "+", label: "REPOS" },
   { value: 14, suffix: "+", label: "TECH" },
+  { value: 8, suffix: "", label: "DOMAINS" },
+  { value: 7, suffix: "", label: "PRINCIPLES" },
 ];
 
 export const SKILLS: Skill[] = [
-  { name: "PHP 8.2+", level: "EXPERT", percent: 88, icon: "Code2", category: "Back-end" },
-  { name: "JavaScript", level: "EXPERT", percent: 90, icon: "Braces", category: "Front-end" },
-  { name: "Python 3", level: "ADVANCED", percent: 80, icon: "Terminal", category: "Automation" },
-  { name: "MySQL 8.0", level: "EXPERT", percent: 88, icon: "Database", category: "Database" },
-  { name: "REST APIs", level: "EXPERT", percent: 90, icon: "Share2", category: "APIs" },
-  { name: "Linux", level: "ADVANCED", percent: 85, icon: "Laptop", category: "Systems" },
-  { name: "Git/GitHub", level: "EXPERT", percent: 90, icon: "GitBranch", category: "Tools" },
-  { name: "OWASP Top 10", level: "EXPERT", percent: 90, icon: "ShieldCheck", category: "Security" },
+  { name: "Kotlin & Jetpack Compose", level: "ADVANCED", percent: 85, icon: "Smartphone", category: "Android" },
+  { name: "Cybersecurity", level: "ADVANCED", percent: 88, icon: "ShieldCheck", category: "Defensive Security" },
+  { name: "Python", level: "ADVANCED", percent: 82, icon: "Terminal", category: "Automation" },
+  { name: "JavaScript", level: "ADVANCED", percent: 85, icon: "Braces", category: "Web" },
+  { name: "PHP", level: "ADVANCED", percent: 80, icon: "Code2", category: "Back-end" },
+  { name: "Java", level: "INTERMEDIATE", percent: 74, icon: "Coffee", category: "Native Apps" },
+  { name: "MySQL & SQLite", level: "ADVANCED", percent: 82, icon: "Database", category: "Data" },
+  { name: "Linux & Bash", level: "ADVANCED", percent: 85, icon: "Laptop", category: "Systems" },
+  { name: "Git & GitHub", level: "EXPERT", percent: 92, icon: "GitBranch", category: "Tooling" },
+  { name: "Privacy Engineering", level: "ADVANCED", percent: 86, icon: "Lock", category: "Offline-First" },
 ];
 
 export const MASTERY_BARS = [
-  { name: "PHP 8.2+", percent: 88 },
-  { name: "JavaScript", percent: 90 },
-  { name: "Python", percent: 80 },
-  { name: "MySQL", percent: 85 },
-  { name: "Security", percent: 92 },
+  { name: "Kotlin / Android", percent: 85 },
+  { name: "Cybersecurity", percent: 88 },
+  { name: "Python", percent: 82 },
+  { name: "JavaScript", percent: 85 },
+  { name: "MySQL / SQLite", percent: 82 },
 ];
 
 export const DASHBOARD_METRICS = [
-  { label: "المشاريع المنشورة", value: 266, suffix: "+", badge: "نشط", icon: "FolderGit2", color: "cyan" },
-  { label: "ساعات التطوير", value: 4450, suffix: "+", badge: "تراكمية", icon: "Clock", color: "purple" },
-  { label: "العملاء الراضون", value: 244, suffix: "+", badge: "ولاء", icon: "Users", color: "pink" },
-  { label: "التقنيات المتقنة", value: 14, suffix: "+", badge: "تنوع", icon: "Cpu", color: "green" },
+  { label: "مستودعات مفتوحة المصدر", value: 26, suffix: "+", badge: "GitHub", icon: "FolderGit2", color: "cyan" },
+  { label: "التقنيات والأدوات", value: 14, suffix: "+", badge: "تنوع", icon: "Cpu", color: "purple" },
+  { label: "مجالات اهتمام تقني", value: 8, suffix: "", badge: "تركيز", icon: "Users", color: "pink" },
+  { label: "مبادئ هندسية ملزمة", value: 7, suffix: "", badge: "التزام", icon: "ShieldCheck", color: "green" },
 ];
 
 export const ACHIEVEMENTS: Achievement[] = [
-  { text: "إطلاق منصة CTO.DRS الشخصية", year: "2024" },
-  { text: "تطوير نظام إدارة مستشفيات متكامل", year: "2024" },
-  { text: "إطلاق سيكيورنت VPN للأندرويد", year: "2025" },
-  { text: "تطوير REST API متكامل", year: "2023" },
+  { text: "إطلاق المنصة الرسمية CTO.DRS — cto-drs.xo.je", year: "2026" },
+  { text: "بناء NexusLink — مركز أجهزة محلي بتشفير تام E2E", year: "2026" },
+  { text: "إطلاق SecureNet VPN بمعمارية WireGuard", year: "2026" },
+  { text: "تطوير لغة عربي — لغة برمجة عربية بالكامل", year: "2026" },
 ];
 
+/** مشاريع حقيقية من مستودعات GitHub الرسمية (CTO-DRS) */
 export const PROJECTS: Project[] = [
   {
-    id: "cto-drs-platform",
-    title: "منصة CTO.DRS الشخصية",
+    id: "nexuslink",
+    title: "NexusLink — مركز أجهزتك المحلي",
     description:
-      "الموقع الشخصي الرسمي — منصة تعريفية بنظام PHP آمن وأداء عالٍ ولوحة تحكم شاملة ومركز معرفة يغذي المساعد الذكي",
-    image: "/images/project-platform.jpg",
-    tags: ["PHP", "MYSQL", "JAVASCRIPT", "SECURITY"],
-    stars: 42,
-    forks: 8,
+      "ربط كل أجهزتك على شبكتك المحلية: مرآة الشاشة والتحكم عن بُعد، نقل الملفات، مزامنة الحافظة وبث الوسائط — بتشفير تام من طرف إلى طرف، بلا سحابة ولا حسابات",
+    image: "/images/project-nexuslink.jpg",
+    tags: ["TYPESCRIPT", "E2E-ENCRYPTED", "LOCAL-FIRST"],
+    url: "https://github.com/CTO-DRS/NexusLink",
+    language: "TypeScript",
+    stars: 1,
     featured: true,
   },
   {
     id: "securenet-vpn",
-    title: "سيكيورنت VPN — خصوصية بمستوى المؤسسات",
-    description: "شبكة افتراضية خاصة ببروتوكول WireGuard مع حماية شاملة للأجهزة وبمستوى المؤسسات",
-    image: "/images/project-vpn.jpg",
-    tags: ["KOTLIN", "ANDROID", "WIREGUARD"],
-    stars: 128,
-    forks: 24,
-    featured: true,
-  },
-  {
-    id: "nexus-link",
-    title: "نكسس لينك — مركز تحكم أجهزتك محلياً",
+    title: "SecureNet VPN — خصوصية بمستوى المؤسسات",
     description:
-      "مركز محلي واحد لأجهزتك: عرض الشاشة والتحكم عن بُعد، مزامنة الحافظة، ونقل الملفات — بتشفير تام من طرف إلى طرف عبر الشبكة المحلية",
-    image: "/images/project-nexuslink.jpg",
-    tags: ["TYPESCRIPT", "ANDROID", "CROSS-PLATFORM"],
-    stars: 96,
-    forks: 18,
+      "شبكة افتراضية خاصة ببروتوكول WireGuard مع ماسح أمان للجهاز ومحسّن شبكة — Kotlin + C++ (NDK) + Go بمعمارية MVVM نظيفة",
+    image: "/images/project-vpn.jpg",
+    tags: ["KOTLIN", "WIREGUARD", "SECURITY"],
+    url: "https://github.com/CTO-DRS/SecureNetVPN",
+    language: "Kotlin",
     featured: true,
   },
   {
     id: "super-biz",
-    title: "سوبر بيز — إدارة الأعمال المتكاملة",
+    title: "SuperBiz — إدارة الأعمال دون اتصال",
     description:
-      "نظام إدارة أعمال أندرويد متكامل: فواتير ومخزون ونقاط بيع متوافق مع فاتورة ZATCA ويعمل دون اتصال",
+      "نظام إدارة أعمال أندرويد متكامل يعمل دون اتصال 100% — فواتير ومخزون ونقاط بيع مع أكثر من 1400 اختبار وحدة",
     image: "/images/project-superbiz.jpg",
-    tags: ["KOTLIN", "ANDROID", "BUSINESS"],
-    stars: 210,
-    forks: 36,
+    tags: ["KOTLIN", "ANDROID", "OFFLINE-FIRST"],
+    url: "https://github.com/CTO-DRS/SuperBiz",
+    language: "Kotlin",
     featured: true,
   },
   {
     id: "drs-ai",
-    title: "نظام تشغيل الذكاء الاصطناعي DRS AI",
+    title: "DRS AI — نظام ذكاء اصطناعي خاص",
     description:
-      "نظام تشغيل ذكاء اصطناعي مؤسسي بأكثر من 40 خدمة مصغرة — مستضاف ذاتياً، يعمل دون اتصال، ويدعم العربية بالكامل",
+      "نظام تشغيل ذكاء اصطناعي مؤسسي بأكثر من 40 خدمة مصغرة — مستضاف ذاتياً، يعمل دون اتصال بالكامل، ويدعم العربية والإنجليزية والفرنسية والألمانية",
     image: "/images/project-drsai.jpg",
-    tags: ["TYPESCRIPT", "AI", "ARABIC"],
-    stars: 355,
-    forks: 52,
+    tags: ["TYPESCRIPT", "AI", "SELF-HOSTED"],
+    url: "https://github.com/CTO-DRS/DRS-AI-Web",
+    language: "TypeScript",
+    stars: 1,
     featured: true,
   },
   {
-    id: "arabic-lang",
+    id: "arabi-lang",
     title: "لغة عربي — برمجة بالعربية الفصحى",
-    description: "لغة برمجة عربية بالكامل تشبه بايثون: متغيرات ودوال وحلقات وقوائم وقواميس ومفسّر كامل",
+    description:
+      "لغة برمجة عربية بالكامل مثل بايثون: متغيرات، دوال، حلقات، قوائم وقواميس ومفسّر تفاعلي — مبنية بـ Python",
     image: "/images/project-arabiclang.jpg",
-    tags: ["PYTHON", "ARABIC", "EDUCATIONAL"],
-    stars: 480,
-    forks: 65,
+    tags: ["PYTHON", "ARABIC", "LANGUAGES"],
+    url: "https://github.com/CTO-DRS/arabi-lang",
+    language: "Python",
+    stars: 1,
+    featured: true,
+  },
+  {
+    id: "drs-smart-keyboard",
+    title: "DRS Smart Keyboard — لوحة مفاتيح واعية بالخصوصية",
+    description:
+      "IME عربي أصلي بالكامل على أندرويد: ذكاء يعمل على الجهاز، خصوصية مثبتة، ونظام امتدادات موقّع تشفيرياً",
+    image: "/images/project-platform.jpg",
+    tags: ["KOTLIN", "IME", "PRIVACY"],
+    url: "https://github.com/CTO-DRS/DRS-Smart-Keyboard",
+    language: "Kotlin",
     featured: true,
   },
 ];
 
 export const PERFORMANCE_STATS = [
-  { value: 266, suffix: "+", label: "مشروع منجز", icon: "Rocket" },
-  { value: 4450, suffix: "+", label: "ساعة تطوير", icon: "Clock" },
-  { value: 244, suffix: "+", label: "عميل راضٍ", icon: "Users" },
-  { value: 14, suffix: "+", label: "تقنية متقنة", icon: "Cpu" },
-  { value: 8, suffix: "+", label: "نظام مُطور", icon: "Server" },
+  { value: 26, suffix: "+", label: "مستودع مفتوح المصدر", icon: "Rocket" },
+  { value: 14, suffix: "+", label: "تقنية وأداة", icon: "Cpu" },
+  { value: 8, suffix: "", label: "مجالات تقنية", icon: "Users" },
+  { value: 7, suffix: "", label: "مبادئ هندسية", icon: "Server" },
+  { value: 7, suffix: "+", label: "لغات برمجة", icon: "Code2" },
 ];
 
 export const VIDEOS: Video[] = [
@@ -266,8 +283,8 @@ export const GALLERY: GalleryItem[] = [
     image: "/images/gallery-dashboard.jpg",
   },
   {
-    title: "شهادة الأمن السيبراني",
-    description: "شهادة معتمدة في الأمن السيبراني الدفاعي",
+    title: "الأمن السيبراني الدفاعي",
+    description: "مجال التركيز الأساسي: تقييم أمني وترميز آمن وإفصاح مسؤول",
     image: "/images/gallery-cert-v2.jpg",
   },
   {
@@ -276,13 +293,13 @@ export const GALLERY: GalleryItem[] = [
     image: "/images/gallery-workspace.jpg",
   },
   {
-    title: "نظام إدارة المستشفيات",
-    description: "واجهة نظام إدارة المستشفيات المتكامل",
+    title: "لوحات تحكم إدارية",
+    description: "واجهات إدارية عربية بأسلوب Cyber Dashboard",
     image: "/images/gallery-hospital-v4.jpg",
   },
   {
-    title: "بوت تيليجرام للأعمال",
-    description: "لقطات من بوت تيليجرام لإدارة الطلبات",
+    title: "TikTok Intelligence Bot",
+    description: "بوت تيليجرام للتحليلات والتتبع بتقارير متعددة الصيغ",
     image: "/images/gallery-bot.jpg",
   },
 ];
@@ -321,12 +338,12 @@ export const QUICK_TOOLS = [
 ];
 
 export const SERVICES = [
-  "تطوير مواقع ويب",
-  "تطوير تطبيقات ويب",
-  "تطوير تطبيقات الموبايل",
-  "إنشاء لوحات تحكم",
-  "برمجة أنظمة مخصصة",
-  "تطوير بوتات تيليجرام",
+  "تطوير تطبيقات أندرويد أصلية",
+  "تطوير مواقع وتطبيقات ويب آمنة",
+  "تقييم أمني واختبار اختراق أخلاقي",
+  "أدوات وأتمتة بـ Python",
+  "مشاريع مفتوحة المصدر",
+  "هندسة الخصوصية وأنظمة offline-first",
 ];
 
 export const NAV_LINKS = [
@@ -338,12 +355,14 @@ export const NAV_LINKS = [
   { href: "#contact", label: "التواصل", icon: "Mail" },
 ];
 
+/** أسطر الكتابة المتحركة — من Profile README الرسمي */
 export const TYPING_ROLES = [
-  "Security Architect",
-  "Full-Stack Developer",
-  "مطور برمجيات متكامل",
-  "Cyber Defense Expert",
-  "Systems Builder",
+  "Software Engineering",
+  "Cybersecurity",
+  "هندسة تجارب رقمية آمنة",
+  "Native Android Development",
+  "Open Source & Innovation",
+  "Building Technology with Purpose",
 ];
 
 /* ═══════════════ ABOUT / TIMELINE / VALUES ═══════════════ */
@@ -356,29 +375,24 @@ export interface TimelineItem {
 
 export const ABOUT_TIMELINE: TimelineItem[] = [
   {
-    year: "2019",
-    title: "انطلاقة الرحلة",
-    text: "البداية بتطوير مواقع شخصية ومتاجر صغيرة، وبناء أساس قوي في PHP و JavaScript وقواعد البيانات.",
-  },
-  {
-    year: "2021",
-    title: "أول نظام مؤسسي",
-    text: "تطوير أول نظام إدارة أعمال متكامل بنقاط بيع وفواتير متوافقة مع الفاتورة الإلكترونية.",
-  },
-  {
-    year: "2023",
-    title: "التخصص في الأمن السيبراني",
-    text: "التركيز على الأمن الدفاعي: اختبارات اختراق، تحصين خوادم، وبناء REST APIs آمنة بمعايير OWASP.",
-  },
-  {
     year: "2024",
-    title: "إطلاق منصة CTO.DRS",
-    text: "إطلاق المنصة الشخصية الرسمية كمركز معرفة ومساحة لعرض المشاريع والخدمات والدورات.",
+    title: "أساسيات الهندسة",
+    text: "بناء قاعدة قوية في تطوير الويب: PHP و JavaScript و SQL، مع أولى أدوات الأتمتة بلغة Python.",
   },
   {
     year: "2025",
-    title: "منتجات رقمية عالمية",
-    text: "إطلاق سيكيورنت VPN، نظام DRS AI، ولغة عربي للبرمجة — منتجات تخدم آلاف المستخدمين.",
+    title: "أندرويد أصلي",
+    text: "التحول إلى تطوير تطبيقات أندرويد أصلية بـ Kotlin و Jetpack Compose مع تصميم يعمل دون اتصال أولاً.",
+  },
+  {
+    year: "2026",
+    title: "الأمن والخصوصية",
+    text: "دمج الأمن الدفاعي وهندسة الخصوصية في كل مشروع: تقييم أمني، ترميز آمن، وتقليل جمع البيانات.",
+  },
+  {
+    year: "2026",
+    title: "هوية CTO-DRS",
+    text: "توحيد المشاريع تحت مظلة واحدة مفتوحة المصدر: NexusLink، SecureNet VPN، SuperBiz، DRS AI، ولغة عربي.",
   },
 ];
 
@@ -388,36 +402,42 @@ export interface AboutValue {
   icon: string; // lucide icon name
 }
 
+/** المبادئ الهندسية السبعة — من Profile README الرسمي */
 export const ABOUT_VALUES: AboutValue[] = [
   {
-    title: "الأمان أولاً",
-    text: "كل سطر كود يُكتب بمنظور Security by Design — الأمان جزء من التصميم وليس إضافة لاحقة.",
+    title: "Security by Design",
+    text: "اعتبار الأمن منذ المراحل الأولى للتطوير وليس كإضافة لاحقة — الأمان جزء من التصميم نفسه.",
     icon: "ShieldCheck",
   },
   {
-    title: "كود نظيف قابل للتوسع",
-    text: "معايير صارمة في التنظيم والتوثيق، لأن الكود الجيد يُقرأ قبل أن يُنفَّذ.",
+    title: "Privacy by Design",
+    text: "تقليل جمع البيانات غير الضرورية والحد من تعريضها — خصوصية المستخدم أولاً.",
+    icon: "Lock",
+  },
+  {
+    title: "هندسة قائمة على الأدلة",
+    text: "التحقق من الادعاءات والنتائج التقنية بالتجربة والأدلة بدل الاعتماد على الافتراضات.",
+    icon: "FlaskConical",
+  },
+  {
+    title: "كود قابل للصيانة",
+    text: "بنية واضحة وتنفيذ مفهوم وموثّق — يُقرأ قبل أن يُنفَّذ ويبقى قابلاً للتطور.",
     icon: "Code2",
   },
   {
-    title: "الالتزام بالمواعيد",
-    text: "جدول زمني واضح منذ اليوم الأول، وتسليم منضبط دون تنازل عن الجودة.",
-    icon: "Clock",
+    title: "بحث مسؤول",
+    text: "احترام الترخيص والخصوصية والقوانين، والإفصاح المسؤول عن الثغرات عبر القنوات المناسبة.",
+    icon: "Scale",
   },
   {
-    title: "شفافية كاملة",
-    text: "تواصل مستمر وتقارير تقدم دورية — تعرف حالة مشروعك في أي لحظة.",
-    icon: "Eye",
-  },
-  {
-    title: "تعلم مستمر",
-    text: "متابعة يومية لأحدث التقنيات والتهديدات الأمنية لتبقى أنظمتك في المقدمة.",
+    title: "تحسين مستمر",
+    text: "تعلم، تقييم، تحسين، ثم تحقق — دورة مستمرة تواكب التقنيات والتهديدات الناشئة.",
     icon: "GraduationCap",
   },
   {
-    title: "دعم ما بعد التسليم",
-    text: "العلاقة لا تنتهي بالإطلاق — صيانة وتحديثات ودعم فني طويل الأمد.",
-    icon: "LifeBuoy",
+    title: "تعاون مفتوح",
+    text: "دعم الشفافية والتوثيق والتعلم المشترك عبر المشاريع مفتوحة المصدر.",
+    icon: "GitBranch",
   },
 ];
 
@@ -434,52 +454,12 @@ export interface TeamMember {
 
 export const TEAM: TeamMember[] = [
   {
-    name: "رشيد نجيب الحداد",
-    role: "المؤسس · المدير التقني CTO",
-    bio: "خبير أمن سيبراني دفاعي ومطور Full-Stack، يقود الرؤية التقنية ويعتمد معايير الجودة والأمان في كل مشروع.",
-    initials: "ر.ح",
-    skills: ["PHP", "Security", "Architecture"],
+    name: "CTO-DRS",
+    role: "المؤسس · مهندس برمجيات وأمن سيبراني",
+    bio: "مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر — يبني كل المشاريع تحت هوية CTO-DRS الموحدة: تقنية مفيدة، آمنة، قابلة للصيانة، ومتاحة للجميع.",
+    initials: "CD",
+    skills: ["Kotlin", "Cybersecurity", "Open Source"],
     accent: "cyan",
-  },
-  {
-    name: "سارة العتيبي",
-    role: "مهندسة واجهات أمامية",
-    bio: "تحوّل التصاميم إلى واجهات حية سريعة وسلسة، مع شغف خاص بالتفاصيل الدقيقة وتجربة المستخدم.",
-    initials: "س.ع",
-    skills: ["React", "Next.js", "Animation"],
-    accent: "pink",
-  },
-  {
-    name: "محمد الغامدي",
-    role: "مهندس خلفية وأنظمة",
-    bio: "يبني قواعد البيانات وواجهات REST API بمعايير أمنية صارمة وأداء عالٍ تحت الضغط.",
-    initials: "م.غ",
-    skills: ["Node.js", "MySQL", "APIs"],
-    accent: "purple",
-  },
-  {
-    name: "لينا حسان",
-    role: "مصممة تجربة مستخدم",
-    bio: "تصميم واجهات عربية أنيقة تُحترم تفاصيلها — من التحليل حتى نموذج التصميم النهائي.",
-    initials: "ل.ح",
-    skills: ["UI/UX", "Figma", "Design Systems"],
-    accent: "gold",
-  },
-  {
-    name: "كريم الشامي",
-    role: "مهندس DevOps",
-    bio: "يشغّل البنية التحتية: خوادم مؤمنة، نشر آلي، مراقبة مستمرة، ونسخ احتياطي دون توقف.",
-    initials: "ك.ش",
-    skills: ["Linux", "Docker", "CI/CD"],
-    accent: "green",
-  },
-  {
-    name: "نور الهدى",
-    role: "أخصائية محتوى تقني",
-    bio: "توثّق الأنظمة وتكتب المحتوى التقني بالعربية بدقة، وتدير المدونة ومركز المعرفة.",
-    initials: "ن.ه",
-    skills: ["Technical Writing", "SEO", "Docs"],
-    accent: "orange",
   },
 ];
 

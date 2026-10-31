@@ -1,12 +1,12 @@
 "use client";
 
-import { Rocket, Clock, Users, Cpu, Server, type LucideIcon } from "lucide-react";
+import { Rocket, Clock, Users, Cpu, Server, Code2, type LucideIcon } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { Counter } from "@/components/counter";
 import { PERFORMANCE_STATS } from "@/lib/data";
 
-const ICONS: Record<string, LucideIcon> = { Rocket, Clock, Users, Cpu, Server };
+const ICONS: Record<string, LucideIcon> = { Rocket, Clock, Users, Cpu, Server, Code2 };
 
 export function MetricsBand() {
   return (

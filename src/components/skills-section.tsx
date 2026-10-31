@@ -10,6 +10,9 @@ import {
   Laptop,
   GitBranch,
   ShieldCheck,
+  Smartphone,
+  Coffee,
+  Lock,
   BarChart3,
   type LucideIcon,
 } from "lucide-react";
@@ -26,6 +29,9 @@ const ICONS: Record<string, LucideIcon> = {
   Laptop,
   GitBranch,
   ShieldCheck,
+  Smartphone,
+  Coffee,
+  Lock,
 };
 
 function SkillCard({
@@ -100,7 +106,7 @@ export function SkillsSection() {
           badge="CAPABILITIES • 03"
           title="المهارات"
           highlight="التقنية"
-          subtitle="مجموعة شاملة من المهارات موزعة على 6 تخصصات رئيسية"
+          subtitle="مجموعة التقنيات والمجالات الواردة في الملف التعريفي الرسمي على GitHub"
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {SKILLS.map((s, i) => (
