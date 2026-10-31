@@ -40,6 +40,17 @@ import { RegisterScreen } from "@/components/screens/register-screen";
 import { AccountScreen } from "@/components/screens/account-screen";
 import { DashboardScreen } from "@/components/screens/dashboard-screen";
 import { ContactScreen } from "@/components/screens/contact-screen";
+import { WishlistScreen } from "@/components/screens/wishlist-screen";
+import { OrdersScreen } from "@/components/screens/orders-screen";
+import { NotificationsScreen } from "@/components/screens/notifications-screen";
+import { PrivacyScreen } from "@/components/screens/privacy-screen";
+import { TermsScreen } from "@/components/screens/terms-screen";
+import { PricingScreen } from "@/components/screens/pricing-screen";
+import { TeamScreen } from "@/components/screens/team-screen";
+import { EventsScreen } from "@/components/screens/events-screen";
+import { ToolsScreen } from "@/components/screens/tools-screen";
+import { VideosScreen } from "@/components/screens/videos-screen";
+import { GalleryScreen } from "@/components/screens/gallery-screen";
 
 function HomeView() {
   return (
@@ -117,6 +128,39 @@ function ScreenSwitch() {
       break;
     case "contact":
       screen = <ContactScreen />;
+      break;
+    case "wishlist":
+      screen = <WishlistScreen />;
+      break;
+    case "orders":
+      screen = <OrdersScreen />;
+      break;
+    case "notifications":
+      screen = <NotificationsScreen />;
+      break;
+    case "privacy":
+      screen = <PrivacyScreen />;
+      break;
+    case "terms":
+      screen = <TermsScreen />;
+      break;
+    case "pricing":
+      screen = <PricingScreen />;
+      break;
+    case "team":
+      screen = <TeamScreen />;
+      break;
+    case "events":
+      screen = <EventsScreen />;
+      break;
+    case "tools":
+      screen = <ToolsScreen />;
+      break;
+    case "videos":
+      screen = <VideosScreen />;
+      break;
+    case "gallery":
+      screen = <GalleryScreen />;
       break;
     default:
       screen = <HomeView />;

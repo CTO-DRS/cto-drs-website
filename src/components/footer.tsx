@@ -87,9 +87,9 @@ export function Footer() {
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#00f0ff] via-[#7c3aed] to-[#ff2a6d] text-[#030303]">
                 <Terminal className="h-4.5 w-4.5" strokeWidth={2.5} />
               </span>
-              <span className="font-heading-cyber text-lg font-extrabold tracking-wider">
+              <span className="font-heading-cyber whitespace-nowrap text-lg font-extrabold tracking-wider" dir="ltr">
                 <span className="text-gradient-cyan">CTO</span>
-                <span className="text-main">.</span>
+                <span className="text-main">-</span>
                 <span className="text-gradient-pink">DRS</span>
               </span>
             </a>
@@ -195,8 +195,25 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-border-soft pt-6 sm:flex-row">
           <p className="font-mono-cyber text-[11px] text-mute" dir="ltr">
-            © {new Date().getFullYear()} CTO.DRS — ALL SYSTEMS OPERATIONAL
+            © {new Date().getFullYear()} CTO-DRS — ALL SYSTEMS OPERATIONAL
           </p>
+          <div className="flex items-center gap-4">
+            <a
+              href={routeHref({ name: "privacy" })}
+              onClick={go({ name: "privacy" })}
+              className="text-[11px] text-mute transition hover:text-cyber"
+            >
+              سياسة الخصوصية
+            </a>
+            <span className="h-1 w-1 rounded-full bg-border-strong" aria-hidden="true" />
+            <a
+              href={routeHref({ name: "terms" })}
+              onClick={go({ name: "terms" })}
+              className="text-[11px] text-mute transition hover:text-cyber"
+            >
+              الشروط والأحكام
+            </a>
+          </div>
           <p className="flex items-center gap-1.5 text-[11px] text-mute">
             <span className="animate-pulse-dot h-1.5 w-1.5 rounded-full bg-[#00ff88]" />
             مبني بشغف وأمان

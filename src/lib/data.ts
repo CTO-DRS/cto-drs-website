@@ -1,4 +1,4 @@
-/* ═══════════════ PORTFOLIO DATA — CTO.DRS Cyber Dashboard ═══════════════ */
+/* ═══════════════ PORTFOLIO DATA — CTO-DRS Cyber Dashboard ═══════════════ */
 
 export interface Skill {
   name: string;
@@ -114,7 +114,7 @@ export const DASHBOARD_METRICS = [
 ];
 
 export const ACHIEVEMENTS: Achievement[] = [
-  { text: "إطلاق المنصة الرسمية CTO.DRS — cto-drs.xo.je", year: "2026" },
+  { text: "إطلاق المنصة الرسمية CTO-DRS — cto-drs.xo.je", year: "2026" },
   { text: "بناء NexusLink — مركز أجهزة محلي بتشفير تام E2E", year: "2026" },
   { text: "إطلاق SecureNet VPN بمعمارية WireGuard", year: "2026" },
   { text: "تطوير لغة عربي — لغة برمجة عربية بالكامل", year: "2026" },
@@ -690,7 +690,7 @@ export const NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: "n8",
-    title: "مرحباً بك في CTO.DRS 👋",
+    title: "مرحباً بك في CTO-DRS 👋",
     body: "شكراً لانضمامك — استكشف الخدمات والدورات واحصل على استشارتك المجانية الأولى.",
     time: "منذ أسبوع",
     type: "system",

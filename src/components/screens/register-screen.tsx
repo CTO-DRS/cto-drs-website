@@ -28,7 +28,7 @@ const INPUT_CLS =
 const BENEFITS = [
   "متابعة طلباتك وحجوزاتك من لوحة واحدة",
   "تنبيهات فورية عند تحديث حالة الخدمات",
-  "عروض حصرية لأعضاء شبكة CTO.DRS",
+  "عروض حصرية لأعضاء شبكة CTO-DRS",
 ];
 
 interface FormErrors {
@@ -100,7 +100,7 @@ export function RegisterScreen() {
         badge="AUTH.CREATE"
         title="إنشاء"
         highlight="حساب"
-        subtitle="انضم إلى شبكة عملاء CTO.DRS وتابع مشاريعك وطلباتك بسهولة"
+        subtitle="انضم إلى شبكة عملاء CTO-DRS وتابع مشاريعك وطلباتك بسهولة"
       />
 
       <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -23,6 +23,7 @@ import {
   Mail,
   MessageSquareQuote,
   Phone,
+  Search,
   ShieldAlert,
   ShoppingBag,
   Star,
@@ -204,6 +205,55 @@ export function DashboardScreen() {
   const [selectedMessage, setSelectedMessage] = useState<ContactMessageItem | null>(null);
   const [patchingId, setPatchingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  /* ── فلاتر الرسائل ── */
+  const [msgSearch, setMsgSearch] = useState("");
+  const [msgPurpose, setMsgPurpose] = useState("all");
+  const [msgRead, setMsgRead] = useState("all");
+
+  const filteredMessages = useMemo(() => {
+    if (!messages) return [];
+    const q = msgSearch.trim().toLowerCase();
+    return messages.filter((m) => {
+      if (msgPurpose !== "all" && (m.purpose ?? "none") !== msgPurpose) return false;
+      if (msgRead === "unread" && m.read) return false;
+      if (msgRead === "read" && !m.read) return false;
+      if (!q) return true;
+      return [m.name, m.email, m.subject, m.message, m.phone].some((f) =>
+        (f ?? "").toLowerCase().includes(q)
+      );
+    });
+  }, [messages, msgSearch, msgPurpose, msgRead]);
+
+  /** تصدير الرسائل المفلترة إلى ملف CSV */
+  function exportMessagesCsv() {
+    if (!filteredMessages.length) {
+      toast({ title: "لا توجد رسائل للتصدير", description: "عدّل الفلاتر أولاً" });
+      return;
+    }
+    const headers = ["الاسم", "البريد", "الهدف", "الدولة", "الجوال", "العنوان", "الرسالة", "الحالة", "التاريخ"];
+    const rows = filteredMessages.map((m) => [
+      m.name,
+      m.email,
+      m.purpose ? PURPOSE_BY_ID[m.purpose]?.label ?? m.purpose : "—",
+      m.country ? COUNTRY_BY_CODE[m.country]?.name ?? m.country : "—",
+      m.phone ?? "—",
+      m.subject ?? "—",
+      m.message.replace(/\n/g, " | "),
+      m.read ? "مقروءة" : "غير مقروءة",
+      new Date(m.createdAt).toLocaleString("ar"),
+    ]);
+    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const csv = "\uFEFF" + [headers, ...rows].map((r) => r.map(esc).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `cto-drs-messages-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "تم تصدير الرسائل", description: `${filteredMessages.length} رسالة في ملف CSV` });
+  }
 
   async function updateBookingStatus(id: string, status: Booking["status"]) {
     setPatchingId(id);
@@ -778,8 +828,63 @@ export function DashboardScreen() {
                     description="لم تستلم النظام أي رسالة تواصل حتى الآن."
                   />
                 ) : (
-                  <div className="grid gap-4 lg:grid-cols-2">
-                    {messages.map((message) => {
+                  <>
+                    {/* شريط الفلاتر والبحث */}
+                    <div className="card-glow mb-5 flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center">
+                      <div className="relative flex-1">
+                        <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" />
+                        <input
+                          value={msgSearch}
+                          onChange={(e) => setMsgSearch(e.target.value)}
+                          placeholder="ابحث بالاسم، البريد، الجوال، أو نص الرسالة..."
+                          aria-label="بحث في الرسائل"
+                          className="h-10 w-full rounded-xl border border-border-strong bg-elev-2/60 pr-9 pl-3 text-xs text-main outline-none transition placeholder:text-mute focus:border-[rgba(0,240,255,0.5)]"
+                        />
+                      </div>
+                      <Select value={msgPurpose} onValueChange={setMsgPurpose}>
+                        <SelectTrigger size="sm" aria-label="فلترة حسب الهدف" className="h-10 min-w-36 border-border-strong bg-elev-2/60 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">كل الأهداف</SelectItem>
+                          {Object.values(PURPOSE_BY_ID).map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.label}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="none">بدون هدف (رسائل قديمة)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select value={msgRead} onValueChange={setMsgRead}>
+                        <SelectTrigger size="sm" aria-label="فلترة حسب القراءة" className="h-10 min-w-32 border-border-strong bg-elev-2/60 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">الكل</SelectItem>
+                          <SelectItem value="unread">غير المقروءة</SelectItem>
+                          <SelectItem value="read">المقروءة</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        size="sm"
+                        onClick={exportMessagesCsv}
+                        className="btn-outline-cyber h-10 shrink-0 rounded-xl px-4 text-xs"
+                        aria-label="تصدير الرسائل المفلترة إلى ملف CSV"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        تصدير CSV
+                      </Button>
+                    </div>
+
+                    {filteredMessages.length === 0 ? (
+                      <EmptyState
+                        icon={Search}
+                        title="لا نتائج مطابقة"
+                        description="جرّب تغيير كلمة البحث أو الفلاتر."
+                      />
+                    ) : (
+                    <div className="grid gap-4 lg:grid-cols-2">
+                      {filteredMessages.map((message) => {
                       const PurposeIcon = message.purpose ? PURPOSE_BY_ID[message.purpose] : null;
                       const cFlag = message.country ? COUNTRY_BY_CODE[message.country]?.flag : null;
                       return (
@@ -846,7 +951,9 @@ export function DashboardScreen() {
                       </button>
                       );
                     })}
-                  </div>
+                    </div>
+                    )}
+                  </>
                 )}
               </TabsContent>
 

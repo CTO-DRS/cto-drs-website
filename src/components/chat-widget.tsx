@@ -21,7 +21,7 @@ const SUGGESTIONS = [
 const WELCOME: Msg = {
   role: "assistant",
   content:
-    "أهلاً بك في CTO.DRS 👋\nأنا المساعد الذكي، كيف يمكنني مساعدتك؟ اسألني عن الخدمات أو المشاريع أو التقنيات.",
+    "أهلاً بك في CTO-DRS 👋\nأنا المساعد الذكي، كيف يمكنني مساعدتك؟ اسألني عن الخدمات أو المشاريع أو التقنيات.",
 };
 
 export function ChatWidget() {

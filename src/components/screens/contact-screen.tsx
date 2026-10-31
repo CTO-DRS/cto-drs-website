@@ -13,7 +13,7 @@ export function ContactScreen() {
   return (
     <>
       <PageHero
-        badge="CONTACT • CTO.DRS"
+        badge="CONTACT • CTO-DRS"
         title="تواصل"
         highlight="معي"
         subtitle="اختر القناة الأنسب لك أو أرسل رسالة مباشرة — سأرد عليك خلال 24 ساعة كحد أقصى"
