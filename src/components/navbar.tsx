@@ -90,10 +90,12 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#00f0ff] via-[#7c3aed] to-[#ff2a6d] text-[#030303] shadow-[0_0_18px_rgba(0,240,255,0.35)] transition-transform duration-300 group-hover:rotate-6">
             <Terminal className="h-4.5 w-4.5" strokeWidth={2.5} />
           </span>
-          <span className="font-heading-cyber hidden text-lg font-extrabold tracking-wider sm:block">
-            <span className="text-gradient-cyan">CTO</span>
-            <span className="text-main">.</span>
-            <span className="text-gradient-pink">DRS</span>
+          <span className="font-heading-cyber hidden text-lg font-extrabold tracking-wider sm:block" dir="ltr">
+            <span className="whitespace-nowrap">
+              <span className="text-gradient-cyan">CTO</span>
+              <span className="text-main">-</span>
+              <span className="text-gradient-pink">DRS</span>
+            </span>
           </span>
         </a>
 

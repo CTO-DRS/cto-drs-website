@@ -1,6 +1,6 @@
 /* ─────────────────────────────────────────────
-   قنوات التواصل الرسمية لـ CTO.DRS
-   (المصدر: بطاقة الحسابات الرسمية)
+   قنوات التواصل الرسمية لـ CTO-DRS
+   (المصدر: بطاقة الحسابات الرسمية + GitHub Profile)
    ───────────────────────────────────────────── */
 
 export interface SocialLink {
@@ -13,8 +13,8 @@ export interface SocialLink {
 }
 
 export const BRAND = {
-  name: "CTO.DRS",
-  handle: "cto.drs",
+  name: "CTO-DRS",
+  handle: "cto-drs",
   website: "https://cto-drs.xo.je/",
   websiteLabel: "cto-drs.xo.je",
 } as const;
@@ -23,7 +23,7 @@ export const SOCIALS: SocialLink[] = [
   {
     id: "whatsapp",
     label: "واتساب (حساب تجاري)",
-    handle: "wa.me/CTO.DRS",
+    handle: "واتساب رسمي",
     url: "https://wa.me/message/MVTVWPOPFOVFF1",
     color: "#25d366",
     glow: "rgba(37,211,102,0.22)",
