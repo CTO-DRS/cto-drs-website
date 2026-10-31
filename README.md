@@ -1,6 +1,6 @@
 # CTO.DRS — منصة المطور المتكاملة | Full-Stack Developer Platform
 
-موقع شخصي/منصة متكاملة بأسلوب **Cyber Dashboard** لمطور Full-Stack وخبير أمن سيبراني — مبني بـ **Next.js 16 + TypeScript + Tailwind CSS 4 + shadcn/ui + Prisma (SQLite)**.
+المنصة الرسمية لهوية **CTO-DRS** التقنية (Software Engineering • Cybersecurity • Innovation) — بأسلوب **Cyber Dashboard** ومبنية بـ **Next.js 16 + TypeScript + Tailwind CSS 4 + shadcn/ui + Prisma (SQLite)**.
 
 A full-featured personal platform / cyber-dashboard styled portfolio with a complete admin console, built with Next.js 16 App Router, TypeScript, Tailwind CSS 4, shadcn/ui and Prisma (SQLite).
 
@@ -15,7 +15,7 @@ A full-featured personal platform / cyber-dashboard styled portfolio with a comp
 - **المتجر الرسمي**: منتجات رقمية، سلة مشتريات، إتمام شراء، قائمة مفضلات
 - **الحجوزات**: نظام حجز استشارات بالتاريخ والفترة الزمنية
 - **صفحات إضافية**: آراء العملاء، الأسئلة الشائعة، معرض الصور، الفيديوهات، الأدوات، الفعاليات، الخصوصية، الشروط
-- **حساب المستخدم**: تسجيل دخول/إنشاء حساب، متابعة الطلبات والحجوزات
+- **الحساب المستخدم**: تسجيل دخول/إنشاء حساب، متابعة الطلبات والحجوزات
 - **قنوات التواصل الرسمية**: واتساب (حساب تجاري)، تيليجرام، تيك توك، إكس، إنستغرام، يوتيوب، جيت هب — مدمجة في الهيرو، الفوتر، صفحة التواصل وشاشة الحساب
 - **مساعد ذكي**: محادثة AI مدعومة مع تصعيد مباشر لواتساب
 

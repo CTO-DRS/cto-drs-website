@@ -26,11 +26,11 @@ const MORE_LINKS: { route: AppRoute; label: string }[] = [
 ];
 
 const SERVICE_LINKS = [
-  "تطوير مواقع الويب",
-  "المتاجر الإلكترونية",
-  "اختبار الاختراق",
-  "تطبيقات الجوال",
-  "الاستشارات التقنية",
+  "تطبيقات أندرويد أصلية",
+  "مواقع وتطبيقات ويب آمنة",
+  "اختبار اختراق أخلاقي",
+  "أدوات وأتمتة Python",
+  "مشاريع مفتوحة المصدر",
 ];
 
 export function Footer() {
@@ -94,7 +94,7 @@ export function Footer() {
               </span>
             </a>
             <p className="mt-4 text-xs leading-6 text-sec">
-              حلول برمجية متكاملة وأمن رقمي مستدام. مبني بأسلوب Cyber Dashboard حديث.
+              هندسة البرمجيات والأمن السيبراني والابتكار مفتوح المصدر — تقنية مفيدة وآمنة وقابلة للصيانة ومتاحة للجميع.
             </p>
             <p className="font-mono-cyber mt-3 text-[10px] tracking-[0.2em] text-mute" dir="ltr">
               {BRAND.websiteLabel}

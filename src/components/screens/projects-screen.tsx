@@ -54,7 +54,7 @@ export function ProjectsScreen() {
         badge="PROJECTS.ARCHIVE"
         title="سجل"
         highlight="المشاريع"
-        subtitle="مجموعة مختارة من المشاريع المنجزة — من المتاجر الإلكترونية إلى أنظمة الأمن والذكاء الاصطناعي"
+        subtitle="مشاريع مفتوحة المصدر منشورة على GitHub — من تطبيقات أندرويد الأصلية إلى أدوات الأمن والذكاء الاصطناعي"
       />
 
       <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">

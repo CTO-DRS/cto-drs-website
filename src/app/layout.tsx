@@ -23,14 +23,26 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: "CTO.DRS | مطور برمجيات متكامل وخبير أمن سيبراني",
+  title: "CTO-DRS | هندسة البرمجيات والأمن السيبراني والابتكار",
   description:
-    "حلول برمجية متكاملة وأمن رقمي مستدام — مطور Full-Stack بخبرة في بناء الأنظمة الرقمية وحلول الأمن السيبراني الدفاعي",
-  keywords: ["تطوير ويب", "أمن سيبراني", "برمجة", "Full-Stack", "PHP", "JavaScript", "Python"],
-  authors: [{ name: "CTO.DRS" }],
+    "CTO-DRS — مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر. تقنية مفيدة وآمنة وقابلة للصيانة ومتاحة للجميع.",
+  keywords: [
+    "CTO-DRS",
+    "هندسة برمجيات",
+    "أمن سيبراني",
+    "Kotlin",
+    "Python",
+    "JavaScript",
+    "PHP",
+    "Android",
+    "Open Source",
+    "برمجة",
+  ],
+  authors: [{ name: "CTO-DRS", url: "https://github.com/CTO-DRS" }],
   openGraph: {
-    title: "CTO.DRS | مطور برمجيات متكامل",
-    description: "حلول برمجية متكاملة وأمن رقمي مستدام",
+    title: "CTO-DRS | Software Engineering • Cybersecurity • Innovation",
+    description:
+      "مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر",
     type: "website",
   },
 };
@@ -49,7 +61,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className={`${plexArabic.variable} ${jakarta.variable} ${firaCode.variable} antialiased bg-app text-main`}
+        className={`${plexArabic.variable} ${jakarta.variable} ${firaCode.variable} antialiased bg-app text-main overflow-x-clip`}
       >
         <ThemeProvider>
           {children}
