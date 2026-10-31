@@ -6,6 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAppRouter, routeHref, type AppRoute } from "@/lib/router";
 import { SocialRow } from "@/components/social-channels";
 import { BRAND } from "@/lib/social";
+import { STATIC_MODE } from "@/lib/static-mode";
 
 const QUICK: { route: AppRoute; label: string }[] = [
   { route: { name: "home" }, label: "الرئيسية" },
@@ -51,6 +52,18 @@ export function Footer() {
     }
     setLoading(true);
     try {
+      /* النسخة الثابتة: الاشتراك يتم عبر البريد المباشر بدل قاعدة البيانات */
+      if (STATIC_MODE) {
+        window.location.href = `mailto:${BRAND.email}?subject=${encodeURIComponent(
+          "اشتراك في النشرة البريدية — CTO-DRS"
+        )}&body=${encodeURIComponent(email)}`;
+        toast({
+          title: "تم تجهيز رسالة الاشتراك",
+          description: "أكمل الإرسال من بريدك — سيتم إضافتك للنشرة فوراً",
+        });
+        setEmail("");
+        return;
+      }
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

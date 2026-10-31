@@ -88,23 +88,25 @@ export function BookingScreen() {
 
   /* on mount: read preselected service from sessionStorage + today's date */
   useEffect(() => {
-    setToday(new Date().toISOString().split("T")[0]);
-    try {
-      const stored = sessionStorage.getItem("cto-drs-booking-service");
-      if (stored) {
-        sessionStorage.removeItem("cto-drs-booking-service");
-        if ((SERVICE_TYPES as readonly string[]).includes(stored)) {
-          setServiceType(stored);
-        } else if (stored.startsWith("دورة: ")) {
-          setServiceType("دورة تدريبية");
-          setNotes(`أرغب بالتسجيل في ${stored}`);
-        } else {
-          setNotes(`أرغب بحجز خدمة: ${stored}`);
+    queueMicrotask(() => {
+      setToday(new Date().toISOString().split("T")[0]);
+      try {
+        const stored = sessionStorage.getItem("cto-drs-booking-service");
+        if (stored) {
+          sessionStorage.removeItem("cto-drs-booking-service");
+          if ((SERVICE_TYPES as readonly string[]).includes(stored)) {
+            setServiceType(stored);
+          } else if (stored.startsWith("دورة: ")) {
+            setServiceType("دورة تدريبية");
+            setNotes(`أرغب بالتسجيل في ${stored}`);
+          } else {
+            setNotes(`أرغب بحجز خدمة: ${stored}`);
+          }
         }
+      } catch {
+        /* sessionStorage unavailable — ignore */
       }
-    } catch {
-      /* sessionStorage unavailable — ignore */
-    }
+    });
   }, []);
 
   const validate = () => {
