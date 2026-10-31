@@ -114,7 +114,7 @@ export const DASHBOARD_METRICS = [
 ];
 
 export const ACHIEVEMENTS: Achievement[] = [
-  { text: "إطلاق المنصة الرسمية CTO-DRS — cto-drs.xo.je", year: "2026" },
+  { text: "إطلاق المنصة الرسمية CTO-DRS — cto-drs.com", year: "2026" },
   { text: "بناء NexusLink — مركز أجهزة محلي بتشفير تام E2E", year: "2026" },
   { text: "إطلاق SecureNet VPN بمعمارية WireGuard", year: "2026" },
   { text: "تطوير لغة عربي — لغة برمجة عربية بالكامل", year: "2026" },
