@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { Code2, ExternalLink, Github, Search, Star } from "lucide-react";
+import { Code2, Download, ExternalLink, Github, Search, Star } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/screen-state";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { useApi } from "@/lib/use-api";
 import type { Project } from "@/lib/types";
+import { APPS, directReleaseUrl, sourceZipUrl } from "@/lib/apps";
 
 export function ProjectsScreen() {
   const { data: projects, loading, error, reload } = useApi<Project[]>("/api/projects");
@@ -47,6 +48,15 @@ export function ProjectsScreen() {
     setActiveCategory("الكل");
     setQuery("");
   };
+
+  /** ابحث عن تطبيق مرتبط بالمشروع الحالي (لرابط تنزيل مباشر) */
+  const appForSelected = useMemo(
+    () =>
+      selected?.githubUrl
+        ? APPS.find((a) => selected.githubUrl!.toLowerCase().includes(a.repo.toLowerCase()))
+        : undefined,
+    [selected]
+  );
 
   return (
     <>
@@ -182,6 +192,29 @@ export function ProjectsScreen() {
                             <ExternalLink className="h-3.5 w-3.5" />
                           </a>
                         )}
+                        {project.githubUrl &&
+                          (() => {
+                            const app = APPS.find((a) =>
+                              project.githubUrl!.toLowerCase().includes(a.repo.toLowerCase())
+                            );
+                            if (!app) return null;
+                            return (
+                              <a
+                                href={
+                                  app.directFile
+                                    ? directReleaseUrl(app.repo, app.directFile)
+                                    : sourceZipUrl(app.repo)
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
+                                aria-label={`تنزيل ${app.titleEn} مباشرة من GitHub Releases`}
+                                className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(0,240,255,0.35)] text-cyber transition hover:bg-[rgba(0,240,255,0.1)]"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                              </a>
+                            );
+                          })()}
                         {project.githubUrl && (
                           <a
                             href={project.githubUrl}
@@ -282,6 +315,24 @@ export function ProjectsScreen() {
                       إغلاق
                     </button>
                   </DialogClose>
+                  {selected.githubUrl && (
+                    <a
+                      href={
+                        appForSelected?.directFile
+                          ? directReleaseUrl(appForSelected.repo, appForSelected.directFile)
+                          : appForSelected
+                            ? sourceZipUrl(appForSelected.repo)
+                            : "#/downloads"
+                      }
+                      target={appForSelected ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      download
+                      className="btn-gradient inline-flex h-10 items-center gap-2 rounded-full px-5 text-xs font-bold"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      {appForSelected?.fileType === "APK" ? "تحميل APK مباشر" : "تحميل ZIP مباشر"}
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

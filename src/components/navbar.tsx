@@ -22,6 +22,7 @@ import {
   HelpCircle,
   MessageSquareQuote,
   LayoutDashboard,
+  Download,
   ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ const LINKS: { route: AppRoute; label: string; icon: typeof Home }[] = [
 
 const MORE: { route: AppRoute; label: string; icon: typeof Home }[] = [
   { route: { name: "booking" }, label: "احجز استشارة", icon: CalendarCheck },
+  { route: { name: "downloads" }, label: "مركز التحميل", icon: Download },
   { route: { name: "testimonials" }, label: "آراء العملاء", icon: MessageSquareQuote },
   { route: { name: "faq" }, label: "الأسئلة الشائعة", icon: HelpCircle },
   { route: { name: "contact" }, label: "تواصل معي", icon: Mail },
