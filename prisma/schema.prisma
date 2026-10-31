@@ -18,6 +18,9 @@ model ContactMessage {
   name      String
   email     String
   subject   String?
+  purpose   String?
+  phone     String?
+  country   String?
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { COUNTRY_BY_CODE, PURPOSE_BY_ID, sanitizePhone } from "@/lib/contact-options";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,9 @@ export async function GET(_req: NextRequest) {
       name: m.name,
       email: m.email,
       subject: m.subject,
+      purpose: m.purpose,
+      phone: m.phone,
+      country: m.country,
       message: m.message,
       read: m.read,
       createdAt: m.createdAt.toISOString(),
@@ -35,6 +39,9 @@ export async function POST(req: Request) {
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const message = typeof body.message === "string" ? body.message.trim() : "";
     const subject = typeof body.subject === "string" ? body.subject.trim() : "";
+    const purpose = typeof body.purpose === "string" ? body.purpose.trim() : "";
+    const country = typeof body.country === "string" ? body.country.trim().toUpperCase() : "";
+    const rawPhone = typeof body.phone === "string" ? sanitizePhone(body.phone) : "";
 
     if (name.length < 2) {
       return NextResponse.json({ error: "الرجاء إدخال الاسم الكامل" }, { status: 400 });
@@ -45,12 +52,29 @@ export async function POST(req: Request) {
     if (message.length < 10) {
       return NextResponse.json({ error: "الرجاء كتابة تفاصيل المشروع (10 أحرف على الأقل)" }, { status: 400 });
     }
+    // هدف المراسلة: اختياري لكن يجب أن يكون من القائمة المعتمدة
+    if (purpose && !PURPOSE_BY_ID[purpose]) {
+      return NextResponse.json({ error: "هدف المراسلة غير صالح" }, { status: 400 });
+    }
+    // الدولة: اختيارية لكن يجب أن تكون من القائمة
+    if (country && !COUNTRY_BY_CODE[country]) {
+      return NextResponse.json({ error: "الدولة غير صالحة" }, { status: 400 });
+    }
+    // الجوال: إن وُجد يجب أن يكون 7–15 رقماً
+    if (rawPhone && (rawPhone.length < 7 || rawPhone.length > 15)) {
+      return NextResponse.json({ error: "رقم الجوال غير صحيح (7 أرقام على الأقل)" }, { status: 400 });
+    }
+    // رقم بدون دولة غير مقبول إذا اختار الدولة، والعكس مسموح
+    const phone = country && rawPhone ? `${COUNTRY_BY_CODE[country].dial}${rawPhone}` : rawPhone || null;
 
     const saved = await db.contactMessage.create({
       data: {
         name,
         email,
-        subject: subject ? subject.slice(0, 200) : null,
+        subject: subject ? subject.slice(0, 200) : purpose ? PURPOSE_BY_ID[purpose].label : null,
+        purpose: purpose || null,
+        phone,
+        country: country || null,
         message: message.slice(0, 5000),
       },
     });
