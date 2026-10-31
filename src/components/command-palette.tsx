@@ -30,6 +30,16 @@ import {
   ShoppingCart,
   LogIn,
   LayoutDashboard,
+  Heart,
+  Bell,
+  ReceiptText,
+  ShieldCheck,
+  FileText,
+  BadgeDollarSign,
+  Users,
+  CalendarDays,
+  Camera,
+  PlayCircle,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAppRouter, type AppRoute } from "@/lib/router";
@@ -93,6 +103,24 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
           <CommandItem onSelect={() => go({ name: "contact" })}>
             <Mail className="h-4 w-4 text-cyber" /> تواصل معي
           </CommandItem>
+          <CommandItem onSelect={() => go({ name: "pricing" })}>
+            <BadgeDollarSign className="h-4 w-4 text-cyber" /> الباقات والأسعار
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "team" })}>
+            <Users className="h-4 w-4 text-cyber" /> من خلف المنصة
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "events" })}>
+            <CalendarDays className="h-4 w-4 text-cyber" /> الفعاليات والورش
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "tools" })}>
+            <Terminal className="h-4 w-4 text-cyber" /> الأدوات والمكتبات
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "videos" })}>
+            <PlayCircle className="h-4 w-4 text-cyber" /> الفيديوهات
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "gallery" })}>
+            <Camera className="h-4 w-4 text-cyber" /> معرض الأعمال
+          </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="إجراءات سريعة">
@@ -117,6 +145,21 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
           </CommandItem>
           <CommandItem onSelect={() => go({ name: "store" })}>
             <ShoppingBag className="h-4 w-4 text-[#a78bfa]" /> تسوّق المنتجات
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "wishlist" })}>
+            <Heart className="h-4 w-4 text-[#a78bfa]" /> قائمة المفضلة
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "orders" })}>
+            <ReceiptText className="h-4 w-4 text-[#a78bfa]" /> طلباتي
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "notifications" })}>
+            <Bell className="h-4 w-4 text-[#a78bfa]" /> مركز التنبيهات
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "privacy" })}>
+            <ShieldCheck className="h-4 w-4 text-[#a78bfa]" /> سياسة الخصوصية
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "terms" })}>
+            <FileText className="h-4 w-4 text-[#a78bfa]" /> الشروط والأحكام
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />

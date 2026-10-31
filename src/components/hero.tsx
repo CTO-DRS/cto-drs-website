@@ -48,7 +48,7 @@ export function Hero() {
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
         <Reveal>
           <div className="section-badge mb-7 flex items-center gap-2.5 rounded-full px-5 py-2">
-            <span className="font-bold tracking-[0.22em]">CTO.DRS • SYSTEM ONLINE</span>
+            <span className="font-bold tracking-[0.22em]">CTO-DRS • SYSTEM ONLINE</span>
             <span className="animate-pulse-dot h-2 w-2 rounded-full bg-[#00ff88]" />
           </div>
         </Reveal>

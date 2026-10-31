@@ -407,7 +407,7 @@ export function CourseDetailScreen() {
                     {course.instructor}
                   </p>
                   <p className="font-mono-cyber mt-0.5 text-xs text-cyber">
-                    مدرب معتمد — CTO.DRS Academy
+                    مدرب معتمد — CTO-DRS Academy
                   </p>
                   <p className="mt-2 text-sm leading-7 text-sec">
                     {course.instructor} مهندس برمجيات وخبير في مجال{" "}
