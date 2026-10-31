@@ -141,6 +141,9 @@ export interface ContactMessageItem {
   name: string;
   email: string;
   subject?: string | null;
+  purpose?: string | null;
+  phone?: string | null;
+  country?: string | null;
   message: string;
   read: boolean;
   createdAt: string;

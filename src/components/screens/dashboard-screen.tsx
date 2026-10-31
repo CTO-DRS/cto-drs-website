@@ -22,9 +22,11 @@ import {
   Lock,
   Mail,
   MessageSquareQuote,
+  Phone,
   ShieldAlert,
   ShoppingBag,
   Star,
+  Target,
   Trash2,
   UserRound,
   Users,
@@ -76,6 +78,7 @@ import type {
   Testimonial,
 } from "@/lib/types";
 import { SOCIAL_BY_ID } from "@/lib/social";
+import { COUNTRY_BY_CODE, PURPOSE_BY_ID } from "@/lib/contact-options";
 import { WhatsAppIcon } from "@/components/social-icons";
 
 /* ── helpers ── */
@@ -776,7 +779,10 @@ export function DashboardScreen() {
                   />
                 ) : (
                   <div className="grid gap-4 lg:grid-cols-2">
-                    {messages.map((message) => (
+                    {messages.map((message) => {
+                      const PurposeIcon = message.purpose ? PURPOSE_BY_ID[message.purpose] : null;
+                      const cFlag = message.country ? COUNTRY_BY_CODE[message.country]?.flag : null;
+                      return (
                       <button
                         key={message.id}
                         type="button"
@@ -806,14 +812,40 @@ export function DashboardScreen() {
                             </div>
                             <p className="mt-1 truncate text-xs text-mute">
                               {message.name} · <span dir="ltr">{message.email}</span>
+                              {cFlag && <span className="mr-1" title={message.country}> {cFlag}</span>}
                             </p>
                             <p className="mt-2 line-clamp-2 text-xs leading-6 text-sec">
                               {message.message}
                             </p>
+                            {(PurposeIcon || message.phone) && (
+                              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                                {PurposeIcon && (
+                                  <span
+                                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold"
+                                    style={{
+                                      color: PurposeIcon.color,
+                                      borderColor: PurposeIcon.color + "55",
+                                      backgroundColor: PurposeIcon.glow,
+                                    }}
+                                  >
+                                    {PurposeIcon.label}
+                                  </span>
+                                )}
+                                {message.phone && (
+                                  <span
+                                    dir="ltr"
+                                    className="font-mono-cyber inline-flex items-center rounded-full border border-border-soft bg-elev-2/60 px-2 py-0.5 text-[10px] text-sec"
+                                  >
+                                    {message.phone}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </TabsContent>
@@ -1064,6 +1096,43 @@ export function DashboardScreen() {
               {selectedMessage && fmtDate(selectedMessage.createdAt)}
             </DialogDescription>
           </DialogHeader>
+
+          {/* بيانات المُرسل الجديدة: الهدف + الدولة + الجوال */}
+          {(selectedMessage?.purpose || selectedMessage?.phone || selectedMessage?.country) && (
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedMessage?.purpose && PURPOSE_BY_ID[selectedMessage.purpose] && (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold"
+                  style={{
+                    color: PURPOSE_BY_ID[selectedMessage.purpose].color,
+                    borderColor: PURPOSE_BY_ID[selectedMessage.purpose].color + "55",
+                    backgroundColor: PURPOSE_BY_ID[selectedMessage.purpose].glow,
+                  }}
+                >
+                  <Target className="h-3.5 w-3.5" />
+                  {PURPOSE_BY_ID[selectedMessage.purpose].label}
+                </span>
+              )}
+              {selectedMessage?.country && COUNTRY_BY_CODE[selectedMessage.country] && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border-soft bg-elev-2/60 px-3 py-1 text-xs text-sec">
+                  {COUNTRY_BY_CODE[selectedMessage.country].flag} {COUNTRY_BY_CODE[selectedMessage.country].name}
+                </span>
+              )}
+              {selectedMessage?.phone && (
+                <a
+                  href={`https://wa.me/${selectedMessage.phone.replace(/[^\d]/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  dir="ltr"
+                  className="font-mono-cyber inline-flex items-center gap-1.5 rounded-full border border-[rgba(37,211,102,0.35)] bg-[rgba(37,211,102,0.08)] px-3 py-1 text-xs font-bold text-[#25d366] transition hover:bg-[rgba(37,211,102,0.18)]"
+                >
+                  <Phone className="h-3 w-3" />
+                  {selectedMessage.phone}
+                </a>
+              )}
+            </div>
+          )}
+
           <div className="max-h-72 overflow-y-auto rounded-xl border border-border-soft bg-elev-2/60 p-4">
             <p className="whitespace-pre-wrap text-sm leading-7 text-sec">{selectedMessage?.message}</p>
           </div>
@@ -1073,13 +1142,19 @@ export function DashboardScreen() {
               نسخ البريد
             </Button>
             <a
-              href={selectedMessage ? `${SOCIAL_BY_ID.whatsapp.url}` : "#"}
+              href={
+                selectedMessage?.phone
+                  ? `https://wa.me/${selectedMessage.phone.replace(/[^\d]/g, "")}`
+                  : selectedMessage
+                    ? `${SOCIAL_BY_ID.whatsapp.url}`
+                    : "#"
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="flex h-10 items-center gap-1.5 rounded-xl border border-[rgba(37,211,102,0.35)] bg-[rgba(37,211,102,0.08)] px-4 text-sm font-bold text-[#25d366] transition hover:bg-[rgba(37,211,102,0.18)]"
             >
               <WhatsAppIcon className="h-4 w-4" />
-              رد عبر واتساب
+              {selectedMessage?.phone ? "رد واتساب مباشر" : "رد عبر واتساب"}
             </a>
             <Button
               onClick={() => selectedMessage && toggleMessageRead(selectedMessage)}
