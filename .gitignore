@@ -64,3 +64,8 @@ verify-*.png
 final-*.png
 site-analysis-*.png
 dev.log
+
+# static export build output
+out/
+.next-static/
+scripts/.api-hidden/

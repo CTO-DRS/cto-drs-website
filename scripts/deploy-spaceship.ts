@@ -230,6 +230,36 @@ async function cmdBind(domain: string, appDomain: string): Promise<void> {
   console.log("ℹ انتظر انتشار DNS (عادة دقائق إلى ساعة) ثم فعّل الدومين في إعدادات التطبيق.");
 }
 
+/** سجلات GitHub Pages المعتمدة للنطاق الرئيسي + www */
+async function cmdPagesDns(domain: string): Promise<void> {
+  const GITHUB_PAGES_IPS = [
+    "185.199.108.153",
+    "185.199.109.153",
+    "185.199.110.153",
+    "185.199.111.153",
+  ];
+  const owner = "CTO-DRS";
+  const body = {
+    items: [
+      ...GITHUB_PAGES_IPS.map((address) => ({
+        type: "A",
+        name: "@",
+        address,
+        ttl: 3600,
+      })),
+      {
+        type: "CNAME",
+        name: "www",
+        cname: `${owner.toLowerCase()}.github.io`,
+        ttl: 3600,
+      },
+    ],
+  };
+  const r = await api("PUT", `/dns/records/${domain}`, body);
+  if (!r.ok) die(`فشل تحديث DNS (${r.status}): ${r.error}`);
+  console.log(`✓ تم ربط ${domain} (+ www) بـ GitHub Pages (${GITHUB_PAGES_IPS.length}× A + CNAME)`);
+}
+
 async function findApp(apps: HyperliftApp[], hint?: string): Promise<HyperliftApp | undefined> {
   if (hint) {
     return apps.find(
@@ -342,6 +372,10 @@ async function main(): Promise<void> {
       requireAuth();
       if (!rest[0] || !rest[1]) die("استخدم: bind <domain> <appDomain>");
       return cmdBind(rest[0], rest[1]);
+    case "pages-dns":
+      requireAuth();
+      if (!rest[0]) die("استخدم: pages-dns <domain>");
+      return cmdPagesDns(rest[0]);
     case "deploy":
       requireAuth();
       return cmdDeploy(rest[0]);

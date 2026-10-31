@@ -67,20 +67,24 @@ export function CheckoutScreen() {
 
   /* prefill from authenticated user once available */
   useEffect(() => {
-    if (user) {
-      setName((n) => n || user.name);
-      setEmail((e) => e || user.email);
-    }
+    queueMicrotask(() => {
+      if (user) {
+        setName((n) => n || user.name);
+        setEmail((e) => e || user.email);
+      }
+    });
   }, [user]);
 
   /* carry over coupon applied in the cart screen */
   useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem("cto-drs-discount");
-      if (stored) setDiscountRate(parseFloat(stored) || 0);
-    } catch {
-      /* ignore */
-    }
+    queueMicrotask(() => {
+      try {
+        const stored = sessionStorage.getItem("cto-drs-discount");
+        if (stored) setDiscountRate(parseFloat(stored) || 0);
+      } catch {
+        /* ignore */
+      }
+    });
   }, []);
 
   const subtotal = cartTotal(cart);

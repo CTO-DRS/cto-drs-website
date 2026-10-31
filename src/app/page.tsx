@@ -22,6 +22,7 @@ import { Footer } from "@/components/footer";
 import { ChatWidget } from "@/components/chat-widget";
 import { CookieConsent } from "@/components/cookie-consent";
 import { AppRouterProvider, useAppRouter } from "@/lib/router";
+import { STATIC_MODE } from "@/lib/static-mode";
 
 import { ServicesScreen } from "@/components/screens/services-screen";
 import { ProjectsScreen } from "@/components/screens/projects-screen";
@@ -200,7 +201,7 @@ export default function Home() {
         </main>
 
         <Footer />
-        <ChatWidget />
+        {!STATIC_MODE && <ChatWidget />}
         <CookieConsent />
       </div>
     </AppRouterProvider>
