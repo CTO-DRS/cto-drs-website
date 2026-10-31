@@ -1,45 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Clock3, Loader2, CheckCircle2, ExternalLink } from "lucide-react";
+import { Send, Clock3, Loader2, CheckCircle2, CalendarDays } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
-import { SocialChannels, SocialIcon } from "@/components/social-channels";
-import { SOCIAL_BY_ID } from "@/lib/social";
+import { SocialChannels } from "@/components/social-channels";
 import { toast } from "@/hooks/use-toast";
 
-const INFO = [
-  {
-    id: "whatsapp",
-    label: "واتساب — حساب تجاري",
-    value: "محادثة مباشرة الآن",
-    href: SOCIAL_BY_ID.whatsapp.url,
-    ltr: false,
-  },
-  {
-    id: "telegram",
-    label: "تيليجرام",
-    value: "@CTO_DRS",
-    href: SOCIAL_BY_ID.telegram.url,
-    ltr: true,
-  },
-  {
-    id: "website",
-    label: "الموقع الرسمي",
-    value: "cto-drs.xo.je",
-    href: SOCIAL_BY_ID.website.url,
-    ltr: true,
-  },
-  {
-    id: "reply",
-    label: "أوقات الرد",
-    value: "خلال 24 ساعة",
-    href: undefined,
-    ltr: false,
-  },
-];
-
-export function ContactSection() {
+export function ContactSection({ showHeader = true }: { showHeader?: boolean }) {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -71,55 +39,55 @@ export function ContactSection() {
   return (
     <section id="contact-form" className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
-        <SectionHeader
-          badge="CONTACT • 10"
-          title="تواصل"
-          highlight="معي"
-          subtitle="أرسل تفاصيل مشروعك وسأرد عليك خلال 24 ساعة"
-        />
+        {showHeader && (
+          <SectionHeader
+            badge="CONTACT • 10"
+            title="تواصل"
+            highlight="معي"
+            subtitle="أرسل تفاصيل مشروعك وسأرد عليك خلال 24 ساعة"
+          />
+        )}
 
         <div className="grid gap-6 lg:grid-cols-5">
-          {/* info cards */}
+          {/* بطاقات معلومات فريدة — القنوات نفسها تُعرض مرة واحدة في شبكة SocialChannels أدناه */}
           <div className="flex flex-col gap-4 lg:col-span-2">
-            {INFO.map((info, i) => {
-              const card = (
-                <div
-                  className="card-glow flex items-center gap-4 rounded-2xl p-4"
-                  style={
-                    info.id === "whatsapp"
-                      ? { backgroundColor: "rgba(37,211,102,0.05)", borderColor: "rgba(37,211,102,0.25)" }
-                      : undefined
-                  }
-                >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(0,240,255,0.07)] text-cyber">
-                    {info.id === "reply" ? (
-                      <Clock3 className="h-5 w-5" />
-                    ) : (
-                      <SocialIcon id={info.id} className="h-5 w-5" />
-                    )}
-                  </span>
-                  <div>
-                    <p className="text-[11px] text-mute">{info.label}</p>
-                    <p className="text-sm font-bold text-main" dir={info.ltr ? "ltr" : "rtl"}>
-                      {info.value}
-                    </p>
-                  </div>
-                  {info.href && <ExternalLink className="mr-auto h-4 w-4 shrink-0 text-mute" aria-hidden="true" />}
+            <Reveal>
+              <div
+                className="card-glow flex items-center gap-4 rounded-2xl p-4"
+                style={{ backgroundColor: "rgba(0,255,136,0.05)", borderColor: "rgba(0,255,136,0.25)" }}
+              >
+                <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(0,255,136,0.08)]">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#00ff88] animate-pulse-dot" />
+                </span>
+                <div>
+                  <p className="text-[11px] text-mute">الحالة الحالية</p>
+                  <p className="text-sm font-bold text-main">متاح لمشاريع جديدة</p>
                 </div>
-              );
-              return (
-                <Reveal key={info.id} delay={i * 80}>
-                  {info.href ? (
-                    <a href={info.href} target="_blank" rel="noopener noreferrer" className="block">
-                      {card}
-                    </a>
-                  ) : (
-                    card
-                  )}
-                </Reveal>
-              );
-            })}
-            <Reveal delay={340}>
+              </div>
+            </Reveal>
+            <Reveal delay={80}>
+              <div className="card-glow flex items-center gap-4 rounded-2xl p-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(0,240,255,0.07)] text-cyber">
+                  <Clock3 className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-[11px] text-mute">أوقات الرد</p>
+                  <p className="text-sm font-bold text-main">خلال 24 ساعة كحد أقصى</p>
+                </div>
+              </div>
+            </Reveal>
+            <Reveal delay={160}>
+              <div className="card-glow flex items-center gap-4 rounded-2xl p-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(0,240,255,0.07)] text-cyber">
+                  <CalendarDays className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-[11px] text-mute">أيام العمل</p>
+                  <p className="text-sm font-bold text-main">الأحد — الخميس • 9ص إلى 9م</p>
+                </div>
+              </div>
+            </Reveal>
+            <Reveal delay={240}>
               <div className="card-glow rounded-2xl p-5">
                 <p className="font-mono-cyber text-[10px] tracking-[0.25em] text-cyber" dir="ltr">
                   $ PING RESPONSE
