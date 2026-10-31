@@ -40,6 +40,7 @@ import {
   CalendarDays,
   Camera,
   PlayCircle,
+  Download,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAppRouter, type AppRoute } from "@/lib/router";
@@ -114,6 +115,9 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
           </CommandItem>
           <CommandItem onSelect={() => go({ name: "tools" })}>
             <Terminal className="h-4 w-4 text-cyber" /> الأدوات والمكتبات
+          </CommandItem>
+          <CommandItem onSelect={() => go({ name: "downloads" })}>
+            <Download className="h-4 w-4 text-cyber" /> مركز التحميل المباشر
           </CommandItem>
           <CommandItem onSelect={() => go({ name: "videos" })}>
             <PlayCircle className="h-4 w-4 text-cyber" /> الفيديوهات

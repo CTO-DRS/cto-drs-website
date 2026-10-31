@@ -49,6 +49,7 @@ import { PricingScreen } from "@/components/screens/pricing-screen";
 import { TeamScreen } from "@/components/screens/team-screen";
 import { EventsScreen } from "@/components/screens/events-screen";
 import { ToolsScreen } from "@/components/screens/tools-screen";
+import { DownloadsScreen } from "@/components/screens/downloads-screen";
 import { VideosScreen } from "@/components/screens/videos-screen";
 import { GalleryScreen } from "@/components/screens/gallery-screen";
 
@@ -155,6 +156,9 @@ function ScreenSwitch() {
       break;
     case "tools":
       screen = <ToolsScreen />;
+      break;
+    case "downloads":
+      screen = <DownloadsScreen />;
       break;
     case "videos":
       screen = <VideosScreen />;

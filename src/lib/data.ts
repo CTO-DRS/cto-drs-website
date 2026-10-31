@@ -310,30 +310,35 @@ export const QUICK_TOOLS = [
     description: "احصل على تقدير فوري لتكلفة مشروعك في ثوانٍ",
     icon: "Calculator",
     color: "cyan",
+    href: "#/booking",
   },
   {
     title: "حجز استشارة",
     description: "استشارة مجانية 30 دقيقة — اختر الوقت المناسب",
     icon: "CalendarClock",
     color: "purple",
+    href: "#/booking",
   },
   {
     title: "الندوات والورش",
     description: "ندوات مباشرة ومسجلة في البرمجة والأمن السيبراني",
     icon: "Presentation",
     color: "pink",
+    href: "#/events",
   },
   {
     title: "الأسعار والباقات",
     description: "ابدأ مجاناً اليوم — باقات شفافة بدون رسوم خفية",
     icon: "Tags",
     color: "green",
+    href: "#/pricing",
   },
   {
     title: "مركز التحميل",
-    description: "السيرة الذاتية، الشهادات، والموارد القابلة للتحميل",
+    description: "تنزيل مباشر لتطبيقاتي وأدواتي من GitHub Releases",
     icon: "Download",
     color: "orange",
+    href: "#/downloads",
   },
 ];
 

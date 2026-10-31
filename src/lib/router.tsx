@@ -39,6 +39,7 @@ export type RouteName =
   | "dashboard"
   | "pricing"
   | "tools"
+  | "downloads"
   | "videos"
   | "gallery"
   | "events"
@@ -76,6 +77,7 @@ const VALID: RouteName[] = [
   "dashboard",
   "pricing",
   "tools",
+  "downloads",
   "videos",
   "gallery",
   "events",
