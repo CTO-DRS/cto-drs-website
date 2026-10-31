@@ -15,8 +15,9 @@ export interface SocialLink {
 export const BRAND = {
   name: "CTO-DRS",
   handle: "cto-drs",
-  website: "https://cto-drs.xo.je/",
-  websiteLabel: "cto-drs.xo.je",
+  website: "https://cto-drs.com/",
+  websiteLabel: "cto-drs.com",
+  email: "admin@ctodrs.com",
 } as const;
 
 export const SOCIALS: SocialLink[] = [

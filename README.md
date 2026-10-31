@@ -57,7 +57,25 @@ A full-featured personal platform / cyber-dashboard styled portfolio with a comp
 
 ---
 
-## 🚀 النشر على استضافة Spaceship (Hyperlift) | Deploy
+## 🌍 الموقع الحي | Live Site
+
+**https://cto-drs.com** — يعمل الآن على GitHub Pages مربوطاً بدومين Spaceship عبر API:
+
+- **DNS**: سجلات تُدار آلياً عبر Spaceship API (`bun scripts/deploy-spaceship.ts pages-dns cto-drs.com`)
+- **الاستضافة**: GitHub Pages من فرع `gh-pages` (HTTPS مفروض + تحويل www تلقائي)
+- **إعادة النشر**:
+  ```bash
+  bun run build:static   # بناء ثابت + لقطات JSON حية من السيرفر + CNAME
+  # ثم رفع محتوى out/ إلى فرع gh-pages
+  ```
+
+### وضع النسخة الثابتة (Static Mode)
+النسخة المنشورة تعمل بدون خادم بكامل محتواها:
+- قراءات GET تُقرأ من لقطات JSON مخبوزة في `/data/*.json` (تُلتقط تلقائياً من السيرفر أثناء البناء)
+- نموذج التواصل يعمل كاملاً مع الإرسال التلقائي عبر واتساب (بلا حفظ في قاعدة بيانات)
+- النشرة البريدية تفتح رسالة بريد جاهزة، ودردشة الذكاء الاصطناعي تُخفى
+
+### مسار Hyperlift (خيار مستقبلي — نسخة خادم كاملة)
 
 المشروع جاهز للنشر على منصة **Spaceship Hyperlift** (تطبيقات Docker مرتبطة بـ GitHub):
 

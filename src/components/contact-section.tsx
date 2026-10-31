@@ -26,6 +26,7 @@ import {
   sanitizePhone,
 } from "@/lib/contact-options";
 import { SOCIAL_BY_ID } from "@/lib/social";
+import { STATIC_MODE } from "@/lib/static-mode";
 import { toast } from "@/hooks/use-toast";
 
 const DRAFT_KEY = "cto-drs-contact-draft";
@@ -65,28 +66,30 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
 
   /* استرجاع مسودة + كشف الدولة تلقائياً مرة واحدة */
   useEffect(() => {
-    if (!detectedRef.current) {
-      detectedRef.current = true;
-      const cc = detectCountryCode();
-      if (cc) set("countryCode", cc);
-    }
-    try {
-      const raw = localStorage.getItem(DRAFT_KEY);
-      if (raw) {
-        const d = JSON.parse(raw) as Partial<FormState>;
-        setForm((f) => ({
-          ...f,
-          name: typeof d.name === "string" ? d.name : "",
-          email: typeof d.email === "string" ? d.email : "",
-          purpose: typeof d.purpose === "string" ? d.purpose : "",
-          countryCode: d.countryCode && COUNTRY_BY_CODE[d.countryCode] ? d.countryCode : f.countryCode,
-          phone: typeof d.phone === "string" ? d.phone : "",
-          message: typeof d.message === "string" ? d.message : "",
-        }));
+    queueMicrotask(() => {
+      if (!detectedRef.current) {
+        detectedRef.current = true;
+        const cc = detectCountryCode();
+        if (cc) set("countryCode", cc);
       }
-    } catch {
-      /* تجاهل */
-    }
+      try {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (raw) {
+          const d = JSON.parse(raw) as Partial<FormState>;
+          setForm((f) => ({
+            ...f,
+            name: typeof d.name === "string" ? d.name : "",
+            email: typeof d.email === "string" ? d.email : "",
+            purpose: typeof d.purpose === "string" ? d.purpose : "",
+            countryCode: d.countryCode && COUNTRY_BY_CODE[d.countryCode] ? d.countryCode : f.countryCode,
+            phone: typeof d.phone === "string" ? d.phone : "",
+            message: typeof d.message === "string" ? d.message : "",
+          }));
+        }
+      } catch {
+        /* تجاهل */
+      }
+    });
   }, []);
 
   /* حفظ تلقائي للمسودة أثناء الكتابة */
@@ -151,22 +154,25 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
     }
     setLoading(true);
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          purpose: form.purpose,
-          country: form.countryCode,
-          phone: sanitizePhone(form.phone),
-          message: form.message,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast({ title: "تعذر الإرسال", description: data.error ?? "تحقق من الحقول وحاول مجدداً" });
-        return;
+      /* النسخة الثابتة: لا حفظ في الخادم — ننتقل مباشرة لنجاح + واتساب */
+      if (!STATIC_MODE) {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            purpose: form.purpose,
+            country: form.countryCode,
+            phone: sanitizePhone(form.phone),
+            message: form.message,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast({ title: "تعذر الإرسال", description: data.error ?? "تحقق من الحقول وحاول مجدداً" });
+          return;
+        }
       }
 
       setSent(true);
