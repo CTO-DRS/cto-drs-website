@@ -31,7 +31,7 @@ export function QuickAccess() {
             return (
               <Reveal key={t.title} delay={(i % 3) * 90}>
                 <a
-                  href="#contact"
+                  href={t.href}
                   className="card-glow group flex h-full items-center gap-4 rounded-2xl p-5"
                 >
                   <span

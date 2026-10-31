@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldCheck, Bot, FileCode2, Download, Tag, HardDrive, ArrowDownToLine, type LucideIcon } from "lucide-react";
+import { ShieldCheck, Bot, FileCode2, Download, Tag, HardDrive, ArrowDownToLine, Github, type LucideIcon } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { TOOLS } from "@/lib/data";
@@ -46,13 +46,25 @@ export function ToolsSection() {
                       {t.downloads}
                     </span>
                   </div>
-                  <a
-                    href="#projects"
-                    className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-full border border-[rgba(0,240,255,0.35)] bg-[rgba(0,240,255,0.05)] text-xs font-bold text-cyber transition hover:bg-[rgba(0,240,255,0.12)]"
-                  >
-                    <ArrowDownToLine className="h-3.5 w-3.5" />
-                    تحميل الأداة
-                  </a>
+                  <div className="mt-5 flex items-center gap-2">
+                    <a
+                      href="#/downloads"
+                      className="btn-gradient flex h-10 flex-1 items-center justify-center gap-2 rounded-full text-xs font-bold"
+                      aria-label={`تحميل ${t.name} من مركز التحميل`}
+                    >
+                      <ArrowDownToLine className="h-3.5 w-3.5" />
+                      تحميل الأداة
+                    </a>
+                    <a
+                      href="https://github.com/CTO-DRS?tab=repositories"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="مستودعات الأدوات على GitHub"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-strong bg-elev-2/50 text-sec transition hover:border-cyber/40 hover:text-cyber"
+                    >
+                      <Github className="h-4 w-4" />
+                    </a>
+                  </div>
                 </article>
               </Reveal>
             );

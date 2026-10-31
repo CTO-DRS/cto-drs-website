@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Eye, Info, FolderGit2, Star, GitFork, X, CalendarDays, Layers, Github, Code2 } from "lucide-react";
+import { Eye, Info, FolderGit2, Star, GitFork, X, CalendarDays, Layers, Github, Code2, Download, type LucideIcon } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { PROJECTS, type Project } from "@/lib/data";
+import { APPS, directReleaseUrl, sourceZipUrl, type AppEntry } from "@/lib/apps";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 function ProjectDialog({ project, onClose }: { project: Project | null; onClose: () => void }) {
+  const appEntry: AppEntry | undefined = APPS.find((a) => a.id === project?.id);
+
   return (
     <Dialog open={!!project} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="glass-strong max-h-[85vh] overflow-y-auto rounded-2xl border-border-strong sm:max-w-lg">
@@ -68,15 +71,29 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
               </div>
             </div>
             {project.url && (
-              <a
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-gradient mt-4 flex h-11 items-center justify-center gap-2 rounded-full text-sm font-bold"
-              >
-                <Github className="h-4 w-4" />
-                عرض على GitHub
-              </a>
+              <div className="mt-4 flex items-center gap-2">
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-border-strong bg-elev-2/50 text-sm font-bold text-sec transition hover:border-cyber/40 hover:text-cyber"
+                >
+                  <Github className="h-4 w-4" />
+                  عرض على GitHub
+                </a>
+                {appEntry && (
+                  <a
+                    href={appEntry.directFile ? directReleaseUrl(appEntry.repo, appEntry.directFile) : sourceZipUrl(appEntry.repo)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    className="btn-gradient flex h-11 flex-1 items-center justify-center gap-2 rounded-full text-sm font-bold"
+                  >
+                    <Download className="h-4 w-4" />
+                    {appEntry.fileType === "APK" ? "تحميل APK مباشر" : "تحميل ZIP مباشر"}
+                  </a>
+                )}
+              </div>
             )}
           </>
         )}

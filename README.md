@@ -33,6 +33,30 @@ A full-featured personal platform / cyber-dashboard styled portfolio with a comp
 
 ---
 
+## ⬇️ روابط التنزيل المباشر | Direct Downloads
+
+جميع التطبيقات متوفرة كملفات جاهزة من **GitHub Releases** — روابط مباشرة بصيغة
+`https://github.com/CTO-DRS/{repo}/releases/latest/download/{asset}` (تُحدَّث تلقائياً مع كل إصدار جديد).
+مركز التحميل داخل الموقع: `#/downloads`
+
+| التطبيق | الإصدار | رابط تنزيل مباشر |
+|---|---|---|
+| NexusLink (Android) | v3.1.0 | [NexusLink-3.1.0-release.apk](https://github.com/CTO-DRS/NexusLink/releases/latest/download/NexusLink-3.1.0-release.apk) |
+| SecureNet VPN (Android) | v1.8.23 | [SecureNetVPN-debug-v1.8.23.apk](https://github.com/CTO-DRS/SecureNetVPN/releases/latest/download/SecureNetVPN-debug-v1.8.23.apk) |
+| SuperBiz (Android) | v3.5.2 | [SuperBiz-v3.5.2-debug.apk](https://github.com/CTO-DRS/SuperBiz/releases/latest/download/SuperBiz-v3.5.2-debug.apk) |
+| DRS Smart Keyboard (Android) | v1.4.2 | [DRS-Smart-Keyboard-v1.4.2.apk](https://github.com/CTO-DRS/DRS-Smart-Keyboard/releases/latest/download/DRS-Smart-Keyboard-v1.4.2.apk) |
+| Onyx Keyboard (Android) | v1.0.0-privacy | [OnyxKeyboard-v1.0.0-privacy-release.apk](https://github.com/CTO-DRS/OnyxKeyboard/releases/latest/download/OnyxKeyboard-v1.0.0-privacy-release.apk) |
+| NovaFiles (Android) | v0.41.0 | [NovaFiles-v0.41.0-release.apk](https://github.com/CTO-DRS/NovaFiles/releases/latest/download/NovaFiles-v0.41.0-release.apk) |
+| Violet Chat (Android) | v0.1.14 | [app-universal-release.apk](https://github.com/CTO-DRS/VioletChat/releases/latest/download/app-universal-release.apk) |
+| Lumina Studio (Android) | v1.1.0 | [LuminaStudio-v1.1.0-debug.apk](https://github.com/CTO-DRS/Lumina-Studio/releases/latest/download/LuminaStudio-v1.1.0-debug.apk) |
+| لغة عربي (Python) | v1.37.0 | [arabi-lang-1.37.0.zip](https://github.com/CTO-DRS/arabi-lang/releases/latest/download/arabi-lang-1.37.0.zip) |
+| DRS AI (Self-Hosted) | main | [الكود المصدري ZIP](https://github.com/CTO-DRS/DRS-AI-Web/archive/refs/heads/main.zip) |
+
+> الكود المصدري لأي مستودع: `https://github.com/CTO-DRS/{repo}/archive/refs/heads/main.zip`
+> API مباشر للإصدارات داخل الموقع: `GET /api/github/apps` (تخزين مؤقت 10 دقائق)
+
+---
+
 ## 🚀 التشغيل المحلي | Getting Started
 
 ```bash

@@ -57,3 +57,10 @@ tool-results/
 agent-ctx/
 *.db
 *.db-journal
+
+# dev screenshots
+sec-*.png
+verify-*.png
+final-*.png
+site-analysis-*.png
+dev.log
