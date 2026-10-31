@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Eye, Info, FolderGit2, Star, GitFork, X, CalendarDays, Layers } from "lucide-react";
+import { Eye, Info, FolderGit2, Star, GitFork, X, CalendarDays, Layers, Github, Code2 } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { PROJECTS, type Project } from "@/lib/data";
@@ -47,15 +47,17 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
             </div>
             <div className="mt-2 grid grid-cols-3 gap-3 border-t border-border-soft pt-4 text-center">
               <div>
-                <p className="font-heading-cyber text-lg font-bold text-main">{project.stars ?? 0}</p>
+                <p className="font-heading-cyber text-lg font-bold text-main" dir="ltr">
+                  {project.language ?? "—"}
+                </p>
                 <p className="flex items-center justify-center gap-1 text-[11px] text-mute">
-                  <Star className="h-3 w-3" /> نجوم
+                  <Code2 className="h-3 w-3" /> اللغة
                 </p>
               </div>
               <div>
-                <p className="font-heading-cyber text-lg font-bold text-main">{project.forks ?? 0}</p>
+                <p className="font-heading-cyber text-lg font-bold text-main">{project.stars ?? 0}</p>
                 <p className="flex items-center justify-center gap-1 text-[11px] text-mute">
-                  <GitFork className="h-3 w-3" /> تفرعات
+                  <Star className="h-3 w-3" /> نجوم
                 </p>
               </div>
               <div>
@@ -65,6 +67,17 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
                 </p>
               </div>
             </div>
+            {project.url && (
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-gradient mt-4 flex h-11 items-center justify-center gap-2 rounded-full text-sm font-bold"
+              >
+                <Github className="h-4 w-4" />
+                عرض على GitHub
+              </a>
+            )}
           </>
         )}
       </DialogContent>
@@ -82,7 +95,7 @@ export function ProjectsSection() {
           badge="PORTFOLIO • 04"
           title="المشاريع"
           highlight="المميزة"
-          subtitle="مجموعة مختارة من أحدث المشاريع المنجزة"
+          subtitle="مشاريع حقيقية منشورة على GitHub — اختر المستودع لعرض الكود المصدري"
         />
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -121,11 +134,14 @@ export function ProjectsSection() {
 
                   <div className="mt-1 flex items-center justify-between border-t border-border-soft pt-4">
                     <a
-                      href="#projects"
+                      href={p.url ?? "#projects"}
+                      target={p.url ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      aria-label={`مستودع مشروع ${p.title} على GitHub`}
                       className="btn-outline-cyber flex h-9 items-center gap-1.5 rounded-full px-4 text-xs font-bold"
                     >
-                      <Eye className="h-3.5 w-3.5" />
-                      معاينة
+                      <Github className="h-3.5 w-3.5" />
+                      المستودع
                     </a>
                     <button
                       onClick={() => setSelected(p)}

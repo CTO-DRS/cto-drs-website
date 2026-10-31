@@ -9,9 +9,9 @@ import { SocialRow } from "@/components/social-channels";
 import { PROFILE } from "@/lib/data";
 
 const MINI_STATS = [
-  { value: 3, suffix: "+", label: "سنوات خبرة" },
-  { value: 266, suffix: "+", label: "مشروع" },
-  { value: 244, suffix: "+", label: "عميل" },
+  { value: 26, suffix: "+", label: "مستودع على GitHub" },
+  { value: 14, suffix: "+", label: "تقنية وأداة" },
+  { value: 8, suffix: "", label: "مجالات تخصص" },
 ];
 
 export function ProfileSection() {
@@ -40,7 +40,7 @@ export function ProfileSection() {
               <div className="absolute inset-x-0 bottom-0 p-6">
                 <h3 className="font-heading-cyber text-xl font-bold text-white">{PROFILE.fullName}</h3>
                 <p className="font-mono-cyber mt-1 text-[11px] tracking-[0.25em] text-cyber" dir="ltr">
-                  FULL-STACK ENGINEER
+                  SOFTWARE ENGINEER • CYBERSECURITY
                 </p>
               </div>
               <span className="glass-strong absolute right-4 top-4 flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] text-[#00ff88]">
