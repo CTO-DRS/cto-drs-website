@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { IBM_Plex_Sans_Arabic, Plus_Jakarta_Sans, Fira_Code } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -60,14 +61,65 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://cto-drs.com",
     siteName: "CTO-DRS",
+    locale: "ar_SA",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "CTO-DRS — Software Engineer & Cybersecurity",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "CTO-DRS | Software Engineering • Cybersecurity • Innovation",
     description:
       "تطبيقات وأدوات مفتوحة المصدر — هندسة برمجيات وأمن سيبراني وابتكار",
+    images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
+};
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://cto-drs.com/#person",
+      name: "CTO-DRS",
+      url: "https://cto-drs.com",
+      email: "mailto:admin@ctodrs.com",
+      jobTitle: "Software Engineer",
+      description:
+        "مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر",
+      knowsAbout: [
+        "Software Engineering",
+        "Cybersecurity",
+        "Android Development",
+        "Kotlin",
+        "Python",
+        "Open Source",
+      ],
+      sameAs: [
+        "https://github.com/CTO-DRS",
+        "https://t.me/CTO_DRS",
+        "https://x.com/cto_drs",
+        "https://www.instagram.com/cto.drs",
+        "https://www.tiktok.com/@cto.drs",
+        "https://youtube.com/@cto-drs",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://cto-drs.com/#website",
+      url: "https://cto-drs.com",
+      name: "CTO-DRS",
+      description: "منصة المطور المتكاملة — هندسة البرمجيات والأمن السيبراني والابتكار",
+      inLanguage: "ar",
+      publisher: { "@id": "https://cto-drs.com/#person" },
+    },
+  ],
 };
 
 export const viewport: Viewport = {
@@ -86,6 +138,12 @@ export default function RootLayout({
       <body
         className={`${plexArabic.variable} ${jakarta.variable} ${firaCode.variable} antialiased bg-app text-main overflow-x-clip`}
       >
+        <Script
+          id="json-ld-structured-data"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+        />
         <ThemeProvider>
           {children}
           <Toaster />
