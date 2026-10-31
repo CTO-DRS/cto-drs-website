@@ -1,0 +1,48 @@
+{
+  "name": "CTO-DRS | هندسة البرمجيات والأمن السيبراني",
+  "short_name": "CTO-DRS",
+  "description": "منصة CTO-DRS — تطبيقات وأدوات مفتوحة المصدر، هندسة برمجيات وأمن سيبراني وابتكار",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#030303",
+  "theme_color": "#030303",
+  "lang": "ar",
+  "dir": "rtl",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "مركز التحميل",
+      "short_name": "التحميلات",
+      "description": "تنزيل مباشر لتطبيقاتي من GitHub Releases",
+      "url": "/#/downloads",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "تواصل معي",
+      "short_name": "تواصل",
+      "url": "/#/contact",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -23,6 +23,7 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cto-drs.com"),
   title: "CTO-DRS | هندسة البرمجيات والأمن السيبراني والابتكار",
   description:
     "CTO-DRS — مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر. تقنية مفيدة وآمنة وقابلة للصيانة ومتاحة للجميع.",
@@ -39,12 +40,34 @@ export const metadata: Metadata = {
     "برمجة",
   ],
   authors: [{ name: "CTO-DRS", url: "https://github.com/CTO-DRS" }],
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "CTO-DRS",
+    statusBarStyle: "black-translucent",
+  },
   openGraph: {
     title: "CTO-DRS | Software Engineering • Cybersecurity • Innovation",
     description:
       "مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر",
     type: "website",
+    url: "https://cto-drs.com",
+    siteName: "CTO-DRS",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "CTO-DRS | Software Engineering • Cybersecurity • Innovation",
+    description:
+      "تطبيقات وأدوات مفتوحة المصدر — هندسة برمجيات وأمن سيبراني وابتكار",
+  },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {

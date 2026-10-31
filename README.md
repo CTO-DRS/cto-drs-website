@@ -57,6 +57,33 @@ A full-featured personal platform / cyber-dashboard styled portfolio with a comp
 
 ---
 
+## 🚀 النشر على استضافة Spaceship (Hyperlift) | Deploy
+
+المشروع جاهز للنشر على منصة **Spaceship Hyperlift** (تطبيقات Docker مرتبطة بـ GitHub):
+
+1. **أنشئ التطبيق** (مرة واحدة): لوحة Spaceship → Hyperlift → Create application
+   - اربط المستودع: `CTO-DRS/cto-drs-website` (فرع `main`)
+   - `dockerfilePath` = `./Dockerfile` (جاهز في المستودع — بناء متعدد المراحل + SQLite تلقائي)
+2. **بيانات المصادقة**: من [API Manager](https://www.spaceship.com/application/api-manager/) خذ القيمتين وضعهما في `.env`:
+   ```bash
+   SPACESHIP_API_KEY=...      # X-Api-Key (قصير)
+   SPACESHIP_API_SECRET=...   # X-Api-Secret (64 حرفاً)
+   ```
+3. **انشر بسطر واحد**:
+   ```bash
+   bun run deploy:spaceship          # يضبط البيئة + يبني + يتابع السجلات + يطبع الرابط
+   ```
+4. **اربط دومينك**:
+   ```bash
+   bun scripts/deploy-spaceship.ts bind <yourdomain.com> <appDomain>
+   ```
+
+أوامر إضافية: `apps` · `app <id>` · `env <id>` · `env-set <id> K=V` · `build <id>` · `dns <domain>` · `domains`
+
+> حساب المدير يُنشأ تلقائياً عند أول تشغيل (`scripts/init-db.js`) — تحكم به عبر `ADMIN_EMAIL` / `ADMIN_PASSWORD` في متغيرات بيئة التطبيق.
+
+---
+
 ## 🚀 التشغيل المحلي | Getting Started
 
 ```bash
