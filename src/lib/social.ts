@@ -80,8 +80,8 @@ export const SOCIALS: SocialLink[] = [
   {
     id: "website",
     label: "الموقع الرسمي",
-    handle: "cto-drs.xo.je",
-    url: "https://cto-drs.xo.je/",
+    handle: "cto-drs.com",
+    url: "https://cto-drs.com/",
     color: "#00f0ff",
     glow: "rgba(0,240,255,0.22)",
   },

@@ -15,6 +15,8 @@ const QUICK: { route: AppRoute; label: string }[] = [
   { route: { name: "courses" }, label: "الدورات" },
   { route: { name: "store" }, label: "المتجر الرقمي" },
   { route: { name: "blog" }, label: "المدونة" },
+  { route: { name: "downloads" }, label: "مركز التحميل" },
+  { route: { name: "events" }, label: "الفعاليات" },
 ];
 
 const MORE_LINKS: { route: AppRoute; label: string }[] = [

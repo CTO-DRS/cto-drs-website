@@ -472,7 +472,7 @@ export function DownloadsScreen() {
             <div className="flex-1">
               <h3 className="font-heading-cyber text-sm font-bold text-main">تنزيل آمن وموثوق</h3>
               <p className="mt-1 text-xs leading-6 text-sec">
-                جميع الملفات تُنزّل مباشرة من الإصدارات الرسمية على GitHub (cto-drs/xo.je ← CTO-DRS) دون أي وسيط.
+                جميع الملفات تُنزّل مباشرة من الإصدارات الرسمية على GitHub (حساب CTO-DRS) دون أي وسيط.
                 تحقق من امتداد الملف وحجمه بعد التحميل، ولا تشغّل سوى ملفات APK/ZIP من هذه الصفحة أو من صفحات الإصدارات الرسمية.
               </p>
             </div>
