@@ -4,6 +4,11 @@ import { IBM_Plex_Sans_Arabic, Plus_Jakarta_Sans, Fira_Code } from "next/font/go
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { APPS, directReleaseUrl } from "@/lib/apps";
+import { FAQS } from "@/lib/faq-data";
+import { SOCIALS } from "@/lib/social";
+
+const SITE = "https://cto-drs.com";
 
 const plexArabic = IBM_Plex_Sans_Arabic({
   variable: "--font-app-sans",
@@ -80,6 +85,64 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
+  alternates: { canonical: SITE },
+  category: "technology",
+  applicationName: "CTO-DRS",
+  twitter: {
+    card: "summary_large_image",
+    site: "@cto_drs",
+    creator: "@cto_drs",
+    title: "CTO-DRS | Software Engineering • Cybersecurity • Innovation",
+    description:
+      "تطبيقات وأدوات مفتوحة المصدر — هندسة برمجيات وأمن سيبراني وابتكار",
+    images: ["/og-image.png"],
+  },
+};
+
+const CATEGORY_MAP: Record<string, string> = {
+  android: "MobileApplication",
+  web: "WebApplication",
+  language: "ApplicationSuite",
+  tool: "UtilitiesApplication",
+};
+
+/** كيانات التطبيقات — SoftwareApplication لكل تطبيق مع رابط التنزيل المباشر */
+const APP_ENTITIES = APPS.map((app, i) => ({
+  "@type": ["SoftwareApplication", CATEGORY_MAP[app.category] ?? "SoftwareApplication"],
+  "@id": `${SITE}/#app-${app.id}`,
+  name: app.titleEn,
+  alternateName: app.title,
+  description: app.description,
+  url: `https://github.com/CTO-DRS/${app.repo}`,
+  downloadUrl: directReleaseUrl(app),
+  softwareVersion: app.version.replace(/^v/, ""),
+  applicationCategory: app.category === "android" ? "MobileApplication" : "DeveloperApplication",
+  operatingSystem: app.platforms.join(", "),
+  fileFormat: app.fileType === "APK" ? "application/vnd.android.package-archive" : app.fileType === "ZIP" ? "application/zip" : "application/octet-stream",
+  isAccessibleForFree: true,
+  author: { "@id": `${SITE}/#person` },
+  publisher: { "@id": `${SITE}/#organization` },
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+    availability: "https://schema.org/InStock",
+  },
+  position: i + 1,
+}));
+
+/** أسئلة FAQ — FAQPage لعرض النتائج الغنية في البحث واستخراجها في نماذج الذكاء الاصطناعي */
+const FAQ_ENTITY = {
+  "@type": "FAQPage",
+  "@id": `${SITE}/#faq`,
+  url: `${SITE}/#/faq`,
+  inLanguage: "ar",
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    text: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
 };
 
 const JSON_LD = {
@@ -87,9 +150,9 @@ const JSON_LD = {
   "@graph": [
     {
       "@type": "Person",
-      "@id": "https://cto-drs.com/#person",
+      "@id": `${SITE}/#person`,
       name: "CTO-DRS",
-      url: "https://cto-drs.com",
+      url: SITE,
       email: "mailto:admin@ctodrs.com",
       jobTitle: "Software Engineer",
       description:
@@ -110,16 +173,58 @@ const JSON_LD = {
         "https://www.tiktok.com/@cto.drs",
         "https://youtube.com/@cto-drs",
       ],
+      mainEntityOfPage: { "@id": `${SITE}/#profilepage` },
+    },
+    {
+      "@type": "ProfilePage",
+      "@id": `${SITE}/#profilepage`,
+      url: SITE,
+      name: "CTO-DRS | هندسة البرمجيات والأمن السيبراني والابتكار",
+      inLanguage: "ar",
+      mainEntity: { "@id": `${SITE}/#person` },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE}/#organization`,
+      name: "CTO-DRS",
+      alternateName: "CTO.DRS",
+      url: SITE,
+      email: "admin@ctodrs.com",
+      logo: `${SITE}/icons/icon-512.png`,
+      image: `${SITE}/og-image.png`,
+      description:
+        "جهة تطوير تقنية مفتوحة المصدر — تطبيقات أندرويد أصلية، أدوات خصوصية وأمن سيبراني، ولغات وأدوات مطورين",
+      foundingDate: "2024",
+      sameAs: SOCIALS.map((s) => s.url),
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          email: "admin@ctodrs.com",
+          availableLanguage: ["Arabic", "English"],
+        },
+      ],
     },
     {
       "@type": "WebSite",
-      "@id": "https://cto-drs.com/#website",
-      url: "https://cto-drs.com",
+      "@id": `${SITE}/#website`,
+      url: SITE,
       name: "CTO-DRS",
       description: "منصة المطور المتكاملة — هندسة البرمجيات والأمن السيبراني والابتكار",
       inLanguage: "ar",
-      publisher: { "@id": "https://cto-drs.com/#person" },
+      publisher: { "@id": `${SITE}/#person` },
+      author: { "@id": `${SITE}/#person` },
     },
+    {
+      "@type": "ItemList",
+      "@id": `${SITE}/#apps`,
+      name: "تطبيقات CTO-DRS مفتوحة المصدر",
+      description: "قائمة تطبيقات وأدوات CTO-DRS المتاحة بتنزيل مباشر من GitHub Releases",
+      itemListOrder: "https://schema.org/ItemListOrderAscending",
+      numberOfItems: APP_ENTITIES.length,
+      itemListElement: APP_ENTITIES.map((a) => ({ "@type": "ListItem", position: a.position, item: a })),
+    },
+    FAQ_ENTITY,
   ],
 };
 
