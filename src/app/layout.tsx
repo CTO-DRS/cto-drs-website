@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { IBM_Plex_Sans_Arabic, Plus_Jakarta_Sans, Fira_Code } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -77,17 +76,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "CTO-DRS | Software Engineering • Cybersecurity • Innovation",
-    description:
-      "تطبيقات وأدوات مفتوحة المصدر — هندسة برمجيات وأمن سيبراني وابتكار",
-    images: ["/og-image.png"],
-  },
-  robots: { index: true, follow: true },
-  alternates: { canonical: SITE },
-  category: "technology",
-  applicationName: "CTO-DRS",
   twitter: {
     card: "summary_large_image",
     site: "@cto_drs",
@@ -244,10 +232,10 @@ export default function RootLayout({
       <body
         className={`${plexArabic.variable} ${jakarta.variable} ${firaCode.variable} antialiased bg-app text-main overflow-x-clip`}
       >
-        <Script
+        {/* JSON-LD كوسم خام في HTML السيرفر — ليقرأه كل الزواحف بما فيها نماذج الذكاء الاصطناعي التي لا تنفّذ JavaScript */}
+        <script
           id="json-ld-structured-data"
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
         />
         <ThemeProvider>
