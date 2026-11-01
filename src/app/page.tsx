@@ -20,6 +20,7 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { OfflineIndicator } from "@/components/offline-indicator";
 import { SWRegister } from "@/components/sw-register";
+import { SeoContent } from "@/components/seo-content";
 import { AppRouterProvider, useAppRouter } from "@/lib/router";
 import { STATIC_MODE } from "@/lib/static-mode";
 
@@ -279,6 +280,9 @@ export default function Home() {
         <main id="main-content" className="relative z-10 flex-1">
           <ScreenSwitch />
         </main>
+
+        {/* طبقة محتوى HTML الثابت — فهرسة كاملة لمحركات البحث ونماذج الذكاء الاصطناعي */}
+        <SeoContent />
 
         <Footer />
         {!STATIC_MODE && <ChatWidget />}
