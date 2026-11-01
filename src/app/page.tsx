@@ -17,6 +17,9 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 import { Footer } from "@/components/footer";
 import { ChatWidget } from "@/components/chat-widget";
 import { CookieConsent } from "@/components/cookie-consent";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { OfflineIndicator } from "@/components/offline-indicator";
+import { SWRegister } from "@/components/sw-register";
 import { AppRouterProvider, useAppRouter } from "@/lib/router";
 import { STATIC_MODE } from "@/lib/static-mode";
 
@@ -103,6 +106,7 @@ const ToolsScreenX = dynScreen(import("@/components/screens/tools-screen"), "Too
 const DownloadsScreen = dynScreen(import("@/components/screens/downloads-screen"), "DownloadsScreen");
 const VideosScreenX = dynScreen(import("@/components/screens/videos-screen"), "VideosScreen");
 const GalleryScreenX = dynScreen(import("@/components/screens/gallery-screen"), "GalleryScreen");
+const NotFoundScreen = dynScreen(import("@/components/screens/not-found-screen"), "NotFoundScreen");
 
 function HomeView() {
   return (
@@ -217,6 +221,9 @@ function ScreenSwitch() {
     case "gallery":
       screen = <GalleryScreenX />;
       break;
+    case "not-found":
+      screen = <NotFoundScreen />;
+      break;
     default:
       screen = <HomeView />;
   }
@@ -230,7 +237,7 @@ function ScreenSwitch() {
         exit={{ opacity: 0, y: -12 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       >
-        {screen}
+        <ErrorBoundary>{screen}</ErrorBoundary>
       </motion.div>
     </AnimatePresence>
   );
@@ -250,20 +257,35 @@ export default function Home() {
 
   return (
     <AppRouterProvider>
+      {/* رابط تخطي التنقل — وصولية لوحة المفاتيح (بدون تغيير الهاش) */}
+      <a
+        href="#main-content"
+        onClick={(e) => {
+          e.preventDefault();
+          const main = document.getElementById("main-content");
+          main?.setAttribute("tabindex", "-1");
+          main?.focus({ preventScroll: false });
+        }}
+        className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-[#00f0ff] focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-[#030303] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#ff2a6d]"
+      >
+        تخطي إلى المحتوى الرئيسي
+      </a>
       <ScrollProgress />
       <div className="relative flex min-h-screen flex-col">
         <ParticleBackground />
         <Navbar onOpenSearch={() => setSearchOpen(true)} />
         <CommandPalette open={searchOpen} setOpen={setSearchOpen} />
 
-        <main className="relative z-10 flex-1">
+        <main id="main-content" className="relative z-10 flex-1">
           <ScreenSwitch />
         </main>
 
         <Footer />
         {!STATIC_MODE && <ChatWidget />}
         <CookieConsent />
+        <OfflineIndicator />
         <ScrollToTop />
+        <SWRegister />
       </div>
     </AppRouterProvider>
   );

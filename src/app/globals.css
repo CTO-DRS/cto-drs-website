@@ -448,3 +448,30 @@
   background-size: 300% 300% !important;
   animation: border-run 6s ease infinite;
 }
+
+/* ═══════════════ REDUCED MOTION (وصولية) ═══════════════ */
+/* احترام تفضيل المستخدم لتقليل الحركة — إيقاف الحركات الزخرفية */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-float,
+  .animate-spin-slow,
+  .animate-pulse-dot,
+  .animate-scroll-hint,
+  .animate-border-run {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════ FOCUS VISIBLE (وصولية لوحة المفاتيح) ═══════════════ */
+:where(a, button, [role="button"], input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid #00f0ff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
