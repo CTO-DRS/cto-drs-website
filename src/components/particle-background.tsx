@@ -47,19 +47,25 @@ export function ParticleBackground({ density = 70 }: { density?: number }) {
     };
     window.addEventListener("resize", onResize);
 
-    const tick = () => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const draw = (animate: boolean) => {
       ctx.clearRect(0, 0, w, h);
       isDark = document.documentElement.classList.contains("dark");
 
-      for (const p of parts) {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.tw += 0.02;
-        if (p.x < -10) p.x = w + 10;
-        if (p.x > w + 10) p.x = -10;
-        if (p.y < -10) p.y = h + 10;
-        if (p.y > h + 10) p.y = -10;
+      if (animate) {
+        for (const p of parts) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.tw += 0.02;
+          if (p.x < -10) p.x = w + 10;
+          if (p.x > w + 10) p.x = -10;
+          if (p.y < -10) p.y = h + 10;
+          if (p.y > h + 10) p.y = -10;
+        }
+      }
 
+      for (const p of parts) {
         const alpha = p.a * (0.6 + 0.4 * Math.sin(p.tw));
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -84,14 +90,31 @@ export function ParticleBackground({ density = 70 }: { density?: number }) {
           }
         }
       }
+    };
 
+    // وصولية: مع تفضيل تقليل الحركة → إطار ثابت واحد بلا حلقة رسوم
+    if (reducedMotion) {
+      draw(false);
+      return () => window.removeEventListener("resize", onResize);
+    }
+
+    const tick = () => {
+      draw(true);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
 
+    // أداء: إيقاف الرسم عند إخفاء التبويب
+    const onVisibility = () => {
+      cancelAnimationFrame(raf);
+      if (!document.hidden) raf = requestAnimationFrame(tick);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [density]);
 

@@ -47,7 +47,8 @@ export type RouteName =
   | "terms"
   | "wishlist"
   | "orders"
-  | "notifications";
+  | "notifications"
+  | "not-found";
 
 export interface AppRoute {
   name: RouteName;
@@ -100,7 +101,8 @@ function parseHashFrom(hash: string): AppRoute {
   if (VALID.includes(name as RouteName)) {
     return { name: name as RouteName, slug: slug || undefined };
   }
-  return { name: "home" };
+  // مسار غير معروف → شاشة 404 (بدلاً من الانزلاق الصامت للرئيسية)
+  return { name: "not-found", slug: raw || undefined };
 }
 
 function subscribe(onChange: () => void) {
@@ -128,6 +130,41 @@ const Ctx = createContext<RouterCtx>({
   back: () => {},
 });
 
+/* عناوين المستند لكل مسار — تحسين SEO وإمكانية الوصول */
+const ROUTE_TITLES: Partial<Record<RouteName, string>> = {
+  home: "الرئيسية",
+  about: "نبذة عني",
+  services: "الخدمات",
+  projects: "المشاريع",
+  courses: "الدورات",
+  blog: "المدونة",
+  store: "المتجر الرسمي",
+  cart: "سلة المشتريات",
+  checkout: "إتمام الشراء",
+  team: "الفريق",
+  testimonials: "آراء العملاء",
+  faq: "الأسئلة الشائعة",
+  contact: "تواصل معي",
+  booking: "حجز استشارة",
+  login: "تسجيل الدخول",
+  register: "إنشاء حساب",
+  account: "حسابي",
+  dashboard: "لوحة التحكم",
+  pricing: "الأسعار",
+  tools: "الأدوات",
+  downloads: "مركز التحميل",
+  videos: "الفيديوهات",
+  gallery: "معرض الصور",
+  events: "الفعاليات",
+  privacy: "سياسة الخصوصية",
+  terms: "شروط الاستخدام",
+  wishlist: "المفضلة",
+  orders: "الطلبات",
+  notifications: "الإشعارات",
+  "not-found": "الصفحة غير موجودة",
+};
+const BASE_TITLE = "CTO-DRS | هندسة البرمجيات والأمن السيبراني والابتكار";
+
 export function AppRouterProvider({ children }: { children: React.ReactNode }) {
   const hash = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const route = useMemo(() => parseHashFrom(hash), [hash]);
@@ -142,6 +179,12 @@ export function AppRouterProvider({ children }: { children: React.ReactNode }) {
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     }
   }, [hash]);
+
+  // تحديث عنوان المستند تلقائياً حسب الشاشة الحالية
+  useEffect(() => {
+    const section = ROUTE_TITLES[route.name];
+    document.title = route.name === "home" || !section ? BASE_TITLE : `${section} — CTO-DRS`;
+  }, [route.name]);
 
   const navigate = useCallback((r: AppRoute) => {
     const current = parseHashFrom(window.location.hash);
