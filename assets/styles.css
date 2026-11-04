@@ -1037,3 +1037,41 @@ html.js [data-reveal][data-delay="3"].in { transition-delay: 0.24s; }
   body { background: #fff; color: #111; }
   .site-header, .site-footer, .cta-band, .hero-actions { display: none; }
 }
+
+/* ---------- v2: social, WhatsApp FAB, project links ---------- */
+.social-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 1rem; }
+.social-pill {
+  font-size: 0.78rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  transition: color .2s, border-color .2s, background .2s;
+}
+.social-pill:hover, .social-pill:focus-visible { color: var(--accent-cyan); border-color: rgba(0, 240, 255, 0.4); background: rgba(0, 240, 255, 0.06); }
+
+.project-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+.project-link { font-size: 0.85rem; font-weight: 600; color: var(--accent-cyan); }
+.project-link:hover { text-decoration: underline; }
+.project-link--muted { color: var(--text-muted); font-weight: 400; }
+.project-card > .project-link { margin-top: -0.3rem; }
+
+.channel-ico--fill svg { fill: var(--accent-cyan); stroke: none; }
+
+.wa-fab {
+  position: fixed;
+  inset-block-end: 1.25rem;
+  inset-inline-start: 1.25rem;
+  z-index: 60;
+  width: 54px; height: 54px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #25d366;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.35), 0 0 0 1px rgba(255,255,255,0.08) inset;
+  transition: transform .2s ease;
+}
+.wa-fab svg { width: 28px; height: 28px; fill: #fff; }
+.wa-fab:hover, .wa-fab:focus-visible { transform: scale(1.07); }
+@media (prefers-reduced-motion: reduce) { .wa-fab { transition: none; } }
+@media print { .wa-fab { display: none; } }

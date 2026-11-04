@@ -54,13 +54,13 @@
 
     "home.proj.eyebrow": { ar: "PORTFOLIO • 02", en: "PORTFOLIO • 02" },
     "home.proj.title": { ar: "مشاريع مميزة", en: "Featured projects" },
-    "home.proj.lede": { ar: "ثلاثة نماذج تكفي لتصوّر نمط العمل — والقائمة الكاملة في صفحة المشاريع.", en: "Three samples say enough about the way I work — the full list lives on the projects page." },
+    "home.proj.lede": { ar: "مشاريع حقيقية منشورة ومفتوحة المصدر — والقائمة الكاملة في صفحة المشاريع.", en: "Three samples say enough about the way I work — the full list lives on the projects page." },
     "home.proj1.t": { ar: "منصة CTO.DRS الشخصية", en: "The CTO.DRS platform" },
     "home.proj1.d": { ar: "منصة مهنية بأداء عالٍ: ثيم داكن زجاجي، لوحة مؤشرات حية، وتجربة عربية أصيلة.", en: "A high-performance professional platform: dark glass theme, live metrics, native Arabic experience." },
-    "home.proj2.t": { ar: "سيكيورنت VPN", en: "Securent VPN" },
-    "home.proj2.d": { ar: "خدمة خصوصية بمستوى المؤسسات: تشفير حديث وسياسات صفرية الثقة.", en: "Enterprise-grade privacy: modern encryption and zero-trust policies." },
-    "home.proj3.t": { ar: "لوحات بيانات حية", en: "Live dashboards" },
-    "home.proj3.d": { ar: "لوحات تحكم تعرض المؤشرات لحظياً مع رسوم بيانية مُتاحة للجميع.", en: "Dashboards streaming KPIs in real time, accessible to every reader." },
+    "home.proj2.t": { ar: "NexusLink", en: "NexusLink" },
+    "home.proj2.d": { ar: "مركز محلي يربط أجهزتك على شبكتك: مرآة الشاشة، نقل الملفات، ومزامنة الحافظة — بتشفير طرفي وبلا سحابة.", en: "A local hub linking your devices over Wi-Fi: screen mirroring, file transfer and clipboard sync — end-to-end encrypted, no cloud." },
+    "home.proj3.t": { ar: "Ultimate AI Suite", en: "Ultimate AI Suite" },
+    "home.proj3.d": { ar: "صندوق أدوات ذكي شامل: مساعد AI و16 أداة احترافية في مكان واحد، مجاناً وبدون تثبيت.", en: "All-in-one AI toolbox: an assistant plus 16 pro tools, free and zero install." },
     "home.proj.more": { ar: "كل المشاريع", en: "All projects" },
     "home.proj.more2": { ar: "استعرض الأرشيف الكامل", en: "Browse the full archive" },
     "home.proj.more2p": { ar: "صفحة المشاريع فيها القائمة الكاملة مع التقنيات المستخدمة.", en: "The projects page holds the full list with the tech behind each build." },
@@ -168,6 +168,29 @@
     "foot.reach": { ar: "قنوات التواصل", en: "Reach me" },
     "foot.rights": { ar: "جميع الحقوق محفوظة.", en: "All rights reserved." },
     "foot.built": { ar: "مُهندَس ومؤمَّن بواسطة CTO.DRS", en: "Engineered & secured by CTO.DRS" },
+
+    "soc.wa": { ar: "واتساب", en: "WhatsApp" },
+    "soc.tg": { ar: "تيليجرام", en: "Telegram" },
+    "soc.x": { ar: "إكس", en: "X" },
+    "soc.ig": { ar: "إنستغرام", en: "Instagram" },
+    "soc.tt": { ar: "تيك توك", en: "TikTok" },
+    "soc.yt": { ar: "يوتيوب", en: "YouTube" },
+    "soc.wa.aria": { ar: "تواصل عبر واتساب", en: "Chat on WhatsApp" },
+    "foot.social": { ar: "حسابات التواصل الاجتماعي", en: "Social accounts" },
+    "contact.ch.wa": { ar: "واتساب للأعمال — الأسرع ردّاً", en: "WhatsApp Business — fastest reply" },
+    "contact.ch.tg": { ar: "قناة تيليجرام", en: "Telegram channel" },
+    "proj.view": { ar: "عرض المشروع", en: "Live demo" },
+    "proj.code": { ar: "الكود المصدري", en: "Source code" },
+    "real.title": { ar: "مشاريع منشورة ومفتوحة المصدر", en: "Shipped, open-source projects" },
+    "real.lede": { ar: "منتجات حقيقية تعمل الآن، بكودها المصدري على GitHub.", en: "Real products running today, with their source on GitHub." },
+    "client.title": { ar: "نماذج من أعمال العملاء", en: "Selected client work" },
+    "client.lede": { ar: "أنظمة نُفّذت لعملاء — التفاصيل الكاملة تُشارَك عند الطلب.", en: "Systems delivered for clients — full details shared on request." },
+    "real.nexus.d": { ar: "مركز محلي يربط كل أجهزتك على شبكتك: مرآة الشاشة والتحكم، نقل الملفات، مزامنة الحافظة — بتشفير طرفي، بلا سحابة ولا حسابات.", en: "One local hub for your devices: screen mirroring and control, file transfer, clipboard sync — end-to-end encrypted, no cloud, no accounts." },
+    "real.suite.d": { ar: "صندوق أدوات ذكي: مساعد AI و16 أداة احترافية في مكان واحد — مجاناً، خاص، وبدون تثبيت.", en: "All-in-one AI toolbox: an assistant plus 16 pro tools — free, private, zero install." },
+    "real.kbd.d": { ar: "لوحة مفاتيح عربية أصلية لأندرويد: ذكاء على الجهاز، خصوصية مثبتة، ونظام امتدادات موقّع تشفيرياً.", en: "A native Arabic keyboard for Android: on-device intelligence, proven privacy and cryptographically signed extensions." },
+    "real.vpn.d": { ar: "VPN بمستوى المؤسسات مبني على WireGuard، مع فاحص أمان للجهاز ومحسّن للشبكة — Clean Architecture.", en: "Enterprise-grade WireGuard VPN with a device security scanner and network optimizer — Clean Architecture." },
+    "real.arsenal.d": { ar: "أداة تصميم واجهات موحّدة تدمج 7 أدوات مفتوحة المصدر: استخراج أنظمة التصميم، حركات GSAP، و218 مكوّن React.", en: "One unified frontend design tool merging 7 open-source tools: design-system extraction, GSAP motion and 218 React components." },
+    "real.dnexus.d": { ar: "حقيبة أدوات مطوّرين أصلية لأندرويد تعمل بلا إنترنت: 11 أداة حقيقية، ثنائية اللغة مع دعم RTL كامل.", en: "A native offline developer toolkit for Android: 11 real tools, bilingual AR/EN with full RTL." },
 
     "err.code": { ar: "404", en: "404" },
     "err.title": { ar: "الصفحة غير موجودة", en: "Page not found" },
@@ -385,7 +408,7 @@
       }
 
       var body = name + " <" + email + ">\n\n" + message;
-      var mailto = "mailto:contact@cto-drs.com" +
+      var mailto = "mailto:cto.drs@gmail.com" +
         "?subject=" + encodeURIComponent(subject || "CTO.DRS") +
         "&body=" + encodeURIComponent(body);
       window.location.href = mailto;
