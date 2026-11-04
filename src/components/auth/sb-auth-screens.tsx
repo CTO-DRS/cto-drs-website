@@ -11,48 +11,13 @@ import { ScreenLoader } from "@/components/screen-state";
 import { toast } from "@/hooks/use-toast";
 import { useAppRouter } from "@/lib/router";
 import { useAuth } from "@/lib/auth";
-import { getSupabase, REDIRECTS, SUPABASE_GOOGLE } from "@/lib/supabase";
+import { getSupabase, REDIRECTS } from "@/lib/supabase";
 import { useI18n } from "@/i18n";
-import { EMAIL_RE, Field, GoogleMark, PasswordField, useAuthErrorText } from "./auth-ui";
+import { EMAIL_RE, Field, PasswordField, useAuthErrorText } from "./auth-ui";
+import { GoogleIdButton } from "./google-id-button";
 
 const ICON_WRAP =
   "mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgba(0,240,255,0.3)] bg-[rgba(0,240,255,0.06)] shadow-[0_0_20px_rgba(0,240,255,0.15)]";
-
-/* ── Google ── */
-function GoogleButton() {
-  const { t } = useI18n();
-  const errText = useAuthErrorText();
-  const [busy, setBusy] = useState(false);
-  if (!SUPABASE_GOOGLE) return null;
-
-  async function go() {
-    const sb = getSupabase();
-    if (!sb) return;
-    setBusy(true);
-    const { error } = await sb.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: REDIRECTS.home },
-    });
-    if (error) {
-      setBusy(false);
-      toast({ title: t.auth.loginFailTitle, description: errText(error), variant: "destructive" });
-    }
-  }
-
-  return (
-    <>
-      <div className="my-5 flex items-center gap-3 text-[11px] text-mute" aria-hidden="true">
-        <span className="h-px flex-1 bg-border-soft" />
-        {t.auth.or}
-        <span className="h-px flex-1 bg-border-soft" />
-      </div>
-      <Button type="button" variant="outline" onClick={go} disabled={busy} className="h-11 w-full rounded-xl">
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <GoogleMark />}
-        {busy ? t.auth.googleRedirecting : t.auth.google}
-      </Button>
-    </>
-  );
-}
 
 /* ── بطاقة "مسجل بالفعل" ── */
 function AlreadySignedIn() {
@@ -254,7 +219,7 @@ export function SbLoginScreen() {
                   </Button>
 
                   {mode === "login" ? (
-                    <GoogleButton />
+                    <GoogleIdButton context="signin" />
                   ) : (
                     <Button type="button" variant="ghost" onClick={() => setMode("login")} className="mt-3 h-10 w-full rounded-xl text-sm">
                       {a.backToLogin}
@@ -431,7 +396,7 @@ export function SbRegisterScreen() {
                   {busy ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <UserPlus className="h-5 w-5" aria-hidden="true" />}
                   {busy ? a.creating : a.createAccount}
                 </Button>
-                <GoogleButton />
+                <GoogleIdButton context="signup" />
               </form>
             </Reveal>
             <p className="text-center text-sm text-sec">

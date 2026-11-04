@@ -133,6 +133,10 @@ export function useAuthErrorText() {
     if (code === "email_not_confirmed" || m.includes("email not confirmed")) return a.emailNotConfirmed;
     if (code === "user_already_exists" || m.includes("already registered")) return a.alreadyRegistered;
     if (code === "weak_password" || m.includes("password should be")) return a.errPassLen;
+    // أخطاء signInWithIdToken (Google)
+    if (code === "provider_disabled" || m.includes("provider is not enabled") || m.includes("unacceptable audience"))
+      return a.googleConfigError;
+    if (m.includes("nonce") || m.includes("id token") || m.includes("id_token")) return a.googleTokenError;
     return raw || a.genericError;
   };
 }
