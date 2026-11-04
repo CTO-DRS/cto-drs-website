@@ -4,13 +4,11 @@ import { useState, type FormEvent } from "react";
 import {
   Eye,
   EyeOff,
-  KeyRound,
   LayoutDashboard,
   Loader2,
   LogIn,
   LogOut,
   Mail,
-  ShieldCheck,
   UserRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,23 +25,6 @@ import { useI18n } from "@/i18n";
 const INPUT_CLS =
   "h-11 w-full rounded-xl border border-border-strong bg-elev-2/60 px-4 text-sm text-main outline-none transition placeholder:text-mute focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.15)]";
 
-const DEMO_ACCOUNTS = [
-  {
-    labelKey: "demoAdmin" as const,
-    email: "contact@cto-drs.com",
-    password: "admin123",
-    color: "var(--gold-text)",
-    icon: ShieldCheck,
-  },
-  {
-    labelKey: "demoClient" as const,
-    email: "demo@ctodrs.com",
-    password: "demo1234",
-    color: "var(--cyber)",
-    icon: UserRound,
-  },
-];
-
 export function LoginScreen() {
   const { navigate } = useAppRouter();
   const { user, setUser } = useAppStore();
@@ -55,12 +36,6 @@ export function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [sending, setSending] = useState(false);
-
-  function fillDemo(account: (typeof DEMO_ACCOUNTS)[number]) {
-    setEmail(account.email);
-    setPassword(account.password);
-    setErrors({});
-  }
 
   function validate() {
     const next: { email?: string; password?: string } = {};
@@ -247,48 +222,6 @@ export function LoginScreen() {
                   )}
                 </Button>
               </form>
-            </Reveal>
-
-            {/* demo credentials */}
-            <Reveal delay={100}>
-              <div className="glass rounded-xl p-4 text-xs">
-                <p className="mb-3 flex items-center gap-2 font-bold text-sec">
-                  <KeyRound className="h-3.5 w-3.5 text-cyber" aria-hidden="true" />
-                  {lg.demoTitle}
-                </p>
-                <div className="space-y-2">
-                  {DEMO_ACCOUNTS.map((account) => (
-                    <div
-                      key={account.email}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-border-soft bg-elev-2/60 px-3 py-2"
-                    >
-                      <div className="min-w-0">
-                        <p
-                          className="flex items-center gap-1.5 font-bold"
-                          style={{ color: account.color }}
-                        >
-                          <account.icon className="h-3 w-3 shrink-0" aria-hidden="true" />
-                          {lg[account.labelKey]}
-                        </p>
-                        <p
-                          dir="ltr"
-                          className="truncate text-left font-mono-cyber text-[11px] text-mute"
-                        >
-                          {account.email} / {account.password}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => fillDemo(account)}
-                        aria-label={lg.autofillAria(lg[account.labelKey])}
-                        className="tag-pill shrink-0 cursor-pointer py-1.5 transition hover:shadow-[0_0_12px_rgba(0,240,255,0.3)]"
-                      >
-                        {lg.autofill}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </Reveal>
 
             {/* footer link */}
