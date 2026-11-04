@@ -1,0 +1,53 @@
+# CTO-DRS
+
+> CTO-DRS مطوّر تقني وجهة تطوير مفتوحة المصدر — هندسة البرمجيات، الأمن السيبراني، وتطبيقات أندرويد أصلية. تقنية مفيدة وآمنة وقابلة للصيانة ومتاحة للجميع.
+> CTO-DRS is a full-stack developer and open-source publisher — software engineering, cybersecurity, and native Android apps. Useful, secure, maintainable technology for everyone.
+
+الموقع الرسمي | Official site: https://cto-drs.com
+المطوّر | Developer: CTO-DRS (Software Engineer)
+البريد | Email: admin@ctodrs.com
+GitHub: https://github.com/CTO-DRS
+
+## الصفحات الرئيسية | Key Pages
+
+- [الرئيسية | Home](https://cto-drs.com/): نظرة شاملة على الهوية والخدمات والتطبيقات
+- [الخدمات | Services](https://cto-drs.com/#/services): تطوير تطبيقات أندرويد، مواقع ويب آمنة، اختبار اختراق أخلاقي، أدوات Python
+- [مركز التحميل | Downloads](https://cto-drs.com/#/downloads): تنزيل مباشر لكل التطبيقات من GitHub Releases
+- [الأسئلة الشائعة | FAQ](https://cto-drs.com/#/faq): مدة التنفيذ، الضمان، الدفعات، الصيانة
+- [تواصل معي | Contact](https://cto-drs.com/#/contact): نموذج تواصل + واتساب + تيليجرام
+- [المتجر | Store](https://cto-drs.com/#/store): منتجات رقمية
+- [المدونة | Blog](https://cto-drs.com/#/blog): مقالات تقنية
+- [الدورات | Courses](https://cto-drs.com/#/courses): دورات برمجة وأمن سيبراني
+
+## التطبيقات مفتوحة المصدر | Open-Source Apps (تنزيل مباشر)
+
+- [NexusLink](https://github.com/CTO-DRS/NexusLink/releases/latest/download/NexusLink-3.1.0-release.apk): مركز أجهزة محلي — مرآة شاشة، نقل ملفات، مزامنة حافظة، بث وسائط بتشفير E2E بلا سحابة (Android + macOS)
+- [SecureNet VPN](https://github.com/CTO-DRS/SecureNetVPN/releases/latest/download/SecureNetVPN-debug-v1.8.23.apk): VPN ببروتوكول WireGuard مع ماسح أمان للجهاز (Android)
+- [SuperBiz](https://github.com/CTO-DRS/SuperBiz/releases/latest/download/SuperBiz-v3.5.2-debug.apk): إدارة أعمال دون اتصال — فواتير، مخزون، نقاط بيع متوافقة مع ZATCA (Android)
+- [DRS Smart Keyboard](https://github.com/CTO-DRS/DRS-Smart-Keyboard/releases/latest/download/DRS-Smart-Keyboard-v1.4.2.apk): لوحة مفاتيح أندرويد ذكية (Android)
+- [Onyx Keyboard](https://github.com/CTO-DRS/OnyxKeyboard/releases/latest/download/OnyxKeyboard-v1.0.0-privacy-release.apk): لوحة مفاتيح تركز على الخصوصية (Android)
+- [NovaFiles](https://github.com/CTO-DRS/NovaFiles/releases/latest/download/NovaFiles-v0.41.0-release.apk): مدير ملفات (Android)
+- [Violet Chat](https://github.com/CTO-DRS/VioletChat/releases/latest/download/app-universal-release.apk): تطبيق محادثة (Android)
+- [Lumina Studio](https://github.com/CTO-DRS/Lumina-Studio/releases/latest/download/LuminaStudio-v1.1.0-debug.apk): استوديو إبداعي (Android)
+- [لغة عربي | Arabi Lang](https://github.com/CTO-DRS/arabi-lang/releases/latest/download/arabi-lang-1.37.0.zip): لغة برمجة بالعربية (Python)
+- [DRS AI](https://github.com/CTO-DRS/DRS-AI-Web/archive/refs/heads/main.zip): منصة ذكاء اصطناعي ذاتية الاستضافة (Self-hosted)
+
+## الخدمات | Services
+
+1. تطوير تطبيقات أندرويد أصلية (Kotlin + Jetpack Compose)
+2. تطوير مواقع وتطبيقات ويب آمنة (Next.js / React / Node.js)
+3. تقييم أمني واختبار اختراق أخلاقي
+4. أدوات وأتمتة بـ Python
+5. مشاريع مفتوحة المصدر
+6. هندسة الخصوصية وأنظمة offline-first
+
+## بيانات مهيكلة | Structured Data
+
+- JSON-LD كامل (Person, Organization, SoftwareApplication×10, FAQPage, WebSite) في الصفحة الرئيسية
+- خلاصة بيانات التطبيقات: https://cto-drs.com/data/github/apps.json
+- النص الكامل: https://cto-drs.com/llms-full.txt
+
+## سياسة الاستخدام | Usage Policy
+
+يُسمح للزواحف ونماذج الذكاء الاصطناعي بالوصول الكامل لفهرسة المحتوى والاقتباس منه مع الإسناد إلى https://cto-drs.com
+Crawlers and AI models are fully allowed to index and cite content with attribution to https://cto-drs.com
