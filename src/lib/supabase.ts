@@ -4,7 +4,8 @@
  * يُقرأ من متغيرات البناء:
  *   NEXT_PUBLIC_SUPABASE_URL        — رابط المشروع  (https://xxxx.supabase.co)
  *   NEXT_PUBLIC_SUPABASE_ANON_KEY   — المفتاح العام anon (آمن للمتصفح؛ الحماية عبر RLS)
- *   NEXT_PUBLIC_SUPABASE_GOOGLE=1   — لإظهار زر "الدخول بحساب Google" (اختياري)
+ *   NEXT_PUBLIC_GOOGLE_CLIENT_ID    — معرّف عميل Google (Web) لزر "المتابعة بحساب Google" عبر
+ *                                     Google Identity Services + signInWithIdToken (اختياري، عام وليس سراً)
  *   NEXT_PUBLIC_SITE_URL            — رابط الموقع لإعادة التوجيه (افتراضي https://cto-drs.com)
  *
  * إن لم تُضبط المتغيرات: SUPABASE_ENABLED = false ويبقى الموقع على سلوكه الثابت السابق.
@@ -16,7 +17,9 @@ const URL = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").trim();
 const ANON = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
 
 export const SUPABASE_ENABLED = URL.length > 0 && ANON.length > 0;
-export const SUPABASE_GOOGLE = SUPABASE_ENABLED && process.env.NEXT_PUBLIC_SUPABASE_GOOGLE === "1";
+export const GOOGLE_CLIENT_ID = (process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "").trim();
+/** زر Google يظهر فقط عند ضبط Supabase ومعرّف عميل Google معاً */
+export const SUPABASE_GOOGLE = SUPABASE_ENABLED && GOOGLE_CLIENT_ID.length > 0;
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://cto-drs.com").replace(/\/+$/, "");
 
 /** روابط إعادة التوجيه (يجب إضافتها في Supabase → Auth → URL Configuration → Redirect URLs) */
