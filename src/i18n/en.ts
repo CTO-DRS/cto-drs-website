@@ -208,6 +208,7 @@ export const en: Dict = {
   socials: {
     channelsAria: "Contact channels",
     followPlatforms: "Follow me across platforms",
+    linktree: "Linktree",
   },
 
   contact: {
