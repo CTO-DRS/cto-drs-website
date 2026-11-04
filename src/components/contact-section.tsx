@@ -20,14 +20,13 @@ import { Switch } from "@/components/ui/switch";
 import {
   COUNTRIES,
   COUNTRY_BY_CODE,
-  CONTACT_PURPOSES,
-  PURPOSE_BY_ID,
   detectCountryCode,
   sanitizePhone,
 } from "@/lib/contact-options";
 import { SOCIAL_BY_ID } from "@/lib/social";
 import { STATIC_MODE } from "@/lib/static-mode";
 import { toast } from "@/hooks/use-toast";
+import { useI18n, useContent, countryName } from "@/i18n";
 
 const DRAFT_KEY = "cto-drs-contact-draft";
 const MAX_MSG = 5000;
@@ -61,8 +60,11 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
+  const { t, lang } = useI18n();
+  const c = t.contact;
+  const { CONTACT_PURPOSES } = useContent();
   const country = form.countryCode ? COUNTRY_BY_CODE[form.countryCode] : undefined;
-  const purpose = form.purpose ? PURPOSE_BY_ID[form.purpose] : undefined;
+  const purpose = form.purpose ? CONTACT_PURPOSES.find((p) => p.id === form.purpose) : undefined;
 
   /* استرجاع مسودة + كشف الدولة تلقائياً مرة واحدة */
   useEffect(() => {
@@ -122,12 +124,12 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
 
   function validate(): boolean {
     const e: Partial<Record<keyof FormState, string>> = {};
-    if (form.name.trim().length < 2) e.name = "أدخل اسمك الكامل";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "بريد إلكتروني غير صحيح";
-    if (!form.purpose) e.purpose = "اختر هدف المراسلة";
+    if (form.name.trim().length < 2) e.name = c.errName;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = c.errEmail;
+    if (!form.purpose) e.purpose = c.errPurpose;
     const ph = sanitizePhone(form.phone);
-    if (ph && (ph.length < 7 || ph.length > 15)) e.phone = "الرقم يجب أن يكون 7 أرقام على الأقل";
-    if (form.message.trim().length < 10) e.message = "اكتب 10 أحرف على الأقل";
+    if (ph && (ph.length < 7 || ph.length > 15)) e.phone = c.errPhone;
+    if (form.message.trim().length < 10) e.message = c.errMessage;
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -135,11 +137,11 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
   /** تركيب نص الرسالة الكامل (يُستخدم للواتساب والحفظ) */
   function composeText(): string {
     const lines = [
-      `الاسم: ${form.name.trim()}`,
-      `البريد: ${form.email.trim()}`,
-      purpose ? `الهدف: ${purpose.label}` : "",
-      country ? `الدولة: ${country.flag} ${country.name} (${country.dial})` : "",
-      form.phone ? `الجوال: ${country?.dial ?? ""}${sanitizePhone(form.phone)}` : "",
+      `${c.lineName}: ${form.name.trim()}`,
+      `${c.lineEmail}: ${form.email.trim()}`,
+      purpose ? `${c.linePurpose}: ${purpose.label}` : "",
+      country ? `${c.lineCountry}: ${country.flag} ${countryName(lang, country)} (${country.dial})` : "",
+      form.phone ? `${c.linePhone}: ${country?.dial ?? ""}${sanitizePhone(form.phone)}` : "",
       "",
       form.message.trim(),
     ].filter((l) => l !== "");
@@ -149,7 +151,7 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
-      toast({ title: "أكمل الحقول المطلوبة", description: "راجع الحقول المعلَّمة بالأحمر" });
+      toast({ title: c.toastIncompleteTitle, description: c.toastIncompleteDesc });
       return;
     }
     setLoading(true);
@@ -170,15 +172,15 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
         });
         const data = await res.json();
         if (!res.ok) {
-          toast({ title: "تعذر الإرسال", description: data.error ?? "تحقق من الحقول وحاول مجدداً" });
+          toast({ title: c.toastFailTitle, description: data.error ?? c.toastFailDesc });
           return;
         }
       }
 
       setSent(true);
       toast({
-        title: "تم إرسال رسالتك بنجاح",
-        description: "سأتواصل معك خلال 24 ساعة إن شاء الله",
+        title: c.toastOkTitle,
+        description: c.toastOkDesc,
       });
 
       /* الإرسال التلقائي: فتح واتساب بالرسالة جاهزة + نسخها احتياطاً */
@@ -188,8 +190,8 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
         try {
           await navigator.clipboard.writeText(composeText());
           toast({
-            title: "الإرسال التلقائي عبر واتساب",
-            description: "نُسخت رسالتك للحافظة — سيفتح واتساب الآن، فقط اضغط إرسال",
+            title: c.toastWaTitle,
+            description: c.toastWaDesc,
           });
         } catch {
           /* الحافظة غير متاحة — الافتتاح يكفي */
@@ -205,7 +207,7 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
       }
       setTimeout(() => setSent(false), 6000);
     } catch {
-      toast({ title: "خطأ في الاتصال", description: "تحقق من اتصالك بالشبكة" });
+      toast({ title: t.common.connErrTitle, description: t.common.connErrDesc });
     } finally {
       setLoading(false);
     }
@@ -222,9 +224,9 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
         {showHeader && (
           <SectionHeader
             badge="CONTACT • 10"
-            title="تواصل"
-            highlight="معي"
-            subtitle="أرسل تفاصيل مشروعك وسأرد عليك خلال 24 ساعة"
+            title={c.title}
+            highlight={c.highlight}
+            subtitle={c.subtitle}
           />
         )}
 
@@ -240,30 +242,30 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                   <span className="animate-pulse-dot h-2.5 w-2.5 rounded-full bg-[#00ff88]" />
                 </span>
                 <div>
-                  <p className="text-[11px] text-mute">الحالة الحالية</p>
-                  <p className="text-sm font-bold text-main">متاح لمشاريع جديدة</p>
+                  <p className="text-[11px] text-mute">{c.statusLabel}</p>
+                  <p className="text-sm font-bold text-main">{c.statusValue}</p>
                 </div>
               </div>
             </Reveal>
             <Reveal delay={80}>
               <div className="card-glow flex items-center gap-4 rounded-2xl p-4">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(0,240,255,0.07)] text-cyber">
-                  <Clock3 className="h-5 w-5" />
+                  <Clock3 className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-[11px] text-mute">أوقات الرد</p>
-                  <p className="text-sm font-bold text-main">خلال 24 ساعة كحد أقصى</p>
+                  <p className="text-[11px] text-mute">{c.replyLabel}</p>
+                  <p className="text-sm font-bold text-main">{c.replyValue}</p>
                 </div>
               </div>
             </Reveal>
             <Reveal delay={160}>
               <div className="card-glow flex items-center gap-4 rounded-2xl p-4">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(0,240,255,0.07)] text-cyber">
-                  <CalendarDays className="h-5 w-5" />
+                  <CalendarDays className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-[11px] text-mute">أيام العمل</p>
-                  <p className="text-sm font-bold text-main">الأحد — الخميس • 9ص إلى 9م</p>
+                  <p className="text-[11px] text-mute">{c.daysLabel}</p>
+                  <p className="text-sm font-bold text-main">{c.daysValue}</p>
                 </div>
               </div>
             </Reveal>
@@ -277,16 +279,21 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                   </p>
                   <span className="font-mono-cyber text-xs font-bold text-cyber">{progress}%</span>
                 </div>
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-elev-2">
+                <div
+                  className="mt-3 h-1.5 overflow-hidden rounded-full bg-elev-2"
+                  role="progressbar"
+                  aria-label={lang === "ar" ? "اكتمال النموذج" : "Form completion"}
+                  aria-valuenow={progress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-[#00f0ff] to-[#00ff88] transition-all duration-500"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
-                <p className="mt-2.5 text-[11px] leading-5 text-mute">
-                  {progress === 100
-                    ? "ممتاز! النموذج جاهز للإرسال ✓"
-                    : "أكمل الخطوات لضمان رد أسرع وأدق"}
+                <p className="mt-2.5 text-[11px] leading-5 text-mute" aria-live="polite">
+                  {progress === 100 ? c.formReady : c.formHint}
                 </p>
               </div>
             </Reveal>
@@ -311,8 +318,9 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
               {/* ١ — هدف المراسلة */}
               <fieldset>
                 <legend className="mb-2.5 flex items-center gap-2 text-xs font-bold text-sec">
-                  <Target className="h-3.5 w-3.5 text-cyber" />
-                  ما هدف مراسلتك؟ <span className="text-[#ff2a6d]">*</span>
+                  <Target className="h-3.5 w-3.5 text-cyber" aria-hidden="true" />
+                  {c.purposeLegend} <span className="text-[#ff2a6d]" aria-hidden="true">*</span>
+                  <span className="sr-only">({c.required})</span>
                 </legend>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {CONTACT_PURPOSES.map((p) => {
@@ -326,7 +334,7 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                           setErrors((e) => ({ ...e, purpose: undefined }));
                         }}
                         aria-pressed={active}
-                        className={`rounded-xl border p-2.5 text-right transition-all duration-300 ${
+                        className={`rounded-xl border p-2.5 text-start transition-all duration-300 ${
                           active ? "shadow-[0_0_18px_var(--pg)]" : "border-border-strong bg-elev-2/40 hover:border-[rgba(0,240,255,0.35)]"
                         }`}
                         style={
@@ -346,49 +354,50 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                     );
                   })}
                 </div>
-                {errors.purpose && <p className="mt-1.5 text-[11px] text-[#ff2a6d]">{errors.purpose}</p>}
+                {errors.purpose && <p className="mt-1.5 text-[11px] text-[#ff2a6d]" role="alert">{errors.purpose}</p>}
               </fieldset>
 
               {/* ٢ — الدولة + رقم الجوال */}
               <fieldset>
                 <legend className="mb-2.5 flex items-center gap-2 text-xs font-bold text-sec">
-                  <Phone className="h-3.5 w-3.5 text-cyber" />
-                  الدولة ورقم الجوال <span className="text-[11px] font-normal text-mute">(اختياري — لتواصل أسرع)</span>
+                  <Phone className="h-3.5 w-3.5 text-cyber" aria-hidden="true" />
+                  {c.phoneLegend} <span className="text-[11px] font-normal text-mute">{c.phoneOptional}</span>
                 </legend>
                 <div className="grid gap-3 sm:grid-cols-[1fr_1.2fr]">
                   <div>
                     <label htmlFor="ct-country" className="sr-only">
-                      الدولة
+                      {c.country}
                     </label>
                     <div className="relative">
-                      <Globe2 className="pointer-events-none absolute right-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-mute" />
+                      <Globe2 className="pointer-events-none absolute start-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-mute" aria-hidden="true" />
                       <select
                         id="ct-country"
                         value={form.countryCode}
                         onChange={(e) => set("countryCode", e.target.value)}
-                        className="h-11 w-full appearance-none rounded-xl border border-border-strong bg-elev-2/50 pr-9 pl-3 text-sm text-main outline-none transition focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.12)]"
+                        aria-describedby="ct-country-hint"
+                        className="h-11 w-full appearance-none rounded-xl border border-border-strong bg-elev-2/50 ps-9 pe-3 text-sm text-main outline-none transition focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.12)]"
                       >
                         {COUNTRIES.map((c) => (
                           <option key={c.code} value={c.code} className="bg-elev text-main">
-                            {c.flag} {c.name} ({c.dial})
+                            {c.flag} {countryName(lang, c)} ({c.dial})
                           </option>
                         ))}
                       </select>
                     </div>
-                    <p className="mt-1 text-[10px] text-mute">
-                      ✨ تم تحديدها تلقائياً حسب موقعك — يمكنك تغييرها
+                    <p id="ct-country-hint" className="mt-1 text-[10px] text-mute">
+                      {t.contact.countryAuto}
                     </p>
                   </div>
                   <div>
                     <label htmlFor="ct-phone" className="sr-only">
-                      رقم الجوال
+                      {t.contact.phone}
                     </label>
                     <div
                       className={`flex h-11 items-center overflow-hidden rounded-xl border bg-elev-2/50 transition focus-within:border-[rgba(0,240,255,0.5)] focus-within:shadow-[0_0_16px_rgba(0,240,255,0.12)] ${
                         errors.phone ? "border-[rgba(255,42,109,0.6)]" : "border-border-strong"
                       }`}
                     >
-                      <span className="font-mono-cyber shrink-0 border-l border-border-strong px-3 text-sm font-bold text-cyber" dir="ltr">
+                      <span aria-hidden="true" className="font-mono-cyber shrink-0 border-e border-border-strong px-3 text-sm font-bold text-cyber" dir="ltr">
                         {country?.dial}
                       </span>
                       <input
@@ -402,10 +411,13 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                           setErrors((er) => ({ ...er, phone: undefined }));
                         }}
                         placeholder="5X XXX XXXX"
+                        autoComplete="tel-national"
+                        aria-invalid={!!errors.phone}
+                        aria-describedby={errors.phone ? "ct-phone-err" : undefined}
                         className="font-mono-cyber h-full min-w-0 flex-1 bg-transparent px-3 text-sm tracking-wider text-main outline-none placeholder:text-mute"
                       />
                     </div>
-                    {errors.phone && <p className="mt-1 text-[11px] text-[#ff2a6d]">{errors.phone}</p>}
+                    {errors.phone && <p id="ct-phone-err" className="mt-1 text-[11px] text-[#ff2a6d]" role="alert">{errors.phone}</p>}
                   </div>
                 </div>
               </fieldset>
@@ -414,7 +426,7 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="c-name" className="mb-1.5 block text-xs font-bold text-sec">
-                    الاسم الكامل <span className="text-[#ff2a6d]">*</span>
+                    {t.contact.name} <span className="text-[#ff2a6d]" aria-hidden="true">*</span>
                   </label>
                   <input
                     id="c-name"
@@ -423,15 +435,19 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                       set("name", e.target.value);
                       setErrors((er) => ({ ...er, name: undefined }));
                     }}
-                    placeholder="ما اسمك الكريم؟"
+                    placeholder={t.contact.namePh}
+                    autoComplete="name"
+                    required
+                    aria-required="true"
                     aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "c-name-err" : undefined}
                     className={inputCls(errors.name)}
                   />
-                  {errors.name && <p className="mt-1 text-[11px] text-[#ff2a6d]">{errors.name}</p>}
+                  {errors.name && <p id="c-name-err" className="mt-1 text-[11px] text-[#ff2a6d]" role="alert">{errors.name}</p>}
                 </div>
                 <div>
                   <label htmlFor="c-email" className="mb-1.5 block text-xs font-bold text-sec">
-                    البريد الإلكتروني <span className="text-[#ff2a6d]">*</span>
+                    {t.contact.email} <span className="text-[#ff2a6d]" aria-hidden="true">*</span>
                   </label>
                   <input
                     id="c-email"
@@ -443,10 +459,14 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                     }}
                     placeholder="name@example.com"
                     dir="ltr"
+                    autoComplete="email"
+                    required
+                    aria-required="true"
                     aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "c-email-err" : undefined}
                     className={inputCls(errors.email)}
                   />
-                  {errors.email && <p className="mt-1 text-[11px] text-[#ff2a6d]">{errors.email}</p>}
+                  {errors.email && <p id="c-email-err" className="mt-1 text-[11px] text-[#ff2a6d]" role="alert">{errors.email}</p>}
                 </div>
               </div>
 
@@ -454,7 +474,7 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
               <div className="flex-1">
                 <div className="mb-1.5 flex items-center justify-between">
                   <label htmlFor="c-msg" className="text-xs font-bold text-sec">
-                    تفاصيل المشروع <span className="text-[#ff2a6d]">*</span>
+                    {t.contact.details} <span className="text-[#ff2a6d]" aria-hidden="true">*</span>
                   </label>
                   <span
                     className={`font-mono-cyber text-[10px] ${msgChars > MAX_MSG * 0.9 ? "text-[#ffd700]" : "text-mute"}`}
@@ -473,16 +493,17 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                     setErrors((er) => ({ ...er, message: undefined }));
                   }}
                   placeholder={
-                    form.purpose
-                      ? `حدّثني أكثر عن ${purpose?.label}: ما الفكرة؟ ما الميزانية التقريبية؟ ما الجدول الزمني المطلوب؟`
-                      : "أخبرني عن فكرتك: نوع المشروع، الميزانية التقريبية، الجدول الزمني..."
+                    form.purpose && purpose ? t.contact.detailsPhPurpose(purpose.label) : t.contact.detailsPh
                   }
+                  required
+                  aria-required="true"
                   aria-invalid={!!errors.message}
+                  aria-describedby={errors.message ? "c-msg-err" : undefined}
                   className={`min-h-28 w-full resize-none rounded-xl border bg-elev-2/50 p-4 text-sm leading-7 text-main outline-none transition placeholder:text-mute focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.12)] ${
                     errors.message ? "border-[rgba(255,42,109,0.6)]" : "border-border-strong"
                   }`}
                 />
-                {errors.message && <p className="mt-1 text-[11px] text-[#ff2a6d]">{errors.message}</p>}
+                {errors.message && <p id="c-msg-err" className="mt-1 text-[11px] text-[#ff2a6d]" role="alert">{errors.message}</p>}
               </div>
 
               {/* ٥ — الإرسال التلقائي */}
@@ -491,19 +512,19 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
               >
                 <div className="flex items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[rgba(37,211,102,0.12)] text-[#25d366]">
-                    <Zap className="h-4.5 w-4.5" />
+                    <Zap className="h-4.5 w-4.5" aria-hidden="true" />
                   </span>
                   <div>
-                    <p className="text-xs font-bold text-main">الإرسال التلقائي عبر واتساب</p>
+                    <p className="text-xs font-bold text-main">{t.contact.autoSendTitle}</p>
                     <p className="text-[10px] leading-4 text-mute">
-                      بعد الحفظ تُفتح محادثة واتساب برسالتك جاهزة للإرسال
+                      {t.contact.autoSendDesc}
                     </p>
                   </div>
                 </div>
                 <Switch
                   checked={form.autoSend}
                   onCheckedChange={(v) => set("autoSend", v)}
-                  aria-label="تشغيل الإرسال التلقائي عبر واتساب"
+                  aria-label={t.contact.autoSendAria}
                   className="data-[state=checked]:bg-[#25d366] data-[state=unchecked]:bg-input"
                 />
               </div>
@@ -522,18 +543,12 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                 ) : (
                   <Send className="h-4 w-4" />
                 )}
-                {sent ? (
-                  "تم الإرسال بنجاح"
-                ) : form.autoSend ? (
-                  "إرسال + تحويل لواتساب"
-                ) : (
-                  "إرسال الرسالة"
-                )}
+                {sent ? t.contact.sentOk : form.autoSend ? t.contact.sendWa : t.contact.send}
               </button>
               {form.autoSend && (
                 <p className="flex items-center justify-center gap-1.5 text-center text-[10px] text-mute">
-                  <ClipboardCheck className="h-3 w-3" />
-                  ستُنسخ رسالتك تلقائياً للحافظة احتياطاً
+                  <ClipboardCheck className="h-3 w-3" aria-hidden="true" />
+                  {t.contact.clipboardNote}
                 </p>
               )}
             </form>

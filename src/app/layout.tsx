@@ -3,9 +3,11 @@ import { IBM_Plex_Sans_Arabic, Plus_Jakarta_Sans, Fira_Code } from "next/font/go
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
-import { APPS, directReleaseUrl } from "@/lib/apps";
+import { APPS, directReleaseUrl, sourceZipUrl } from "@/lib/apps";
 import { FAQS } from "@/lib/faq-data";
 import { SOCIALS } from "@/lib/social";
+import { LanguageProvider } from "@/i18n";
+import { A11yProvider, EARLY_PREFS_SCRIPT } from "@/lib/a11y";
 
 const SITE = "https://cto-drs.com";
 
@@ -45,6 +47,14 @@ export const metadata: Metadata = {
     "برمجة",
   ],
   authors: [{ name: "CTO-DRS", url: "https://github.com/CTO-DRS" }],
+  alternates: {
+    canonical: "/",
+    languages: {
+      ar: "/",
+      en: "/en/",
+      "x-default": "/",
+    },
+  },
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
@@ -102,7 +112,7 @@ const APP_ENTITIES = APPS.map((app, i) => ({
   alternateName: app.title,
   description: app.description,
   url: `https://github.com/CTO-DRS/${app.repo}`,
-  downloadUrl: directReleaseUrl(app),
+  downloadUrl: app.directFile ? directReleaseUrl(app.repo, app.directFile) : sourceZipUrl(app.repo),
   softwareVersion: app.version.replace(/^v/, ""),
   applicationCategory: app.category === "android" ? "MobileApplication" : "DeveloperApplication",
   operatingSystem: app.platforms.join(", "),
@@ -229,6 +239,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        {/* تطبيق تفضيلات اللغة/حجم النص/الحركة قبل أول رسم */}
+        <script id="early-prefs" dangerouslySetInnerHTML={{ __html: EARLY_PREFS_SCRIPT }} />
+      </head>
       <body
         className={`${plexArabic.variable} ${jakarta.variable} ${firaCode.variable} antialiased bg-app text-main overflow-x-clip`}
       >
@@ -239,8 +253,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
         />
         <ThemeProvider>
-          {children}
-          <Toaster />
+          <LanguageProvider>
+            <A11yProvider>
+              {children}
+              <Toaster />
+            </A11yProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

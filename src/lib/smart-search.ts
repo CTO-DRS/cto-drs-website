@@ -21,6 +21,7 @@ import {
 } from "@/lib/data";
 import { FAQS } from "@/lib/faq-data";
 import { APPS } from "@/lib/apps";
+import * as EN from "@/i18n/content-en";
 
 export type SearchKind =
   | "صفحة"
@@ -46,6 +47,10 @@ export interface SearchDoc {
   body?: string;
   route?: AppRoute;
   url?: string;
+  /** English display/search text (lang = "en") */
+  titleEn?: string;
+  subtitleEn?: string;
+  bodyEn?: string;
 }
 
 export interface SearchHit extends SearchDoc {
@@ -104,54 +109,91 @@ for (const g of SYNONYM_GROUPS) {
 }
 
 /* ── الفهرس ──────────────────────────────────────────────── */
-const PAGES: { title: string; route: AppRoute; keys: string }[] = [
-  { title: "الرئيسية", route: { name: "home" }, keys: "home بدايه" },
-  { title: "من أنا", route: { name: "about" }, keys: "about نبذه سيره" },
-  { title: "الخدمات", route: { name: "services" }, keys: "services" },
-  { title: "المشاريع", route: { name: "projects" }, keys: "projects اعمال portfolio" },
-  { title: "الدورات", route: { name: "courses" }, keys: "courses" },
-  { title: "المتجر الرقمي", route: { name: "store" }, keys: "store" },
-  { title: "المدونة", route: { name: "blog" }, keys: "blog مقالات" },
-  { title: "احجز استشارة", route: { name: "booking" }, keys: "booking" },
-  { title: "مركز التحميل", route: { name: "downloads" }, keys: "downloads apk" },
-  { title: "الباقات والأسعار", route: { name: "pricing" }, keys: "pricing" },
-  { title: "الأسئلة الشائعة", route: { name: "faq" }, keys: "faq اسئله" },
-  { title: "آراء العملاء", route: { name: "testimonials" }, keys: "testimonials تقييمات" },
-  { title: "تواصل معي", route: { name: "contact" }, keys: "contact" },
-  { title: "الأدوات والمكتبات", route: { name: "tools" }, keys: "tools" },
-  { title: "الفيديوهات", route: { name: "videos" }, keys: "videos يوتيوب youtube" },
-  { title: "معرض الأعمال", route: { name: "gallery" }, keys: "gallery صور" },
-  { title: "الفعاليات والورش", route: { name: "events" }, keys: "events ورش" },
-  { title: "من خلف المنصة", route: { name: "team" }, keys: "team فريق" },
-  { title: "السلة", route: { name: "cart" }, keys: "cart" },
-  { title: "سياسة الخصوصية", route: { name: "privacy" }, keys: "privacy" },
-  { title: "الشروط والأحكام", route: { name: "terms" }, keys: "terms" },
+const PAGES: { title: string; titleEn: string; route: AppRoute; keys: string }[] = [
+  { title: "الرئيسية", titleEn: "Home", route: { name: "home" }, keys: "home بدايه" },
+  { title: "من أنا", titleEn: "About me", route: { name: "about" }, keys: "about نبذه سيره bio" },
+  { title: "الخدمات", titleEn: "Services", route: { name: "services" }, keys: "services" },
+  { title: "المشاريع", titleEn: "Projects", route: { name: "projects" }, keys: "projects اعمال portfolio work" },
+  { title: "الدورات", titleEn: "Courses", route: { name: "courses" }, keys: "courses" },
+  { title: "المتجر الرقمي", titleEn: "Digital Store", route: { name: "store" }, keys: "store shop" },
+  { title: "المدونة", titleEn: "Blog", route: { name: "blog" }, keys: "blog مقالات articles" },
+  { title: "احجز استشارة", titleEn: "Book a consultation", route: { name: "booking" }, keys: "booking" },
+  { title: "مركز التحميل", titleEn: "Download Center", route: { name: "downloads" }, keys: "downloads apk" },
+  { title: "الباقات والأسعار", titleEn: "Plans & Pricing", route: { name: "pricing" }, keys: "pricing plans" },
+  { title: "الأسئلة الشائعة", titleEn: "FAQ", route: { name: "faq" }, keys: "faq اسئله questions" },
+  { title: "آراء العملاء", titleEn: "Testimonials", route: { name: "testimonials" }, keys: "testimonials تقييمات reviews" },
+  { title: "تواصل معي", titleEn: "Contact", route: { name: "contact" }, keys: "contact" },
+  { title: "الأدوات والمكتبات", titleEn: "Tools & Libraries", route: { name: "tools" }, keys: "tools" },
+  { title: "الفيديوهات", titleEn: "Videos", route: { name: "videos" }, keys: "videos يوتيوب youtube" },
+  { title: "معرض الأعمال", titleEn: "Work Gallery", route: { name: "gallery" }, keys: "gallery صور" },
+  { title: "الفعاليات والورش", titleEn: "Events & Workshops", route: { name: "events" }, keys: "events ورش workshops" },
+  { title: "من خلف المنصة", titleEn: "Behind the platform", route: { name: "team" }, keys: "team فريق" },
+  { title: "السلة", titleEn: "Cart", route: { name: "cart" }, keys: "cart" },
+  { title: "سياسة الخصوصية", titleEn: "Privacy Policy", route: { name: "privacy" }, keys: "privacy" },
+  { title: "الشروط والأحكام", titleEn: "Terms & Conditions", route: { name: "terms" }, keys: "terms" },
 ];
 
 let DOCS: SearchDoc[] | null = null;
 
 function buildDocs(): SearchDoc[] {
   const d: SearchDoc[] = [];
-  PAGES.forEach((p) => d.push({ id: `page-${p.route.name}`, kind: "صفحة", title: p.title, body: p.keys, route: p.route }));
+  PAGES.forEach((p) => d.push({ id: `page-${p.route.name}`, kind: "صفحة", title: p.title, titleEn: p.titleEn, body: p.keys, route: p.route }));
   PROJECTS.forEach((p) =>
-    d.push({ id: `proj-${p.id}`, kind: "مشروع", title: p.title, subtitle: p.language, tags: p.tags, body: p.description, route: { name: "projects" }, url: p.url }),
+    d.push({
+      id: `proj-${p.id}`,
+      kind: "مشروع",
+      title: p.title,
+      titleEn: EN.PROJECTS_EN[p.id]?.title,
+      subtitle: p.language,
+      tags: p.tags,
+      body: p.description,
+      bodyEn: EN.PROJECTS_EN[p.id]?.description,
+      route: { name: "projects" },
+      url: p.url,
+    }),
   );
-  SERVICES.forEach((s, i) => d.push({ id: `svc-${i}`, kind: "خدمة", title: s, route: { name: "services" } }));
+  SERVICES.forEach((s, i) => d.push({ id: `svc-${i}`, kind: "خدمة", title: s, titleEn: EN.SERVICES_EN[i], route: { name: "services" } }));
   COURSES.forEach((c, i) =>
-    d.push({ id: `course-${i}`, kind: "دورة", title: c.title, subtitle: `${c.lessons} درس · ${c.level}`, body: c.description, route: { name: "courses" } }),
+    d.push({
+      id: `course-${i}`,
+      kind: "دورة",
+      title: c.title,
+      titleEn: EN.COURSES_EN[i]?.title,
+      subtitle: `${c.lessons} درس · ${c.level}`,
+      subtitleEn: `${c.lessons} lessons · ${EN.COURSES_EN[i]?.level ?? c.level}`,
+      body: c.description,
+      bodyEn: EN.COURSES_EN[i]?.description,
+      route: { name: "courses" },
+    }),
   );
   APPS.forEach((a) =>
-    d.push({ id: `app-${a.id}`, kind: "تطبيق", title: a.title, subtitle: `${a.titleEn} · ${a.version}`, tags: a.platforms, body: `${a.description} ${a.repo}`, route: { name: "downloads" } }),
+    d.push({
+      id: `app-${a.id}`,
+      kind: "تطبيق",
+      title: a.title,
+      titleEn: EN.APPS_EN[a.id]?.title ?? a.titleEn,
+      subtitle: `${a.titleEn} · ${a.version}`,
+      tags: a.platforms,
+      body: `${a.description} ${a.repo}`,
+      bodyEn: EN.APPS_EN[a.id]?.description,
+      route: { name: "downloads" },
+    }),
   );
-  TOOLS.forEach((t, i) => d.push({ id: `tool-${i}`, kind: "أداة", title: t.name, subtitle: t.version, body: t.description, route: { name: "tools" } }));
+  TOOLS.forEach((t, i) => d.push({ id: `tool-${i}`, kind: "أداة", title: t.name, subtitle: t.version, body: t.description, bodyEn: EN.TOOLS_EN[i], route: { name: "tools" } }));
   SKILLS.forEach((s, i) => d.push({ id: `skill-${i}`, kind: "مهارة", title: s.name, subtitle: `${s.level} · ${s.percent}%`, body: s.category, route: { name: "home" } }));
-  FAQS.forEach((f, i) => d.push({ id: `faq-${i}`, kind: "سؤال", title: f.q, subtitle: f.cat, body: f.a, route: { name: "faq" } }));
+  FAQS.forEach((f, i) =>
+    d.push({ id: `faq-${i}`, kind: "سؤال", title: f.q, titleEn: EN.FAQS_EN[i]?.q, subtitle: f.cat, body: f.a, bodyEn: EN.FAQS_EN[i]?.a, route: { name: "faq" } }),
+  );
   PRICING_PLANS.forEach((p, i) =>
     d.push({ id: `plan-${i}`, kind: "باقة", title: p.name, subtitle: p.tagline, body: p.features.join(" "), route: { name: "pricing" } }),
   );
   EVENTS.forEach((e, i) => d.push({ id: `event-${i}`, kind: "فعالية", title: e.title, subtitle: `${e.date} · ${e.mode}`, body: e.description, route: { name: "events" } }));
-  VIDEOS.forEach((v, i) => d.push({ id: `video-${i}`, kind: "فيديو", title: v.title, subtitle: v.duration, body: v.description, route: { name: "videos" } }));
-  GALLERY.forEach((g, i) => d.push({ id: `gal-${i}`, kind: "معرض", title: g.title, body: g.description, route: { name: "gallery" } }));
+  VIDEOS.forEach((v, i) =>
+    d.push({ id: `video-${i}`, kind: "فيديو", title: v.title, titleEn: EN.VIDEOS_EN[i]?.title, subtitle: v.duration, body: v.description, bodyEn: EN.VIDEOS_EN[i]?.description, route: { name: "videos" } }),
+  );
+  GALLERY.forEach((g, i) =>
+    d.push({ id: `gal-${i}`, kind: "معرض", title: g.title, titleEn: EN.GALLERY_EN[i]?.title, body: g.description, bodyEn: EN.GALLERY_EN[i]?.description, route: { name: "gallery" } }),
+  );
   TEAM.forEach((t, i) => d.push({ id: `team-${i}`, kind: "فريق", title: t.name, subtitle: t.role, tags: t.skills, body: t.bio, route: { name: "team" } }));
   return d;
 }
@@ -173,9 +215,10 @@ function prepare(): Prepared[] {
   if (PREP) return PREP;
   DOCS = buildDocs();
   PREP = DOCS.map((doc) => {
-    const title = words(doc.title + " " + (doc.subtitle ?? ""));
+    // نفهرس النص العربي والإنجليزي معاً — البحث يعمل بأي من اللغتين
+    const title = words(doc.title + " " + (doc.subtitle ?? "") + " " + (doc.titleEn ?? "") + " " + (doc.subtitleEn ?? ""));
     const tags = words((doc.tags ?? []).join(" "));
-    const body = words(doc.body ?? "");
+    const body = words((doc.body ?? "") + " " + (doc.bodyEn ?? ""));
     return { doc, title, tags, body, full: [...title, ...tags, ...body].join(" ") };
   });
   return PREP;
