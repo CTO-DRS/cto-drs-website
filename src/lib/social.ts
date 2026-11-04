@@ -33,7 +33,7 @@ export const SOCIALS: SocialLink[] = [
     id: "telegram",
     label: "تيليجرام",
     handle: "@CTO_DRS",
-    url: "https://t.me/CTO_DRS",
+    url: "https://t.me/ctodrs",
     color: "#2aabee",
     glow: "rgba(42,171,238,0.22)",
   },
