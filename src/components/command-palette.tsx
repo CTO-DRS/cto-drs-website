@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { smartSearch, SEARCH_SUGGESTIONS, type SearchHit } from "@/lib/smart-search";
 import {
   CommandDialog,
   CommandEmpty,
@@ -41,6 +42,9 @@ import {
   Camera,
   PlayCircle,
   Download,
+  Sparkles,
+  ExternalLink,
+  ArrowLeft,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAppRouter, type AppRoute } from "@/lib/router";
@@ -59,23 +63,88 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
       }
     };
     document.addEventListener("keydown", down);
-    return () => window.removeEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
   }, [open, setOpen]);
+
+  const [query, setQuery] = useState("");
+  useEffect(() => {
+    if (!open) setQuery("");
+  }, [open]);
+  const hits = useMemo(() => smartSearch(query), [query]);
+  const searching = query.trim().length > 0;
 
   const go = (r: AppRoute) => {
     setOpen(false);
     navigate(r);
   };
 
+  const openHit = (h: SearchHit) => {
+    if (h.route) go(h.route);
+    else if (h.url) {
+      setOpen(false);
+      window.open(h.url, "_blank", "noopener");
+    }
+  };
+
   return (
-    <CommandDialog open={open} onOpenChange={setOpen} className="glass-strong rounded-2xl">
+    <CommandDialog
+      open={open}
+      onOpenChange={setOpen}
+      shouldFilter={false}
+      title="البحث الذكي"
+      description="ابحث في المشاريع والخدمات والدورات والتطبيقات"
+      className="glass-strong rounded-2xl"
+    >
       <div className="flex items-center gap-2 border-b border-border-soft px-4 pt-3">
-        <Search className="h-4 w-4 text-cyber" />
-        <span className="font-mono-cyber text-[10px] tracking-[0.2em] text-mute">COMMAND PALETTE</span>
+        <Sparkles className="h-4 w-4 text-cyber" />
+        <span className="font-mono-cyber text-[10px] tracking-[0.2em] text-mute">SMART SEARCH</span>
       </div>
-      <CommandInput placeholder="ابحث أو نفذ أمراً... (Esc للإغلاق)" />
-      <CommandList className="max-h-80">
-        <CommandEmpty>لا توجد نتائج مطابقة.</CommandEmpty>
+      <CommandInput
+        value={query}
+        onValueChange={setQuery}
+        placeholder="ابحث بذكاء: مشروع، خدمة، دورة، تطبيق…"
+      />
+      <CommandList className="max-h-[60vh]">
+        {searching ? (
+          hits.length ? (
+            <CommandGroup heading={`${hits.length} نتيجة`}>
+              {hits.map((h) => (
+                <CommandItem key={h.id} value={h.id} onSelect={() => openHit(h)} className="items-start">
+                  <span className="mt-0.5 shrink-0 rounded-md bg-[rgba(0,240,255,0.10)] px-1.5 py-0.5 text-[10px] text-cyber">
+                    {h.kind}
+                  </span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-sm text-main">{h.title}</span>
+                    {(h.subtitle || h.body) && (
+                      <span className="line-clamp-1 text-[11px] text-mute">{h.subtitle || h.body}</span>
+                    )}
+                  </span>
+                  {h.url && !h.route ? (
+                    <ExternalLink className="h-3.5 w-3.5 shrink-0 text-mute" />
+                  ) : (
+                    <ArrowLeft className="h-3.5 w-3.5 shrink-0 text-mute" />
+                  )}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ) : (
+            <div className="px-4 py-8 text-center text-sm text-mute">
+              لا توجد نتائج لـ «{query}». جرّب كلمة أخرى أو
+              <button className="mx-1 text-cyber underline" onClick={() => go({ name: "contact" })}>
+                تواصل معي
+              </button>
+            </div>
+          )
+        ) : (
+        <>
+        <CommandGroup heading="اقتراحات">
+          {SEARCH_SUGGESTIONS.map((s) => (
+            <CommandItem key={s} value={`sug-${s}`} onSelect={() => setQuery(s)}>
+              <Search className="h-4 w-4 text-mute" /> {s}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        <CommandSeparator />
         <CommandGroup heading="الصفحات">
           <CommandItem onSelect={() => go({ name: "home" })}>
             <Home className="h-4 w-4 text-cyber" /> الرئيسية
@@ -182,6 +251,8 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
             تبديل السمة ({theme === "dark" ? "الفاتح" : "الداكن"})
           </CommandItem>
         </CommandGroup>
+        </>
+        )}
       </CommandList>
     </CommandDialog>
   );
