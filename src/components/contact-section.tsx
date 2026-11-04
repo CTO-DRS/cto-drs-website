@@ -25,6 +25,8 @@ import {
 } from "@/lib/contact-options";
 import { SOCIAL_BY_ID } from "@/lib/social";
 import { STATIC_MODE } from "@/lib/static-mode";
+import { getSupabase, SUPABASE_ENABLED } from "@/lib/supabase";
+import { useAuth } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { useI18n, useContent, countryName } from "@/i18n";
 
@@ -62,6 +64,7 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
 
   const { t, lang } = useI18n();
   const c = t.contact;
+  const { session: authSession } = useAuth();
   const { CONTACT_PURPOSES } = useContent();
   const country = form.countryCode ? COUNTRY_BY_CODE[form.countryCode] : undefined;
   const purpose = form.purpose ? CONTACT_PURPOSES.find((p) => p.id === form.purpose) : undefined;
@@ -156,8 +159,26 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
     }
     setLoading(true);
     try {
-      /* النسخة الثابتة: لا حفظ في الخادم — ننتقل مباشرة لنجاح + واتساب */
-      if (!STATIC_MODE) {
+      /* Supabase مُعدّ: الحفظ في جدول contact_messages (يُسمح للزائر المجهول) */
+      const sb = SUPABASE_ENABLED ? getSupabase() : null;
+      if (sb) {
+        const details = [
+          country ? `${c.lineCountry}: ${countryName(lang, country)} (${country.dial})` : "",
+          form.phone ? `${c.linePhone}: ${country?.dial ?? ""}${sanitizePhone(form.phone)}` : "",
+        ].filter(Boolean);
+        const { error } = await sb.from("contact_messages").insert({
+          user_id: authSession?.user.id ?? null,
+          name: form.name.trim(),
+          email: form.email.trim(),
+          subject: purpose?.label ?? null,
+          message: [form.message.trim(), details.length ? `\n— ${details.join(" · ")}` : ""].join(""),
+        });
+        if (error) {
+          toast({ title: c.toastFailTitle, description: error.message || c.toastFailDesc });
+          return;
+        }
+      } else if (!STATIC_MODE) {
+        /* النسخة الثابتة بدون Supabase: لا حفظ في الخادم — ننتقل مباشرة لنجاح + واتساب */
         const res = await fetch("/api/contact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

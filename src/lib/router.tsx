@@ -36,6 +36,7 @@ export type RouteName =
   | "booking"
   | "login"
   | "register"
+  | "reset"
   | "account"
   | "dashboard"
   | "pricing"
@@ -75,6 +76,7 @@ const VALID: RouteName[] = [
   "booking",
   "login",
   "register",
+  "reset",
   "account",
   "dashboard",
   "pricing",
