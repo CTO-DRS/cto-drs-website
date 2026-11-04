@@ -24,14 +24,21 @@ import {
   LayoutDashboard,
   Download,
   ChevronDown,
+  LogIn,
+  LogOut,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSession } from "@/lib/auth";
+import { toast } from "@/hooks/use-toast";
 import { useAppRouter, routeHref, type AppRoute } from "@/lib/router";
 import { useAppStore, cartCount } from "@/lib/store";
 import { useI18n } from "@/i18n";
@@ -64,10 +71,17 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { route, navigate } = useAppRouter();
   const { resolvedTheme, setTheme } = useTheme();
-  const { user, cart } = useAppStore();
+  const { cart } = useAppStore();
+  const { user, signOut } = useSession();
   const count = cartCount(cart);
   const { t } = useI18n();
   const nt = t.nav;
+  const at = t.auth;
+  const doSignOut = async () => {
+    await signOut();
+    toast({ title: at.logoutTitle, description: at.logoutDesc });
+    navigate({ name: "home" });
+  };
   const label = (k: NavKey) => nt[k] as string;
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -230,16 +244,56 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
             )}
           </Button>
 
-          {/* account */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => go({ name: user ? "account" : "login" })}
-            className="hidden h-9 w-9 rounded-full text-sec hover:text-cyber sm:flex"
-            aria-label={user ? nt.account : nt.login}
-          >
-            <User className="h-4 w-4" aria-hidden="true" />
-          </Button>
+          {/* account menu: دخول/تسجيل عند الخروج — حسابي/الإدارة/خروج عند الدخول */}
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`hidden h-9 w-9 rounded-full sm:flex ${user ? "text-cyber" : "text-sec hover:text-cyber"}`}
+                aria-label={user ? `${at.accountMenu} — ${user.name}` : at.accountMenu}
+              >
+                <User className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="glass-strong border-border-strong min-w-52 rounded-2xl border p-2">
+              {user ? (
+                <>
+                  <DropdownMenuLabel className="px-3 py-2">
+                    <span className="block truncate text-[13px] font-bold text-main">{user.name}</span>
+                    <span dir="ltr" className="block truncate font-mono-cyber text-[11px] font-normal text-mute">{user.email}</span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => go({ name: "account" })} className="cursor-pointer gap-2.5 rounded-xl px-3 py-2.5 text-[13px] text-sec transition hover:bg-[rgba(0,240,255,0.08)] hover:text-cyber focus:bg-[rgba(0,240,255,0.08)] focus:text-cyber">
+                    <User className="h-4 w-4" aria-hidden="true" />
+                    {at.account}
+                  </DropdownMenuItem>
+                  {user.isAdmin && (
+                    <DropdownMenuItem onClick={() => go({ name: "dashboard" })} className="cursor-pointer gap-2.5 rounded-xl px-3 py-2.5 text-[13px] text-sec transition hover:bg-[rgba(0,240,255,0.08)] hover:text-cyber focus:bg-[rgba(0,240,255,0.08)] focus:text-cyber">
+                      <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+                      {at.admin}
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={doSignOut} className="cursor-pointer gap-2.5 rounded-xl px-3 py-2.5 text-[13px] text-[#ff2a6d] focus:bg-[rgba(255,42,109,0.08)] focus:text-[#ff2a6d]">
+                    <LogOut className="h-4 w-4" aria-hidden="true" />
+                    {at.logout}
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem onClick={() => go({ name: "login" })} className="cursor-pointer gap-2.5 rounded-xl px-3 py-2.5 text-[13px] text-sec transition hover:bg-[rgba(0,240,255,0.08)] hover:text-cyber focus:bg-[rgba(0,240,255,0.08)] focus:text-cyber">
+                    <LogIn className="h-4 w-4" aria-hidden="true" />
+                    {at.login}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => go({ name: "register" })} className="cursor-pointer gap-2.5 rounded-xl px-3 py-2.5 text-[13px] text-sec transition hover:bg-[rgba(0,240,255,0.08)] hover:text-cyber focus:bg-[rgba(0,240,255,0.08)] focus:text-cyber">
+                    <UserPlus className="h-4 w-4" aria-hidden="true" />
+                    {at.register}
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Button
             variant="ghost"
@@ -267,7 +321,7 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
             {nt.bookCta}
           </a>
 
-          {user?.role === "admin" && (
+          {user?.isAdmin && (
             <Button
               variant="ghost"
               size="icon"
@@ -356,18 +410,74 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
           </Button>
           <LanguageToggle className="border border-border-strong" />
         </div>
-        <a
-          href={routeHref({ name: user ? "account" : "login" })}
-          onClick={(e) => {
-            e.preventDefault();
-            go({ name: user ? "account" : "login" });
-            setMobileOpen(false);
-          }}
-          className="btn-gradient mt-2 flex h-10 items-center justify-center gap-2 rounded-full text-xs"
-        >
-          <User className="h-3.5 w-3.5" aria-hidden="true" />
-          {user ? nt.account : nt.login}
-        </a>
+        {user ? (
+          <div className="mt-2 flex flex-col gap-2">
+            <a
+              href={routeHref({ name: "account" })}
+              onClick={(e) => {
+                e.preventDefault();
+                go({ name: "account" });
+                setMobileOpen(false);
+              }}
+              className="btn-gradient flex h-10 items-center justify-center gap-2 rounded-full text-xs"
+            >
+              <User className="h-3.5 w-3.5" aria-hidden="true" />
+              {at.account}
+            </a>
+            {user.isAdmin && (
+              <a
+                href={routeHref({ name: "dashboard" })}
+                onClick={(e) => {
+                  e.preventDefault();
+                  go({ name: "dashboard" });
+                  setMobileOpen(false);
+                }}
+                className="btn-outline-cyber flex h-10 items-center justify-center gap-2 rounded-full text-xs"
+              >
+                <LayoutDashboard className="h-3.5 w-3.5" aria-hidden="true" />
+                {at.admin}
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(false);
+                void doSignOut();
+              }}
+              className="flex h-10 items-center justify-center gap-2 rounded-full text-xs font-bold text-[#ff2a6d] hover:bg-[rgba(255,42,109,0.08)]"
+            >
+              <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+              {at.logout}
+            </button>
+          </div>
+        ) : (
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <a
+              href={routeHref({ name: "login" })}
+              onClick={(e) => {
+                e.preventDefault();
+                go({ name: "login" });
+                setMobileOpen(false);
+              }}
+              className="btn-gradient flex h-10 items-center justify-center gap-2 rounded-full text-xs"
+            >
+              <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
+              {at.login}
+            </a>
+            <a
+              href={routeHref({ name: "register" })}
+              onClick={(e) => {
+                e.preventDefault();
+                go({ name: "register" });
+                setMobileOpen(false);
+              }}
+              className="btn-outline-cyber flex h-10 items-center justify-center gap-2 rounded-full text-xs"
+            >
+              <UserPlus className="h-3.5 w-3.5" aria-hidden="true" />
+              {at.register}
+            </a>
+          </div>
+        )}
       </div>
     </header>
   );

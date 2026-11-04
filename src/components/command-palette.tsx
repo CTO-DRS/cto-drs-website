@@ -49,12 +49,14 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAppRouter, type AppRoute } from "@/lib/router";
+import { useSession } from "@/lib/auth";
 import { useAppStore } from "@/lib/store";
 
 export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: boolean) => void }) {
   const { theme, setTheme } = useTheme();
   const { navigate } = useAppRouter();
-  const { user, cart } = useAppStore();
+  const { cart } = useAppStore();
+  const { user } = useSession();
   const { t, lang } = useI18n();
   const s = t.search;
 
@@ -215,7 +217,7 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
             {user ? <User className="h-4 w-4 text-[#a78bfa]" /> : <LogIn className="h-4 w-4 text-[#a78bfa]" />}
             {user ? s.a.account : s.a.login}
           </CommandItem>
-          {user?.role === "admin" && (
+          {user?.isAdmin && (
             <CommandItem onSelect={() => go({ name: "dashboard" })}>
               <LayoutDashboard className="h-4 w-4 text-[#a78bfa]" aria-hidden="true" /> {s.a.dashboard}
             </CommandItem>

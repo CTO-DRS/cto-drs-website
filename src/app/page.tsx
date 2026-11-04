@@ -23,6 +23,8 @@ import { SWRegister } from "@/components/sw-register";
 import { SeoContent } from "@/components/seo-content";
 import { AppRouterProvider, useAppRouter } from "@/lib/router";
 import { STATIC_MODE } from "@/lib/static-mode";
+import { AuthProvider } from "@/lib/auth";
+import { SUPABASE_ENABLED } from "@/lib/supabase";
 import { useI18n } from "@/i18n";
 import { useA11y } from "@/lib/a11y";
 
@@ -111,6 +113,12 @@ const DownloadsScreen = dynScreen(import("@/components/screens/downloads-screen"
 const VideosScreenX = dynScreen(import("@/components/screens/videos-screen"), "VideosScreen");
 const GalleryScreenX = dynScreen(import("@/components/screens/gallery-screen"), "GalleryScreen");
 const NotFoundScreen = dynScreen(import("@/components/screens/not-found-screen"), "NotFoundScreen");
+/* شاشات Supabase (حسابات حقيقية) — تُستخدم فقط عند ضبط متغيرات Supabase وقت البناء */
+const SbLoginScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-auth-screens"), "SbLoginScreen") : NotFoundScreen;
+const SbRegisterScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-auth-screens"), "SbRegisterScreen") : NotFoundScreen;
+const SbResetScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-auth-screens"), "SbResetScreen") : NotFoundScreen;
+const SbAccountScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-account-screen"), "SbAccountScreen") : NotFoundScreen;
+const SbAdminScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-admin-screen"), "SbAdminScreen") : NotFoundScreen;
 
 function HomeView() {
   return (
@@ -175,16 +183,19 @@ function ScreenSwitch() {
       screen = <BookingScreen />;
       break;
     case "login":
-      screen = <LoginScreen />;
+      screen = SUPABASE_ENABLED ? <SbLoginScreen /> : <LoginScreen />;
       break;
     case "register":
-      screen = <RegisterScreen />;
+      screen = SUPABASE_ENABLED ? <SbRegisterScreen /> : <RegisterScreen />;
+      break;
+    case "reset":
+      screen = SUPABASE_ENABLED ? <SbResetScreen /> : <NotFoundScreen />;
       break;
     case "account":
-      screen = <AccountScreen />;
+      screen = SUPABASE_ENABLED ? <SbAccountScreen /> : <AccountScreen />;
       break;
     case "dashboard":
-      screen = <DashboardScreenX />;
+      screen = SUPABASE_ENABLED ? <SbAdminScreen /> : <DashboardScreenX />;
       break;
     case "contact":
       screen = <ContactScreen />;
@@ -264,6 +275,7 @@ export default function Home() {
   return (
     <MotionConfig reducedMotion={reduceMotion ? "always" : "user"}>
     <AppRouterProvider>
+    <AuthProvider>
       {/* رابط تخطي التنقل — وصولية لوحة المفاتيح (بدون تغيير الهاش) */}
       <a
         href="#main-content"
@@ -297,6 +309,7 @@ export default function Home() {
         <ScrollToTop />
         <SWRegister />
       </div>
+    </AuthProvider>
     </AppRouterProvider>
     </MotionConfig>
   );
