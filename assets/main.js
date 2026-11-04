@@ -408,7 +408,7 @@
       }
 
       var body = name + " <" + email + ">\n\n" + message;
-      var mailto = "mailto:cto.drs@gmail.com" +
+      var mailto = "mailto:contact@cto-drs.com" +
         "?subject=" + encodeURIComponent(subject || "CTO.DRS") +
         "&body=" + encodeURIComponent(body);
       window.location.href = mailto;
