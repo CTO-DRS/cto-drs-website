@@ -260,6 +260,7 @@ export const SOCIALS_EN: Record<string, { label: string; handle?: string }> = {
   instagram: { label: "Instagram" },
   youtube: { label: "YouTube" },
   github: { label: "GitHub" },
+  linktree: { label: "Linktree" },
   website: { label: "Official website" },
 };
 

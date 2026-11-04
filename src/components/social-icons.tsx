@@ -35,3 +35,12 @@ export function TelegramIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/** شعار Linktree (النجمة) — SVG مضمنة لأن Lucide لا تحتوي عليه */
+export function LinktreeIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M13.511 5.853 17.5 1.751l2.316 2.372-4.185 3.99h5.886v3.293h-5.914l4.212 4.091-2.316 2.325-5.719-5.747-5.72 5.747-2.315-2.316 4.212-4.09H2.04V8.113h5.886L3.74 4.123l2.316-2.372 3.988 4.102V0h3.467zm-3.467 10.29h3.467V24h-3.467z" />
+    </svg>
+  );
+}

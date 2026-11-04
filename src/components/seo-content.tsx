@@ -139,7 +139,8 @@ export function SeoContent() {
                 <li key={s.id}>
                   <a
                     href={s.url}
-                    rel="noopener"
+                    target="_blank"
+                    rel="noopener noreferrer me"
                     className="inline-block rounded-full border border-[rgba(0,240,255,0.2)] px-3 py-1.5 text-xs font-bold text-sec transition-colors hover:text-cyber"
                   >
                     {s.label} — {s.handle}
