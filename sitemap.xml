@@ -1,49 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cto-drs.com/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/"/>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://cto-drs.com/about/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/about/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/about/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/about/"/>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cto-drs.com/services/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/services/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/services/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/services/"/>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cto-drs.com/projects/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/projects/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/projects/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/projects/"/>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cto-drs.com/downloads/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/downloads/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/downloads/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/downloads/"/>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cto-drs.com/courses/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/courses/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/courses/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/courses/"/>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://cto-drs.com/faq/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/faq/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/faq/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/faq/"/>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://cto-drs.com/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/contact/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/contact/"/>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cto-drs.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/"/>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cto-drs.com/en/about/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/about/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/about/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/about/"/>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cto-drs.com/en/services/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/services/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/services/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/services/"/>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cto-drs.com/en/projects/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/projects/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/projects/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/projects/"/>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cto-drs.com/en/downloads/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/downloads/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/downloads/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/downloads/"/>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cto-drs.com/en/courses/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/courses/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/courses/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/courses/"/>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://cto-drs.com/en/faq/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/faq/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/faq/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/faq/"/>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cto-drs.com/en/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://cto-drs.com/contact/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cto-drs.com/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cto-drs.com/contact/"/>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
