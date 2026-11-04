@@ -143,7 +143,7 @@ ${p.body}
 </main>
 <footer>
 <p>© ${new Date().getFullYear()} CTO-DRS — ${esc(PROFILE.roleEn)} · <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>
-<p>${SOCIALS.map((s) => `<a href="${s.url}" rel="me noopener">${esc(isAr ? s.label : EN.SOCIALS_EN[s.id]?.label ?? s.label)}</a>`).join("")}</p>
+<p>${SOCIALS.map((s) => `<a href="${s.url}" target="_blank" rel="me noopener noreferrer">${esc(isAr ? s.label : EN.SOCIALS_EN[s.id]?.label ?? s.label)}</a>`).join("")}</p>
 </footer>
 </body>
 </html>`;
@@ -308,7 +308,7 @@ arPages.push({
   priority: "0.8",
   body:
     `<p>البريد: <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>` +
-    SOCIALS.map((s) => `<div class="card"><strong>${esc(s.label)}</strong> — <a href="${s.url}" rel="me noopener">${esc(s.handle)}</a></div>`).join(""),
+    SOCIALS.map((s) => `<div class="card"><strong>${esc(s.label)}</strong> — <a href="${s.url}" target="_blank" rel="me noopener noreferrer">${esc(s.handle)}</a></div>`).join(""),
   jsonld: [
     {
       "@type": "ContactPage",
@@ -524,7 +524,7 @@ enPages.push({
     `<p>Email: <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>` +
     SOCIALS.map((s) => {
       const e = EN.SOCIALS_EN[s.id];
-      return `<div class="card"><strong>${esc(e?.label ?? s.label)}</strong> — <a href="${s.url}" rel="me noopener">${esc(e?.handle ?? s.handle)}</a></div>`;
+      return `<div class="card"><strong>${esc(e?.label ?? s.label)}</strong> — <a href="${s.url}" target="_blank" rel="me noopener noreferrer">${esc(e?.handle ?? s.handle)}</a></div>`;
     }).join(""),
   jsonld: [
     {

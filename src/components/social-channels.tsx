@@ -3,7 +3,7 @@
 import { Globe, Github, Youtube, Instagram, ArrowUpLeft } from "lucide-react";
 import { SOCIAL_ROW_IDS, type SocialLink } from "@/lib/social";
 import { useI18n, useContent } from "@/i18n";
-import { TikTokIcon, XIcon, WhatsAppIcon, TelegramIcon } from "@/components/social-icons";
+import { TikTokIcon, XIcon, WhatsAppIcon, TelegramIcon, LinktreeIcon } from "@/components/social-icons";
 import { Reveal } from "@/components/reveal";
 
 /* خريطة الأيقونات: Lucide للمعروف + SVG مخصصة للباقي */
@@ -15,6 +15,7 @@ export const SOCIAL_ICONS: Record<string, (p: { className?: string }) => React.R
   instagram: Instagram,
   youtube: Youtube,
   github: Github,
+  linktree: LinktreeIcon,
   website: Globe,
 };
 
@@ -51,7 +52,7 @@ export function SocialRow({
           <a
             href={s.url}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer me"
             aria-label={`${s.label} — ${s.handle}`}
             title={`${s.label} • ${s.handle}`}
             className={`group flex ${box} items-center justify-center rounded-full border border-border-soft bg-elev-2/60 text-sec transition-all duration-300 hover:-translate-y-0.5 hover:text-white hover:shadow-lg`}
@@ -93,7 +94,7 @@ export function SocialChannels() {
             <a
               href={s.url}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener noreferrer me"
               aria-label={`${s.label} — ${s.handle}`}
               className="card-glow group flex h-full items-center gap-3 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
               onMouseEnter={(e) => {

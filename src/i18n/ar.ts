@@ -208,6 +208,7 @@ export const ar = {
   socials: {
     channelsAria: "قنوات التواصل",
     followPlatforms: "تابعني عبر المنصات",
+    linktree: "لينك تري",
   },
 
   contact: {

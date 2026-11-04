@@ -170,6 +170,7 @@ const JSON_LD = {
         "https://www.instagram.com/cto.drs",
         "https://www.tiktok.com/@cto.drs",
         "https://youtube.com/@cto-drs",
+        "https://linktr.ee/cto.drs",
       ],
       mainEntityOfPage: { "@id": `${SITE}/#profilepage` },
     },
