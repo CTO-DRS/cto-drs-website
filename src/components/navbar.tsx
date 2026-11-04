@@ -101,6 +101,17 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
           </span>
         </a>
 
+        {/* smart search (mobile + tablet) */}
+        <button
+          type="button"
+          onClick={onOpenSearch}
+          className="mx-1 flex h-9 min-w-0 flex-1 items-center gap-2 rounded-full border border-border-strong bg-elev-2/60 px-3 text-xs text-mute transition hover:border-[rgba(0,240,255,0.3)] hover:text-cyber lg:hidden"
+          aria-label="البحث الذكي"
+        >
+          <Search className="h-3.5 w-3.5 shrink-0 text-cyber" />
+          <span className="truncate">ابحث بذكاء…</span>
+        </button>
+
         {/* desktop links */}
         <ul className="hidden items-center gap-0.5 lg:flex">
           {LINKS.map((l) => (
@@ -157,11 +168,12 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
             variant="ghost"
             size="sm"
             onClick={onOpenSearch}
-            className="hidden h-9 items-center gap-2 rounded-full border border-border-strong bg-elev-2/60 px-3 text-xs text-mute transition hover:border-[rgba(0,240,255,0.3)] hover:text-cyber md:flex"
-            aria-label="بحث سريع"
+            className="hidden h-9 items-center gap-2 rounded-full border border-border-strong bg-elev-2/60 px-3 text-xs text-mute transition hover:border-[rgba(0,240,255,0.3)] hover:text-cyber lg:flex"
+            aria-label="البحث الذكي"
           >
             <Search className="h-3.5 w-3.5" />
-            <span className="font-mono-cyber">Ctrl K</span>
+            <span>بحث ذكي</span>
+            <span className="font-mono-cyber text-[10px] opacity-70">Ctrl K</span>
           </Button>
 
           {/* cart */}
