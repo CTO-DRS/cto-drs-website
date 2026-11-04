@@ -15,9 +15,10 @@ GitHub: https://github.com/CTO-DRS
 - [مركز التحميل | Downloads](https://cto-drs.com/downloads/): تنزيل مباشر لكل التطبيقات من GitHub Releases
 - [الأسئلة الشائعة | FAQ](https://cto-drs.com/faq/): مدة التنفيذ، الضمان، الدفعات، الصيانة
 - [تواصل معي | Contact](https://cto-drs.com/contact/): نموذج تواصل + واتساب + تيليجرام
-- [المتجر | Store](https://cto-drs.com/#/store): منتجات رقمية
-- [المدونة | Blog](https://cto-drs.com/#/blog): مقالات تقنية
 - [الدورات | Courses](https://cto-drs.com/courses/): دورات برمجة وأمن سيبراني
+- [من أنا | About](https://cto-drs.com/about/): الملف المهني والمهارات
+- [المشاريع | Projects](https://cto-drs.com/projects/): مشاريع مفتوحة المصدر على GitHub
+- [English version](https://cto-drs.com/en/): English pages (/en/about/, /en/services/, /en/projects/, /en/downloads/, /en/courses/, /en/faq/, /en/contact/)
 
 ## التطبيقات مفتوحة المصدر | Open-Source Apps (تنزيل مباشر)
 

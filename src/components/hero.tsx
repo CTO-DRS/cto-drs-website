@@ -2,17 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { Rocket, FolderGit2, UserRound, ChevronDown } from "lucide-react";
-import { PROFILE, HERO_STATS, TYPING_ROLES } from "@/lib/data";
+import { useI18n, useContent } from "@/i18n";
+import { useA11y } from "@/lib/a11y";
 import { Counter } from "@/components/counter";
 import { Reveal } from "@/components/reveal";
 import { SocialRow } from "@/components/social-channels";
 
-function useTypingEffect(words: string[], typeMs = 70, deleteMs = 32, holdMs = 1900) {
+function useTypingEffect(words: string[], paused = false, typeMs = 70, deleteMs = 32, holdMs = 1900) {
   const [text, setText] = useState("");
   const [wordIdx, setWordIdx] = useState(0);
   const [deleting, setDeleting] = useState(false);
 
+  /* عند تبديل اللغة: ابدأ من جديد */
   useEffect(() => {
+    queueMicrotask(() => {
+      setText("");
+      setDeleting(false);
+      setWordIdx(0);
+    });
+  }, [words]);
+
+  useEffect(() => {
+    if (paused) return;
     const word = words[wordIdx % words.length];
     let timeout: ReturnType<typeof setTimeout>;
 
@@ -30,13 +41,17 @@ function useTypingEffect(words: string[], typeMs = 70, deleteMs = 32, holdMs = 1
       );
     }
     return () => clearTimeout(timeout);
-  }, [text, deleting, wordIdx, words, typeMs, deleteMs, holdMs]);
+  }, [text, deleting, wordIdx, words, paused, typeMs, deleteMs, holdMs]);
 
-  return text;
+  // تقليل الحركة: نص ثابت بلا كتابة متحركة
+  return paused ? words[0] : text;
 }
 
 export function Hero() {
-  const typed = useTypingEffect(TYPING_ROLES);
+  const { t } = useI18n();
+  const { PROFILE, HERO_STATS, TYPING_ROLES } = useContent();
+  const { reduceMotion } = useA11y();
+  const typed = useTypingEffect(TYPING_ROLES, reduceMotion);
 
   return (
     <section
@@ -65,7 +80,8 @@ export function Hero() {
           <p
             dir="auto"
             className="typing-caret font-mono-cyber mt-6 text-lg font-semibold tracking-wide text-cyber sm:text-2xl"
-            aria-label="المسمى المهني"
+            aria-label={t.hero.roleAria}
+            aria-live="off"
           >
             {typed}
           </p>
@@ -84,19 +100,19 @@ export function Hero() {
         <Reveal delay={500}>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <a href="#contact" className="btn-gradient flex h-12 items-center gap-2 rounded-full px-7 text-sm">
-              <Rocket className="h-4 w-4" />
-              ابدأ مشروعك
+              <Rocket className="h-4 w-4" aria-hidden="true" />
+              {t.hero.startProject}
             </a>
             <a href="#projects" className="btn-outline-cyber flex h-12 items-center gap-2 rounded-full px-7 text-sm font-bold">
-              <FolderGit2 className="h-4 w-4" />
-              استعرض الأعمال
+              <FolderGit2 className="h-4 w-4" aria-hidden="true" />
+              {t.hero.viewWork}
             </a>
             <a
               href="#about"
               className="flex h-12 items-center gap-2 rounded-full px-6 text-sm font-semibold text-sec transition hover:text-cyber"
             >
-              <UserRound className="h-4 w-4" />
-              تعرف علي
+              <UserRound className="h-4 w-4" aria-hidden="true" />
+              {t.hero.aboutMe}
             </a>
           </div>
         </Reveal>
@@ -113,14 +129,14 @@ export function Hero() {
             {HERO_STATS.map((s) => (
               <div
                 key={s.label}
-                className="glass rounded-2xl px-3 py-5 transition hover:border-[rgba(0,240,255,0.3)]"
+                className="glass flex flex-col rounded-2xl px-3 py-5 transition hover:border-[rgba(0,240,255,0.3)]"
               >
-                <dd className="font-heading-cyber text-2xl font-extrabold sm:text-3xl">
-                  <Counter value={s.value} suffix={s.suffix} className="text-gradient-static" />
-                </dd>
-                <dt className="font-mono-cyber mt-1 text-[10px] tracking-[0.25em] text-mute">
+                <dt className="font-mono-cyber order-2 mt-1 text-[10px] tracking-[0.25em] text-mute">
                   {s.label}
                 </dt>
+                <dd className="font-heading-cyber order-1 text-2xl font-extrabold sm:text-3xl">
+                  <Counter value={s.value} suffix={s.suffix} className="text-gradient-static" />
+                </dd>
               </div>
             ))}
           </dl>
@@ -130,10 +146,10 @@ export function Hero() {
       <a
         href="#dashboard"
         className="absolute bottom-7 z-10 flex flex-col items-center gap-1.5 text-[10px] tracking-[0.3em] text-mute transition hover:text-cyber"
-        aria-label="مرر للأسفل"
+        aria-label={t.hero.scrollAria}
       >
         SCROLL TO EXPLORE
-        <ChevronDown className="animate-scroll-hint h-4 w-4" />
+        <ChevronDown className="animate-scroll-hint h-4 w-4" aria-hidden="true" />
       </a>
     </section>
   );

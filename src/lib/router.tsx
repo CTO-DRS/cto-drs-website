@@ -9,6 +9,7 @@ import {
   useRef,
   useSyncExternalStore,
 } from "react";
+import { useI18n } from "@/i18n";
 
 /* ─────────────────────────────────────────────
    Hash based SPA router — works on the single
@@ -130,40 +131,7 @@ const Ctx = createContext<RouterCtx>({
   back: () => {},
 });
 
-/* عناوين المستند لكل مسار — تحسين SEO وإمكانية الوصول */
-const ROUTE_TITLES: Partial<Record<RouteName, string>> = {
-  home: "الرئيسية",
-  about: "نبذة عني",
-  services: "الخدمات",
-  projects: "المشاريع",
-  courses: "الدورات",
-  blog: "المدونة",
-  store: "المتجر الرسمي",
-  cart: "سلة المشتريات",
-  checkout: "إتمام الشراء",
-  team: "الفريق",
-  testimonials: "آراء العملاء",
-  faq: "الأسئلة الشائعة",
-  contact: "تواصل معي",
-  booking: "حجز استشارة",
-  login: "تسجيل الدخول",
-  register: "إنشاء حساب",
-  account: "حسابي",
-  dashboard: "لوحة التحكم",
-  pricing: "الأسعار",
-  tools: "الأدوات",
-  downloads: "مركز التحميل",
-  videos: "الفيديوهات",
-  gallery: "معرض الصور",
-  events: "الفعاليات",
-  privacy: "سياسة الخصوصية",
-  terms: "شروط الاستخدام",
-  wishlist: "المفضلة",
-  orders: "الطلبات",
-  notifications: "الإشعارات",
-  "not-found": "الصفحة غير موجودة",
-};
-const BASE_TITLE = "CTO-DRS | هندسة البرمجيات والأمن السيبراني والابتكار";
+/* عناوين المستند لكل مسار — من قاموس اللغة (src/i18n) */
 
 export function AppRouterProvider({ children }: { children: React.ReactNode }) {
   const hash = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
@@ -181,10 +149,19 @@ export function AppRouterProvider({ children }: { children: React.ReactNode }) {
   }, [hash]);
 
   // تحديث عنوان المستند تلقائياً حسب الشاشة الحالية
+  const { t } = useI18n();
   useEffect(() => {
-    const section = ROUTE_TITLES[route.name];
-    document.title = route.name === "home" || !section ? BASE_TITLE : `${section} — CTO-DRS`;
-  }, [route.name]);
+    const section = t.routes[route.name];
+    const desired = route.name === "home" || !section ? t.meta.baseTitle : `${section} — CTO-DRS`;
+    const apply = () => {
+      if (document.title !== desired) document.title = desired;
+    };
+    apply();
+    // بيانات Next الوصفية قد تُحقن بعد التركيب وتعيد العنوان الافتراضي — نعيد تطبيق عنواننا
+    const mo = new MutationObserver(apply);
+    mo.observe(document.head, { subtree: true, childList: true, characterData: true });
+    return () => mo.disconnect();
+  }, [route.name, t]);
 
   const navigate = useCallback((r: AppRoute) => {
     const current = parseHashFrom(window.location.hash);
