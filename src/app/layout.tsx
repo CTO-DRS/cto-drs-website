@@ -165,7 +165,7 @@ const JSON_LD = {
       ],
       sameAs: [
         "https://github.com/CTO-DRS",
-        "https://t.me/CTO_DRS",
+        "https://t.me/ctodrs",
         "https://x.com/cto_drs",
         "https://www.instagram.com/cto.drs",
         "https://www.tiktok.com/@cto.drs",

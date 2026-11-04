@@ -303,7 +303,7 @@ arPages.push({
   slug: "contact",
   hash: "contact",
   title: "تواصل مع CTO-DRS | واتساب، تيليجرام، البريد",
-  description: `تواصل مع CTO-DRS لطلب مشروع أو استشارة تقنية: واتساب للأعمال، تيليجرام t.me/CTO_DRS، البريد ${BRAND.email}.`,
+  description: `تواصل مع CTO-DRS لطلب مشروع أو استشارة تقنية: واتساب للأعمال، تيليجرام t.me/ctodrs، البريد ${BRAND.email}.`,
   h1: "تواصل معي",
   priority: "0.8",
   body:
@@ -517,7 +517,7 @@ enPages.push({
   slug: "contact",
   hash: "contact",
   title: "Contact CTO-DRS | WhatsApp, Telegram, Email",
-  description: `Contact CTO-DRS for a project or technical consultation: WhatsApp Business, Telegram t.me/CTO_DRS, email ${BRAND.email}.`,
+  description: `Contact CTO-DRS for a project or technical consultation: WhatsApp Business, Telegram t.me/ctodrs, email ${BRAND.email}.`,
   h1: "Get in Touch",
   priority: "0.8",
   body:
