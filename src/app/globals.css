@@ -66,7 +66,9 @@
 :root {
   --radius: 0.75rem;
 
-  --cyber: #00f0ff;
+  /* الوضع الفاتح: درجة سماوية أغمق لتحقيق تباين WCAG AA للنصوص (5.4:1 على الأبيض) */
+  --cyber: #0e7490;
+  --gold-text: #a16207;
   --cyber-pink: #ff2a6d;
   --cyber-purple: #7c3aed;
   --cyber-gold: #ffd700;
@@ -85,7 +87,7 @@
   --glass-border-hi: rgba(2, 6, 23, 0.16);
   --text-main: #0f172a;
   --text-sec: #475569;
-  --text-mute: #64748b;
+  --text-mute: #526072; /* WCAG AA: ≥4.5:1 على #f1f5f9 و #ffffff */
   --border-soft: rgba(2, 6, 23, 0.07);
   --border-strong: rgba(2, 6, 23, 0.14);
   --shadow-sm: 0 2px 8px rgba(2, 6, 23, 0.06);
@@ -130,6 +132,8 @@
 
 .dark {
   /* ── dark: near-black cyber ── */
+  --cyber: #00f0ff;
+  --gold-text: #ffd700;
   --bg-app: #030303;
   --bg-app-2: #0a0b12;
   --bg-elev: #0e1018;
@@ -140,7 +144,7 @@
   --glass-border-hi: rgba(255, 255, 255, 0.14);
   --text-main: #f4f5f8;
   --text-sec: #9aa0b4;
-  --text-mute: #5b6072;
+  --text-mute: #8b91a7; /* WCAG AA: كان #5b6072 (≈3.2:1) → ≈6:1 على الخلفيات الداكنة */
   --border-soft: rgba(255, 255, 255, 0.06);
   --border-strong: rgba(255, 255, 255, 0.12);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -464,14 +468,79 @@
   .animate-spin-slow,
   .animate-pulse-dot,
   .animate-scroll-hint,
-  .animate-border-run {
+  .animate-border-run,
+  .animate-ping,
+  .animate-pulse {
     animation: none !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
+/* نفس القواعد عند تفعيل «تقليل الحركة» يدوياً من أدوات الوصولية */
+html.reduce-motion,
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+html.reduce-motion .animate-float,
+html.reduce-motion .animate-spin-slow,
+html.reduce-motion .animate-pulse-dot,
+html.reduce-motion .animate-scroll-hint,
+html.reduce-motion .animate-border-run,
+html.reduce-motion .animate-ping,
+html.reduce-motion .animate-pulse,
+html.reduce-motion .typing-caret::after {
+  animation: none !important;
+}
+html.reduce-motion .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 /* ═══════════════ FOCUS VISIBLE (وصولية لوحة المفاتيح) ═══════════════ */
-:where(a, button, [role="button"], input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
-  outline: 2px solid #00f0ff;
+:where(a, button, [role="button"], [role="option"], [role="menuitem"], [role="tab"], summary, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 3px solid var(--focus-ring, #00f0ff);
   outline-offset: 2px;
   border-radius: 4px;
+}
+:root {
+  --focus-ring: #0e7490; /* تباين ≥3:1 على الخلفيات الفاتحة */
+}
+.dark {
+  --focus-ring: #00f0ff;
+}
+/* حقول الإدخال تستخدم outline-none — نعيد مؤشر تركيز واضح للوحة المفاتيح */
+:where(input, select, textarea):focus-visible {
+  outline: 2px solid var(--focus-ring, #00f0ff) !important;
+  outline-offset: 1px;
+}
+#main-content:focus {
+  outline: none;
+}
+
+/* ═══════════════ تباين الألوان في الوضع الفاتح (WCAG AA) ═══════════════ */
+/* ألوان النيون مصممة للخلفية الداكنة؛ على الأبيض نستخدم درجات أغمق للنص */
+html:not(.dark) .text-cyber,
+html:not(.dark) .text-\[\#00f0ff\] { color: #0e7490; }
+html:not(.dark) .text-\[\#00ff88\] { color: #047857; }
+html:not(.dark) .text-\[\#ffd700\] { color: #a16207; }
+html:not(.dark) .text-\[\#ff9900\] { color: #c2410c; }
+html:not(.dark) .text-\[\#a78bfa\] { color: #6d28d9; }
+html:not(.dark) .text-\[\#ff2a6d\] { color: #be123c; }
+html:not(.dark) .text-\[\#00aaff\] { color: #0369a1; }
+html:not(.dark) [class*="text-cyber/"] { color: var(--cyber); }
+
+/* ═══════════════ اتجاه الأيقونات في الواجهة الإنجليزية (LTR) ═══════════════ */
+/* الأسهم مصممة للعربية (للأمام = يسار)؛ نعكسها أفقياً عند LTR */
+html[dir="ltr"] .lucide-arrow-left,
+html[dir="ltr"] .lucide-chevron-left,
+html[dir="ltr"] .lucide-arrow-up-left {
+  transform: scaleX(-1);
 }

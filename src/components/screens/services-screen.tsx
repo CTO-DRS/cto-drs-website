@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bug,
   Check,
@@ -31,8 +31,7 @@ import { useAppRouter } from "@/lib/router";
 import { useApi } from "@/lib/use-api";
 import { toast } from "@/hooks/use-toast";
 import type { Service } from "@/lib/types";
-
-const fmtPrice = (n: number) => n.toLocaleString("en-US") + " ر.س";
+import { useI18n, localizeService } from "@/i18n";
 
 const ICONS: Record<string, LucideIcon> = {
   Globe,
@@ -64,9 +63,18 @@ const TILE_TONES = [
 ];
 
 export function ServicesScreen() {
-  const { data: services, loading, error, reload } = useApi<Service[]>("/api/services");
+  const { data: rawServices, loading, error, reload } = useApi<Service[]>("/api/services");
   const { navigate } = useAppRouter();
-  const [activeCat, setActiveCat] = useState("الكل");
+  const { t, lang } = useI18n();
+  const sv = t.services;
+  const fmtPrice = (n: number) => n.toLocaleString("en-US") + t.meta.currency;
+  const services = useMemo(() => rawServices?.map((s) => localizeService(lang, s)), [rawServices, lang]);
+  const ALL = "__all__";
+  const [activeCat, setActiveCat] = useState(ALL);
+  // عند تبديل اللغة تتغير أسماء التصنيفات — نعيد التصفية للكل
+  useEffect(() => {
+    queueMicrotask(() => setActiveCat(ALL));
+  }, [lang]);
 
   const categories = useMemo(() => {
     if (!services) return [] as string[];
@@ -76,7 +84,7 @@ export function ServicesScreen() {
   const filtered = useMemo(() => {
     if (!services) return [] as Service[];
     const list =
-      activeCat === "الكل" ? services : services.filter((s) => s.category === activeCat);
+      activeCat === ALL ? services : services.filter((s) => s.category === activeCat);
     return [...list].sort((a, b) => Number(b.featured) - Number(a.featured));
   }, [services, activeCat]);
 
@@ -87,8 +95,8 @@ export function ServicesScreen() {
       /* storage unavailable */
     }
     toast({
-      title: "تم اختيار الخدمة",
-      description: `أكمل بيانات الحجز لخدمة: ${service.title}`,
+      title: sv.chosenTitle,
+      description: sv.chosenDesc(service.title),
     });
     navigate({ name: "booking" });
   };
@@ -97,32 +105,34 @@ export function ServicesScreen() {
     <>
       <PageHero
         badge="SERVICES.MODULE"
-        title="الخدمات"
-        highlight="المهنية"
-        subtitle="حلول تقنية متكاملة من الاستشارة حتى الإطلاق — اختر الخدمة وابدأ رحلتك الرقمية بأمان"
+        title={sv.title}
+        highlight={sv.highlight}
+        subtitle={sv.subtitle}
       />
 
       <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">
         {/* ── Category filter pills ── */}
-        <div className="mb-8 flex flex-wrap items-center gap-2" role="group" aria-label="تصفية الخدمات حسب التصنيف">
-          {["الكل", ...categories].map((cat) =>
+        <div className="mb-8 flex flex-wrap items-center gap-2" role="group" aria-label={sv.filterAria}>
+          {[ALL, ...categories].map((cat) =>
             activeCat === cat ? (
               <button
                 key={cat}
+                type="button"
                 onClick={() => setActiveCat(cat)}
                 className="btn-gradient rounded-full px-4 py-1.5 text-xs font-bold"
                 aria-pressed="true"
               >
-                {cat}
+                {cat === ALL ? t.common.all : cat}
               </button>
             ) : (
               <button
                 key={cat}
+                type="button"
                 onClick={() => setActiveCat(cat)}
                 className="tag-pill cursor-pointer transition hover:border-[rgba(0,240,255,0.6)] hover:bg-[rgba(0,240,255,0.1)]"
                 aria-pressed="false"
               >
-                {cat}
+                {cat === ALL ? t.common.all : cat}
               </button>
             )
           )}
@@ -134,14 +144,15 @@ export function ServicesScreen() {
         {!loading && !error && filtered.length === 0 && (
           <EmptyState
             icon={Wrench}
-            title="لا توجد خدمات في هذا التصنيف"
-            description="جرّب اختيار تصنيف آخر أو عُد لاحقاً — نضيف خدمات جديدة باستمرار."
+            title={sv.emptyTitle}
+            description={sv.emptyDesc}
             action={
               <button
-                onClick={() => setActiveCat("الكل")}
+                type="button"
+                onClick={() => setActiveCat(ALL)}
                 className="btn-gradient rounded-full px-5 py-2 text-xs font-bold"
               >
-                عرض كل الخدمات
+                {sv.showAll}
               </button>
             }
           />
@@ -161,9 +172,9 @@ export function ServicesScreen() {
                     }`}
                   >
                     {service.featured && (
-                      <Badge className="absolute left-4 top-4 gap-1 border-[rgba(255,215,0,0.4)] bg-[rgba(255,215,0,0.12)] text-[10px] font-bold text-[#ffd700]">
-                        <Star className="h-3 w-3 fill-[#ffd700]" />
-                        مميزة
+                      <Badge className="absolute end-4 -top-2.5 z-10 gap-1 border-[rgba(255,215,0,0.4)] bg-[rgba(255,215,0,0.12)] text-[10px] font-bold text-[#ffd700]">
+                        <Star className="h-3 w-3 fill-[#ffd700]" aria-hidden="true" />
+                        {t.common.featuredF}
                       </Badge>
                     )}
 
@@ -199,17 +210,18 @@ export function ServicesScreen() {
                         {service.duration}
                       </span>
                       <span className="text-xs text-sec">
-                        تبدأ من{" "}
+                        {sv.startsFrom}{" "}
                         <span className="font-bold text-cyber">{fmtPrice(service.price)}</span>
                       </span>
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => orderService(service)}
                       className="btn-gradient h-10 w-full rounded-full px-5 text-xs"
-                      aria-label={`اطلب خدمة ${service.title}`}
+                      aria-label={sv.orderAria(service.title)}
                     >
-                      اطلب الخدمة
+                      {sv.order}
                     </button>
                   </article>
                 </Reveal>

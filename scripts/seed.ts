@@ -857,7 +857,7 @@ async function main() {
   await prisma.user.create({
     data: {
       name: "مدير النظام",
-      email: "admin@ctodrs.com",
+      email: "contact@cto-drs.com",
       password: hashPassword("admin123"),
       role: "admin",
     },

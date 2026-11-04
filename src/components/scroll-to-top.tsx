@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
+import { useI18n } from "@/i18n";
 
 /**
  * زر العودة إلى الأعلى — يظهر بعد تمرير 600px
  * مثبت أسفل اليمين (مقابل أداة الدردشة) بأسلوب زجاجي سيبراني
  */
 export function ScrollToTop() {
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export function ScrollToTop() {
       {visible && (
         <motion.button
           type="button"
-          aria-label="العودة إلى الأعلى"
+          aria-label={t.common.backToTop}
           initial={{ opacity: 0, scale: 0.6, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.6, y: 16 }}

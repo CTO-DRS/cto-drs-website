@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { WifiOff } from "lucide-react";
+import { useI18n } from "@/i18n";
 
 /**
  * مؤشر حالة الاتصال — شريط تنبيه يظهر عند فقدان الشبكة
  * (النسخة الثابتة تعمل دون اتصال بفضل التخزين المؤقت).
  */
 export function OfflineIndicator() {
+  const { t } = useI18n();
   const [offline, setOffline] = useState(false);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export function OfflineIndicator() {
     >
       <div className="glass-strong flex items-center gap-2 rounded-full border border-[rgba(255,180,0,0.35)] px-5 py-2.5 text-xs font-bold text-main shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
         <WifiOff className="h-4 w-4 text-[#ffb400]" aria-hidden="true" />
-        لا يوجد اتصال بالإنترنت — يتم العرض من النسخة المخزنة
+        {t.common.offline}
       </div>
     </div>
   );

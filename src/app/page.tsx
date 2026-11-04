@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { Terminal } from "lucide-react";
 import { ParticleBackground } from "@/components/particle-background";
 import { Navbar } from "@/components/navbar";
@@ -23,6 +23,8 @@ import { SWRegister } from "@/components/sw-register";
 import { SeoContent } from "@/components/seo-content";
 import { AppRouterProvider, useAppRouter } from "@/lib/router";
 import { STATIC_MODE } from "@/lib/static-mode";
+import { useI18n } from "@/i18n";
+import { useA11y } from "@/lib/a11y";
 
 /* ─────────────────────────────────────────────
    تحميل كسول — الأقسام أسفل الطية والشاشات الأخرى
@@ -30,8 +32,9 @@ import { STATIC_MODE } from "@/lib/static-mode";
    ───────────────────────────────────────────── */
 
 function ScreenLoader() {
+  const { t } = useI18n();
   return (
-    <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-live="polite">
+    <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-live="polite" aria-label={t.common.loadingAria}>
       <div className="flex flex-col items-center gap-3">
         <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00f0ff] via-[#7c3aed] to-[#ff2a6d] shadow-[0_0_36px_rgba(0,240,255,0.4)]">
           <Terminal className="h-6 w-6 text-[#030303]" strokeWidth={2.5} />
@@ -246,6 +249,8 @@ function ScreenSwitch() {
 
 export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const { t } = useI18n();
+  const { reduceMotion } = useA11y();
 
   useEffect(() => {
     console.log(
@@ -257,6 +262,7 @@ export default function Home() {
   }, []);
 
   return (
+    <MotionConfig reducedMotion={reduceMotion ? "always" : "user"}>
     <AppRouterProvider>
       {/* رابط تخطي التنقل — وصولية لوحة المفاتيح (بدون تغيير الهاش) */}
       <a
@@ -267,13 +273,13 @@ export default function Home() {
           main?.setAttribute("tabindex", "-1");
           main?.focus({ preventScroll: false });
         }}
-        className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-[#00f0ff] focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-[#030303] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#ff2a6d]"
+        className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-[#00f0ff] focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-[#030303] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#ff2a6d]"
       >
-        تخطي إلى المحتوى الرئيسي
+        {t.common.skipToContent}
       </a>
       <ScrollProgress />
       <div className="relative flex min-h-screen flex-col">
-        <ParticleBackground />
+        {!reduceMotion && <ParticleBackground />}
         <Navbar onOpenSearch={() => setSearchOpen(true)} />
         <CommandPalette open={searchOpen} setOpen={setSearchOpen} />
 
@@ -292,5 +298,6 @@ export default function Home() {
         <SWRegister />
       </div>
     </AppRouterProvider>
+    </MotionConfig>
   );
 }

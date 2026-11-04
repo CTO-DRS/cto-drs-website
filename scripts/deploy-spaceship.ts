@@ -28,7 +28,7 @@ const APP_NAME_HINTS = ["cto-drs-website", "cto-drs", "website"];
 const REQUIRED_ENV: Record<string, string> = {
   NODE_ENV: "production",
   DATABASE_URL: "file:/app/db/custom.db",
-  ADMIN_EMAIL: "admin@ctodrs.com",
+  ADMIN_EMAIL: "contact@cto-drs.com",
 };
 
 interface HyperliftApp {
