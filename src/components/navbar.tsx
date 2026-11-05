@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
-import { useAppRouter, routeHref, type AppRoute } from "@/lib/router";
+import { useAppRouter, routeHref, ACADEMY_ROUTE, type AppRoute } from "@/lib/router";
 import { useAppStore, cartCount } from "@/lib/store";
 import { useI18n } from "@/i18n";
 import type { Dict } from "@/i18n/ar";
@@ -53,7 +53,7 @@ const LINKS: { route: AppRoute; label: NavKey; icon: typeof Home }[] = [
   { route: { name: "home" }, label: "home", icon: Home },
   { route: { name: "services" }, label: "services", icon: Wrench },
   { route: { name: "projects" }, label: "projects", icon: Package },
-  { route: { name: "courses" }, label: "courses", icon: GraduationCap },
+  { route: ACADEMY_ROUTE, label: "academy", icon: GraduationCap },
   { route: { name: "store" }, label: "store", icon: Store },
   { route: { name: "blog" }, label: "blog", icon: BookOpen },
 ];
@@ -123,7 +123,8 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
   }, []);
 
   const go = (r: AppRoute) => navigate(r);
-  const isActive = (r: AppRoute) => route.name === r.name;
+  const isActive = (r: AppRoute) => route.name === r.name && (route.slug ?? "") === (r.slug ?? "");
+  const linkKey = (r: AppRoute) => `${r.name}-${r.slug ?? ""}`;
 
   return (
     <header className="fixed inset-x-0 top-4 z-[100] flex justify-center px-3 sm:top-5">
@@ -169,7 +170,7 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
         {/* desktop links */}
         <ul className="hidden items-center gap-0.5 lg:flex">
           {LINKS.map((l) => (
-            <li key={l.route.name}>
+            <li key={linkKey(l.route)}>
               <a
                 href={routeHref(l.route)}
                 onClick={(e) => {
@@ -192,10 +193,11 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
               href={ACADEMY_URL}
               target="_blank"
               rel="noopener"
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-2 text-[13px] xl:px-3 font-medium text-sec transition-all duration-300 hover:bg-[rgba(0,240,255,0.06)] hover:text-main"
+              title={t.academy.enter}
+              className="mx-0.5 flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[rgba(0,240,255,0.35)] bg-[rgba(0,240,255,0.06)] px-2.5 py-1.5 text-[12px] font-bold text-cyber transition-all duration-300 hover:bg-[rgba(0,240,255,0.14)] hover:shadow-[0_0_14px_rgba(0,240,255,0.25)]"
             >
               <School className="h-3.5 w-3.5" aria-hidden="true" />
-              {nt.academy}
+              <span className="sr-only xl:not-sr-only">{t.academy.enter}</span>
               <span className="sr-only"> {nt.newTab}</span>
             </a>
           </li>
@@ -383,7 +385,7 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
       >
         {MOBILE_ALL.map((l) => (
           <a
-            key={l.route.name}
+            key={linkKey(l.route)}
             href={routeHref(l.route)}
             onClick={(e) => {
               e.preventDefault();
@@ -405,10 +407,10 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
           target="_blank"
           rel="noopener"
           onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-sec transition hover:bg-[rgba(0,240,255,0.08)] hover:text-cyber"
+          className="mt-1 flex items-center gap-3 rounded-xl border border-[rgba(0,240,255,0.35)] bg-[rgba(0,240,255,0.06)] px-4 py-3 text-sm font-bold text-cyber transition hover:bg-[rgba(0,240,255,0.14)]"
         >
           <School className="h-4 w-4" aria-hidden="true" />
-          {nt.academy}
+          {t.academy.enter}
           <span className="sr-only"> {nt.newTab}</span>
         </a>
         <div className="mt-4 flex items-center gap-2 border-t border-border-soft pt-4">

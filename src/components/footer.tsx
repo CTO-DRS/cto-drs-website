@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Terminal, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useAppRouter, routeHref, type AppRoute } from "@/lib/router";
+import { useAppRouter, routeHref, ACADEMY_ROUTE, type AppRoute } from "@/lib/router";
 import { SocialRow } from "@/components/social-channels";
 import { BRAND, ACADEMY_URL } from "@/lib/social";
 import { STATIC_MODE } from "@/lib/static-mode";
@@ -15,7 +15,7 @@ const QUICK: { route: AppRoute }[] = [
   { route: { name: "home" } },
   { route: { name: "services" } },
   { route: { name: "projects" } },
-  { route: { name: "courses" } },
+  { route: ACADEMY_ROUTE },
   { route: { name: "store" } },
   { route: { name: "blog" } },
   { route: { name: "downloads" } },
@@ -37,7 +37,7 @@ export function Footer() {
   const { navigate } = useAppRouter();
   const { t } = useI18n();
   const f = t.footer;
-  const label = (r: AppRoute) => f.links[r.name] ?? r.name;
+  const label = (r: AppRoute) => (r.slug && f.links[r.slug]) || f.links[r.name] || r.name;
 
   const go = (r: AppRoute) => (e: React.MouseEvent) => {
     e.preventDefault();
@@ -121,7 +121,7 @@ export function Footer() {
             <h2 className="font-heading-cyber mb-4 text-sm font-bold text-main">{f.quickLinks}</h2>
             <ul className="space-y-2.5">
               {QUICK.map((l) => (
-                <li key={l.route.name}>
+                <li key={`${l.route.name}-${l.route.slug ?? ""}`}>
                   <a
                     href={routeHref(l.route)}
                     onClick={go(l.route)}
@@ -138,7 +138,7 @@ export function Footer() {
                   rel="noopener"
                   className="text-xs text-sec transition hover:ps-1 hover:text-cyber"
                 >
-                  {f.links.academy}
+                  {t.academy.enter} ↗
                   <span className="sr-only"> {t.nav.newTab}</span>
                 </a>
               </li>

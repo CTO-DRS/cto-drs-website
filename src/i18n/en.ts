@@ -376,6 +376,7 @@ export const en: Dict = {
     quickActions: "Quick actions",
     settings: "Settings",
     p: {
+      academy: "Academy",
       home: "Home",
       services: "Services",
       projects: "Projects",

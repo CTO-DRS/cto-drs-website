@@ -48,7 +48,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useAppRouter, type AppRoute } from "@/lib/router";
+import { useAppRouter, type AppRoute, ACADEMY_ROUTE } from "@/lib/router";
 import { useSession } from "@/lib/auth";
 import { useAppStore } from "@/lib/store";
 
@@ -164,8 +164,8 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
           <CommandItem onSelect={() => go({ name: "projects" })}>
             <Package className="h-4 w-4 text-cyber" aria-hidden="true" /> {s.p.projects}
           </CommandItem>
-          <CommandItem onSelect={() => go({ name: "courses" })}>
-            <GraduationCap className="h-4 w-4 text-cyber" aria-hidden="true" /> {s.p.courses}
+          <CommandItem onSelect={() => go(ACADEMY_ROUTE)}>
+            <GraduationCap className="h-4 w-4 text-cyber" aria-hidden="true" /> {s.p.academy}
           </CommandItem>
           <CommandItem onSelect={() => go({ name: "store" })}>
             <Store className="h-4 w-4 text-cyber" aria-hidden="true" /> {s.p.store}
