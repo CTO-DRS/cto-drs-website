@@ -76,7 +76,6 @@ const dynScreen = (mod: Promise<unknown>, exportName: string) =>
 
 const DashboardSection = dynSection(import("@/components/dashboard-section"), "DashboardSection");
 const VideosSection = dynSection(import("@/components/videos-section"), "VideosSection");
-const CoursesSection = dynSection(import("@/components/courses-section"), "CoursesSection");
 const ToolsSection = dynSection(import("@/components/tools-section"), "ToolsSection");
 const GallerySection = dynSection(import("@/components/gallery-section"), "GallerySection");
 const QuickAccess = dynSection(import("@/components/quick-access"), "QuickAccess");
@@ -131,7 +130,6 @@ function HomeView() {
       <ProjectsSection />
       <MetricsBand />
       <VideosSection />
-      <CoursesSection />
       <AcademySection />
       <ToolsSection />
       <GallerySection />

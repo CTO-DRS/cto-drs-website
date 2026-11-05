@@ -177,15 +177,6 @@ export const en: Dict = {
     subtitle: "Video tutorials and walkthroughs on programming and cybersecurity",
   },
 
-  coursesSection: {
-    title: "Latest",
-    highlight: "Courses",
-    subtitle: "Hands-on training courses that take you from fundamentals to mastery",
-    lessons: (v: number) => plural(v, "lesson", "lessons"),
-    hours: (v: number) => plural(v, "hour", "hours"),
-    free: "Free course",
-  },
-
   toolsSection: {
     title: "Tools &",
     highlight: "Libraries",
@@ -276,10 +267,44 @@ export const en: Dict = {
 
   academy: {
     eyebrow: "Al-Rasheed Academy",
-    title1: "Learn with me at the",
-    title2: "Academy",
-    body: "Learning paths in cybersecurity, programming and ethical hacking — 15 courses and 120 lessons.",
+    badge: "ACADEMY • 07",
+    title1: "Learn with me at",
+    title2: "Al-Rasheed Academy",
+    tagline: "An Arabic-first learning platform for cybersecurity, programming and ethical hacking",
+    body: "Al-Rasheed Academy is an Arabic-first LMS that takes you step by step from the fundamentals to advanced topics: structured tracks, interactive text lessons, a short quiz after every lesson, hands-on CTF challenges and a verifiable certificate of completion. Built for beginners, students, developers and anyone moving into cybersecurity.",
+    pills: ["Completely free", "Arabic-first + English", "Beginner to advanced"],
     enter: "Enter the Academy",
+    register: "Sign up free",
+    browseTracks: "Browse tracks",
+    statsAria: "Academy in numbers",
+    stats: { tracks: "Tracks", courses: "Courses", lessons: "Lessons", quizzes: "Quiz questions", ctf: "CTF challenges" },
+    featuresTitle: "What the academy offers",
+    features: [
+      { t: "Structured content", d: "Tracks → courses → modules → lessons, with a short quiz for every lesson." },
+      { t: "Verifiable certificates", d: "A certificate of completion when you finish a course, verifiable on the verify page." },
+      { t: "CTF challenges", d: "Hands-on challenges in cryptography, web, networking and forensics, with flags checked server-side." },
+      { t: "Labs & tools", d: "Practical labs, tools, a glossary of terms and a learning roadmap." },
+      { t: "Learning community", d: "Forum, Q&A, comments and ratings." },
+      { t: "Gamification", d: "XP, levels, learning streaks, badges and a leaderboard." },
+      { t: "Bilingual", d: "Arabic and English with full RTL/LTR support and dark and light themes." },
+      { t: "Secure account", d: "Sign-in with two-factor authentication (2FA) and protected sessions." },
+    ],
+    tracksTitle: "What you'll learn",
+    tracksSub: "5 tracks, each with 3 progressive courses (beginner → intermediate → advanced)",
+    levels: { beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" },
+    lessons: (v: number) => plural(v, "lesson", "lessons"),
+    hours: (v: number) => plural(v, "hour", "hours"),
+    trackMeta: (courses: number, lessons: number) => `${plural(courses, "course", "courses")} · ${plural(lessons, "lesson", "lessons")}`,
+    courseAria: (name: string) => `${name} course at the academy`,
+    stepsTitle: "How it works",
+    steps: [
+      { t: "Sign up free", d: "Create your account in a minute." },
+      { t: "Pick a track", d: "Start with cybersecurity, programming, Linux, networking or ethical hacking." },
+      { t: "Learn & test yourself", d: "Study the lessons, solve quizzes and challenges, and earn XP." },
+      { t: "Get certified", d: "Finish the course and earn a verifiable certificate of completion." },
+    ],
+    ctaTitle: "Start learning today",
+    ctaBody: "Every track, lesson and challenge is free.",
   },
 
   footer: {
