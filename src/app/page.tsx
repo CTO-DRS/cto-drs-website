@@ -82,6 +82,7 @@ const GallerySection = dynSection(import("@/components/gallery-section"), "Galle
 const QuickAccess = dynSection(import("@/components/quick-access"), "QuickAccess");
 const ContactSection = dynSection(import("@/components/contact-section"), "ContactSection");
 const CtaSection = dynSection(import("@/components/cta-section"), "CtaSection");
+const AcademySection = dynSection(import("@/components/academy-section"), "AcademySection");
 
 const ServicesScreen = dynScreen(import("@/components/screens/services-screen"), "ServicesScreen");
 const ProjectsScreen = dynScreen(import("@/components/screens/projects-screen"), "ProjectsScreen");
@@ -131,6 +132,7 @@ function HomeView() {
       <MetricsBand />
       <VideosSection />
       <CoursesSection />
+      <AcademySection />
       <ToolsSection />
       <GallerySection />
       <QuickAccess />

@@ -20,6 +20,9 @@ export const BRAND = {
   email: "contact@cto-drs.com",
 } as const;
 
+/** أكاديمية الرشيد — منصة التعلّم (LMS) على نطاق فرعي مستقل */
+export const ACADEMY_URL = "https://academy.cto-drs.com";
+
 export const SOCIALS: SocialLink[] = [
   {
     id: "whatsapp",
