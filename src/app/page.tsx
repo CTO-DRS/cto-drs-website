@@ -142,7 +142,8 @@ function HomeView() {
 
 function ScreenSwitch() {
   const { route } = useAppRouter();
-  const key = `${route.name}${route.slug ? `-${route.slug}` : ""}`;
+  // أقسام الرئيسية (#/academy) لا تعيد تركيب الصفحة — فقط تمرير
+  const key = route.name === "home" ? "home" : `${route.name}${route.slug ? `-${route.slug}` : ""}`;
 
   let screen: React.ReactNode;
   switch (route.name) {
