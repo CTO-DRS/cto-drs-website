@@ -377,6 +377,7 @@ export const ar = {
     quickActions: "إجراءات سريعة",
     settings: "الإعدادات",
     p: {
+      academy: "الأكاديمية",
       home: "الرئيسية",
       services: "الخدمات",
       projects: "المشاريع",

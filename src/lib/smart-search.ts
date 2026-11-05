@@ -114,7 +114,7 @@ const PAGES: { title: string; titleEn: string; route: AppRoute; keys: string }[]
   { title: "من أنا", titleEn: "About me", route: { name: "about" }, keys: "about نبذه سيره bio" },
   { title: "الخدمات", titleEn: "Services", route: { name: "services" }, keys: "services" },
   { title: "المشاريع", titleEn: "Projects", route: { name: "projects" }, keys: "projects اعمال portfolio work" },
-  { title: "الدورات", titleEn: "Courses", route: { name: "courses" }, keys: "courses" },
+  { title: "الأكاديمية", titleEn: "Academy", route: { name: "home", slug: "academy" }, keys: "academy courses الدورات دورات اكاديميه الرشيد تعلم" },
   { title: "المتجر الرقمي", titleEn: "Digital Store", route: { name: "store" }, keys: "store shop" },
   { title: "المدونة", titleEn: "Blog", route: { name: "blog" }, keys: "blog مقالات articles" },
   { title: "احجز استشارة", titleEn: "Book a consultation", route: { name: "booking" }, keys: "booking" },
@@ -163,7 +163,7 @@ function buildDocs(): SearchDoc[] {
       subtitleEn: `${c.lessons} lessons · ${EN.COURSES_EN[i]?.level ?? c.level}`,
       body: c.description,
       bodyEn: EN.COURSES_EN[i]?.description,
-      route: { name: "courses" },
+      route: { name: "home", slug: "academy" },
     }),
   );
   APPS.forEach((a) =>
