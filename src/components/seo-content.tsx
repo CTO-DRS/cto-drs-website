@@ -148,6 +148,12 @@ export function SeoContent() {
                 </li>
               ))}
             </ul>
+            <p className="mt-3 text-sm text-sec">
+              أكاديمية الرشيد — مسارات في الأمن السيبراني والبرمجة والاختراق الأخلاقي:{" "}
+              <a href="https://academy.cto-drs.com" target="_blank" rel="noopener" className="text-cyber underline decoration-dotted">
+                academy.cto-drs.com
+              </a>
+            </p>
             <p className="mt-4 flex items-center gap-1.5 text-[11px] text-mute">
               <ShieldCheck className="h-3.5 w-3.5 text-[#00ff88]" aria-hidden="true" />
               جميع بيانات التواصل تُعالج بسرية تامة، وتوقّع اتفاقيات NDA عند الطلب.

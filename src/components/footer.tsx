@@ -5,7 +5,7 @@ import { Terminal, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAppRouter, routeHref, type AppRoute } from "@/lib/router";
 import { SocialRow } from "@/components/social-channels";
-import { BRAND } from "@/lib/social";
+import { BRAND, ACADEMY_URL } from "@/lib/social";
 import { STATIC_MODE } from "@/lib/static-mode";
 import { useI18n } from "@/i18n";
 import { A11yControls, LanguageToggle } from "@/components/a11y-controls";
@@ -131,6 +131,17 @@ export function Footer() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a
+                  href={ACADEMY_URL}
+                  target="_blank"
+                  rel="noopener"
+                  className="text-xs text-sec transition hover:ps-1 hover:text-cyber"
+                >
+                  {f.links.academy}
+                  <span className="sr-only"> {t.nav.newTab}</span>
+                </a>
+              </li>
             </ul>
           </nav>
 

@@ -195,6 +195,13 @@ const JSON_LD = {
         "جهة تطوير تقنية مفتوحة المصدر — تطبيقات أندرويد أصلية، أدوات خصوصية وأمن سيبراني، ولغات وأدوات مطورين",
       foundingDate: "2024",
       sameAs: SOCIALS.map((s) => s.url),
+      subOrganization: {
+        "@type": "EducationalOrganization",
+        "@id": "https://academy.cto-drs.com/#organization",
+        name: "أكاديمية الرشيد",
+        alternateName: "Al-Rasheed Academy",
+        url: "https://academy.cto-drs.com/",
+      },
       contactPoint: [
         {
           "@type": "ContactPoint",
