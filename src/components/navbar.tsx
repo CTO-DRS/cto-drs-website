@@ -27,7 +27,9 @@ import {
   LogIn,
   LogOut,
   UserPlus,
+  School,
 } from "lucide-react";
+import { ACADEMY_URL } from "@/lib/social";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -185,6 +187,18 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
               </a>
             </li>
           ))}
+          <li>
+            <a
+              href={ACADEMY_URL}
+              target="_blank"
+              rel="noopener"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-2 text-[13px] xl:px-3 font-medium text-sec transition-all duration-300 hover:bg-[rgba(0,240,255,0.06)] hover:text-main"
+            >
+              <School className="h-3.5 w-3.5" aria-hidden="true" />
+              {nt.academy}
+              <span className="sr-only"> {nt.newTab}</span>
+            </a>
+          </li>
           <li>
             <DropdownMenu>
               <DropdownMenuTrigger
@@ -386,6 +400,17 @@ export function Navbar({ onOpenSearch }: { onOpenSearch: () => void }) {
             {label(l.label)}
           </a>
         ))}
+        <a
+          href={ACADEMY_URL}
+          target="_blank"
+          rel="noopener"
+          onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-sec transition hover:bg-[rgba(0,240,255,0.08)] hover:text-cyber"
+        >
+          <School className="h-4 w-4" aria-hidden="true" />
+          {nt.academy}
+          <span className="sr-only"> {nt.newTab}</span>
+        </a>
         <div className="mt-4 flex items-center gap-2 border-t border-border-soft pt-4">
           <Button
             variant="outline"

@@ -13,7 +13,7 @@ import { join } from "node:path";
 import { PROFILE, PROJECTS, SERVICES, SKILLS, COURSES, TOOLS } from "../src/lib/data";
 import { FAQS } from "../src/lib/faq-data";
 import { APPS, repoPageUrl, releasesPageUrl } from "../src/lib/apps";
-import { SOCIALS, BRAND } from "../src/lib/social";
+import { SOCIALS, BRAND, ACADEMY_URL } from "../src/lib/social";
 import * as EN from "../src/i18n/content-en";
 
 const OUT = process.argv[2] || "out";
@@ -27,6 +27,15 @@ const esc = (s: string) =>
 
 const PERSON = { "@type": "Person", "@id": `${SITE}/#person`, name: "CTO-DRS", url: `${SITE}/`, jobTitle: PROFILE.role, sameAs: SOCIALS.map((s) => s.url) };
 const PERSON_EN = { ...PERSON, jobTitle: EN.PROFILE_EN.role };
+/** أكاديمية الرشيد — منصة تعليمية مستقلة على نطاق فرعي */
+const ACADEMY_ORG = {
+  "@type": "EducationalOrganization",
+  "@id": `${ACADEMY_URL}/#organization`,
+  name: "أكاديمية الرشيد",
+  alternateName: "Al-Rasheed Academy",
+  url: `${ACADEMY_URL}/`,
+  parentOrganization: { "@type": "Organization", "@id": `${SITE}/#organization`, name: "CTO-DRS", url: `${SITE}/` },
+};
 
 interface Page {
   slug: string;
@@ -79,7 +88,10 @@ function layout(p: Page, lang: Lang) {
       ...(p.slug ? [{ "@type": "ListItem", position: 2, name: p.h1, item: url }] : []),
     ],
   };
-  const graph = { "@context": "https://schema.org", "@graph": [isAr ? PERSON : PERSON_EN, crumbs, ...p.jsonld] };
+  const graph = { "@context": "https://schema.org", "@graph": [isAr ? PERSON : PERSON_EN, ACADEMY_ORG, crumbs, ...p.jsonld] };
+  const academyLabel = isAr ? "الأكاديمية" : "Academy";
+  const newTab = isAr ? "(يفتح في نافذة جديدة)" : "(opens in a new tab)";
+  const academyLink = `<a href="${ACADEMY_URL}" target="_blank" rel="noopener" aria-label="${academyLabel} ${newTab}">${academyLabel}</a>`;
   const other: Lang = isAr ? "en" : "ar";
   const switchLabel = isAr ? "English" : "العربية";
   const ctaLabel = isAr ? "افتح النسخة التفاعلية ←" : "Open the interactive version →";
@@ -134,7 +146,7 @@ a:focus-visible{outline:3px solid #00f0ff;outline-offset:2px;border-radius:4px}
 <a class="brand" href="${pathFor(lang, "")}" dir="ltr"><b>CTO</b>-<i>DRS</i></a>
 <nav aria-label="${isAr ? "التنقل الرئيسي" : "Main navigation"}">${NAV[lang]
     .map(([s, l]) => `<a href="${pathFor(lang, s)}"${s === p.slug ? ' aria-current="page"' : ""}>${l}</a>`)
-    .join("")}<a class="lang" href="${pathFor(other, p.slug)}" hreflang="${other}" lang="${other}">${switchLabel}</a></nav>
+    .join("")}${academyLink}<a class="lang" href="${pathFor(other, p.slug)}" hreflang="${other}" lang="${other}">${switchLabel}</a></nav>
 </header>
 <main id="main">
 <h1>${esc(p.h1)}</h1>
@@ -144,6 +156,7 @@ ${p.body}
 <footer>
 <p>© ${new Date().getFullYear()} CTO-DRS — ${esc(PROFILE.roleEn)} · <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>
 <p>${SOCIALS.map((s) => `<a href="${s.url}" target="_blank" rel="me noopener noreferrer">${esc(isAr ? s.label : EN.SOCIALS_EN[s.id]?.label ?? s.label)}</a>`).join("")}</p>
+<p>${isAr ? "أكاديمية الرشيد" : "Al-Rasheed Academy"}: ${academyLink}</p>
 </footer>
 </body>
 </html>`;

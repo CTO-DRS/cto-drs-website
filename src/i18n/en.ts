@@ -113,6 +113,8 @@ export const en: Dict = {
     menu: "Menu",
     closeMenu: "Close menu",
     quickSearch: "Quick search",
+    academy: "Academy",
+    newTab: "(opens in a new tab)",
   },
 
   hero: {
@@ -270,6 +272,14 @@ export const en: Dict = {
     body: "Whether you need a professional website, a complete system, or a security consultation — I'm here to turn your ideas into digital solutions that run reliably and securely.",
     contactNow: "Contact me now",
     viewServices: "Explore services",
+  },
+
+  academy: {
+    eyebrow: "Al-Rasheed Academy",
+    title1: "Learn with me at the",
+    title2: "Academy",
+    body: "Learning paths in cybersecurity, programming and ethical hacking — 15 courses and 120 lessons.",
+    enter: "Enter the Academy",
   },
 
   footer: {
