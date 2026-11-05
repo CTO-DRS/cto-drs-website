@@ -10,7 +10,8 @@
    ═══════════════════════════════════════════════════════════ */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { PROFILE, PROJECTS, SERVICES, SKILLS, COURSES, TOOLS } from "../src/lib/data";
+import { PROFILE, PROJECTS, SERVICES, SKILLS } from "../src/lib/data";
+import { ACADEMY_TRACKS, ACADEMY_COURSES, ACADEMY_STATS, ACADEMY_REGISTER_URL, academyCourseUrl } from "../src/lib/academy";
 import { FAQS } from "../src/lib/faq-data";
 import { APPS, repoPageUrl, releasesPageUrl } from "../src/lib/apps";
 import { SOCIALS, BRAND, ACADEMY_URL } from "../src/lib/social";
@@ -46,6 +47,8 @@ interface Page {
   body: string;
   jsonld: object[];
   priority: string;
+  /** رابط زر الدعوة بدل النسخة التفاعلية (اختياري) */
+  cta?: { href: string; label: string };
 }
 
 const NAV: Record<Lang, [string, string][]> = {
@@ -55,7 +58,7 @@ const NAV: Record<Lang, [string, string][]> = {
     ["services", "الخدمات"],
     ["projects", "المشاريع"],
     ["downloads", "التطبيقات"],
-    ["courses", "الدورات"],
+    ["academy", "الأكاديمية"],
     ["faq", "الأسئلة الشائعة"],
     ["contact", "تواصل"],
   ],
@@ -65,7 +68,7 @@ const NAV: Record<Lang, [string, string][]> = {
     ["services", "Services"],
     ["projects", "Projects"],
     ["downloads", "Apps"],
-    ["courses", "Courses"],
+    ["academy", "Academy"],
     ["faq", "FAQ"],
     ["contact", "Contact"],
   ],
@@ -151,7 +154,7 @@ a:focus-visible{outline:3px solid #00f0ff;outline-offset:2px;border-radius:4px}
 <main id="main">
 <h1>${esc(p.h1)}</h1>
 ${p.body}
-<a class="cta" href="${appLink(lang, p.hash)}">${ctaLabel}</a>
+${p.cta ? `<a class="cta" href="${p.cta.href}" target="_blank" rel="noopener">${esc(p.cta.label)}</a> ` : ""}<a class="cta" href="${appLink(lang, p.hash)}">${ctaLabel}</a>
 </main>
 <footer>
 <p>© ${new Date().getFullYear()} CTO-DRS — ${esc(PROFILE.roleEn)} · <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>
@@ -278,25 +281,65 @@ arPages.push({
   ],
 });
 
-/* الدورات */
-arPages.push({
-  slug: "courses",
-  hash: "courses",
-  title: "دورات CTO-DRS | برمجة وأمن سيبراني بالعربي",
-  description: "دورات تقنية بالعربي من CTO-DRS: " + COURSES.map((c) => c.title).join("، ") + ".",
-  h1: "الدورات التدريبية",
-  priority: "0.7",
-  body:
-    COURSES.map((c) => `<div class="card"><h2 style="margin:0 0 6px;font-size:19px">${esc(c.title)}</h2><p>${esc(c.description)}</p><p>${c.lessons} درس · ${c.hours} ساعة · المستوى: ${esc(c.level)}</p></div>`).join("") +
-    `<h2>أدوات مجانية</h2>` +
-    TOOLS.map((t) => `<div class="card"><strong>${esc(t.name)}</strong> ${esc(t.version)} — ${esc(t.description)}</div>`).join(""),
-  jsonld: COURSES.map((c) => ({
-    "@type": "Course",
-    name: c.title,
-    description: c.description,
-    inLanguage: "ar",
-    provider: { "@type": "Organization", name: "CTO-DRS", sameAs: `${SITE}/` },
+/* أكاديمية الرشيد */
+const LEVEL_AR = { beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدّم" } as const;
+const LEVEL_EN = { beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" } as const;
+const academyCourseList = (lang: Lang) => ({
+  "@type": "ItemList",
+  name: lang === "ar" ? "دورات أكاديمية الرشيد" : "Al-Rasheed Academy courses",
+  numberOfItems: ACADEMY_COURSES.length,
+  itemListElement: ACADEMY_COURSES.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "Course",
+      name: lang === "ar" ? c.titleAr : c.title,
+      alternateName: lang === "ar" ? c.title : c.titleAr,
+      description:
+        lang === "ar"
+          ? `${c.titleAr} — دورة ضمن ${c.trackAr} (${LEVEL_AR[c.level]}، ${c.lessons} دروس).`
+          : `${c.title} — part of the ${c.track} (${LEVEL_EN[c.level]}, ${c.lessons} lessons).`,
+      url: academyCourseUrl(c.slug),
+      inLanguage: "ar",
+      educationalLevel: c.level,
+      isAccessibleForFree: true,
+      provider: { "@id": `${ACADEMY_URL}/#organization` },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", category: "Free" },
+      hasCourseInstance: { "@type": "CourseInstance", courseMode: "online", courseWorkload: `PT${c.hours}H` },
+    },
   })),
+});
+
+arPages.push({
+  slug: "academy",
+  hash: "home",
+  title: "أكاديمية الرشيد | تعلّم الأمن السيبراني والبرمجة والاختراق الأخلاقي مجاناً بالعربي",
+  description: `أكاديمية الرشيد من CTO-DRS: ${ACADEMY_STATS.tracks} مسارات، ${ACADEMY_STATS.courses} دورة، ${ACADEMY_STATS.lessons} درساً، ${ACADEMY_STATS.quizzes} سؤال اختبار و${ACADEMY_STATS.ctf} تحديات CTF — مجاناً وبالعربي.`,
+  h1: "أكاديمية الرشيد",
+  priority: "0.8",
+  cta: { href: ACADEMY_REGISTER_URL, label: "سجّل مجاناً في الأكاديمية" },
+  body:
+    `<p>أكاديمية الرشيد منصة تعلّم (LMS) عربية أولاً متخصصة في الأمن السيبراني والبرمجة والاختراق الأخلاقي، تأخذك من الأساسيات حتى المستوى المتقدّم. المحتوى مجاني بالكامل، ومتاح بالعربية والإنجليزية: <a href="${ACADEMY_URL}" rel="noopener">academy.cto-drs.com</a>.</p>` +
+    `<p><strong>${ACADEMY_STATS.tracks}</strong> مسارات · <strong>${ACADEMY_STATS.courses}</strong> دورة · <strong>${ACADEMY_STATS.lessons}</strong> درساً · <strong>${ACADEMY_STATS.quizzes}</strong> سؤال اختبار · <strong>${ACADEMY_STATS.ctf}</strong> تحديات CTF</p>` +
+    `<h2>ماذا تقدّم الأكاديمية؟</h2><ul>` +
+    [
+      "محتوى منظّم: مسارات ← دورات ← وحدات ← دروس، مع اختبار قصير لكل درس.",
+      "شهادة إتمام قابلة للتحقق عند إكمال الدورة.",
+      "تحديات CTF عملية في التشفير والويب والشبكات والتحليل الجنائي، والتحقق من الأعلام على الخادم.",
+      "مختبرات وأدوات ومسرد مصطلحات وخريطة طريق للتعلّم.",
+      "مجتمع: منتدى، أسئلة وأجوبة، تعليقات وتقييمات.",
+      "تحفيز: نقاط XP ومستويات وسلاسل تعلّم وشارات ولوحة صدارة.",
+      "ثنائية اللغة (RTL/LTR) مع وضع ليلي وفاتح، وتسجيل دخول بتحقق ثنائي (2FA).",
+    ].map((x) => `<li>${esc(x)}</li>`).join("") +
+    `</ul><h2>المسارات والدورات</h2>` +
+    ACADEMY_TRACKS.map(
+      (t) =>
+        `<div class="card"><h2 style="margin:0 0 6px;font-size:19px">${t.icon} ${esc(t.titleAr)}</h2><p>${esc(t.descAr)}</p><ol>${t.courses
+          .map((c) => `<li><a href="${academyCourseUrl(c.slug)}" rel="noopener">${esc(c.titleAr)}</a> — ${LEVEL_AR[c.level]} · ${c.lessons} دروس · ${c.hours} ساعات</li>`)
+          .join("")}</ol></div>`,
+    ).join("") +
+    `<h2>كيف تبدأ؟</h2><ol><li>سجّل مجاناً.</li><li>اختر مساراً.</li><li>تعلّم واختبر نفسك بالاختبارات والتحديات.</li><li>أكمل الدورة واحصل على شهادة الإتمام.</li></ol>`,
+  jsonld: [academyCourseList("ar")],
 });
 
 /* الأسئلة الشائعة */
@@ -353,7 +396,7 @@ enPages.push({
       ["services", "Services", EN.SERVICES_EN.join(" · ")],
       ["projects", "Open-source projects", PROJECTS.map((p) => enProject(p.id)?.title.split(" — ")[0] ?? p.title).join(" · ")],
       ["downloads", "App downloads", "Direct APK/ZIP downloads from GitHub Releases."],
-      ["courses", "Courses & tools", "Practical courses in programming and cybersecurity, plus free tools."],
+      ["academy", "Al-Rasheed Academy", "Free Arabic-first learning platform: 5 tracks, 15 courses, 120 lessons and 6 CTF challenges."],
       ["faq", "FAQ", "Timelines, pricing, payments, warranty and support."],
       ["contact", "Contact", `WhatsApp Business, Telegram and ${BRAND.email}.`],
     ]
@@ -488,29 +531,37 @@ enPages.push({
   ],
 });
 
-/* Courses */
+/* Academy */
 enPages.push({
-  slug: "courses",
-  hash: "courses",
-  title: "CTO-DRS Courses | Programming & Cybersecurity",
-  description: "Technical courses from CTO-DRS: " + EN.COURSES_EN.map((c) => c.title).join(", ") + ".",
-  h1: "Training Courses",
-  priority: "0.7",
+  slug: "academy",
+  hash: "home",
+  title: "Al-Rasheed Academy | Learn Cybersecurity, Programming & Ethical Hacking for Free",
+  description: `Al-Rasheed Academy by CTO-DRS: ${ACADEMY_STATS.tracks} tracks, ${ACADEMY_STATS.courses} courses, ${ACADEMY_STATS.lessons} lessons, ${ACADEMY_STATS.quizzes} quiz questions and ${ACADEMY_STATS.ctf} CTF challenges — free and Arabic-first.`,
+  h1: "Al-Rasheed Academy",
+  priority: "0.8",
+  cta: { href: ACADEMY_REGISTER_URL, label: "Sign up free at the academy" },
   body:
-    COURSES.map((c, i) => {
-      const e = EN.COURSES_EN[i];
-      return `<div class="card"><h2 style="margin:0 0 6px;font-size:19px">${esc(e?.title ?? c.title)}</h2><p>${esc(e?.description ?? c.description)}</p><p>${c.lessons} lessons · ${c.hours} hours · Level: ${esc(e?.level ?? c.level)}</p></div>`;
-    }).join("") +
-    `<h2>Free tools</h2>` +
-    TOOLS.map((t, i) => `<div class="card"><strong>${esc(t.name)}</strong> ${esc(t.version)} — ${esc(EN.TOOLS_EN[i] ?? t.description)}</div>`).join(""),
-  jsonld: COURSES.map((c, i) => ({
-    "@type": "Course",
-    name: EN.COURSES_EN[i]?.title ?? c.title,
-    description: EN.COURSES_EN[i]?.description ?? c.description,
-    inLanguage: "ar",
-    availableLanguage: ["ar"],
-    provider: { "@type": "Organization", name: "CTO-DRS", sameAs: `${SITE}/` },
-  })),
+    `<p>Al-Rasheed Academy is an Arabic-first learning platform (LMS) for cybersecurity, programming and ethical hacking that takes you from the fundamentals to advanced topics. All content is free, in Arabic with an English interface: <a href="${ACADEMY_URL}" rel="noopener">academy.cto-drs.com</a>.</p>` +
+    `<p><strong>${ACADEMY_STATS.tracks}</strong> tracks · <strong>${ACADEMY_STATS.courses}</strong> courses · <strong>${ACADEMY_STATS.lessons}</strong> lessons · <strong>${ACADEMY_STATS.quizzes}</strong> quiz questions · <strong>${ACADEMY_STATS.ctf}</strong> CTF challenges</p>` +
+    `<h2>What the academy offers</h2><ul>` +
+    [
+      "Structured content: tracks → courses → modules → lessons, with a short quiz for every lesson.",
+      "A verifiable certificate of completion when you finish a course.",
+      "Hands-on CTF challenges in cryptography, web, networking and forensics, with flags checked server-side.",
+      "Labs, tools, a glossary of terms and a learning roadmap.",
+      "Community: forum, Q&A, comments and ratings.",
+      "Gamification: XP, levels, learning streaks, badges and a leaderboard.",
+      "Bilingual (RTL/LTR) with dark and light themes, and sign-in with two-factor authentication (2FA).",
+    ].map((x) => `<li>${esc(x)}</li>`).join("") +
+    `</ul><h2>Tracks &amp; courses</h2>` +
+    ACADEMY_TRACKS.map(
+      (t) =>
+        `<div class="card"><h2 style="margin:0 0 6px;font-size:19px">${t.icon} ${esc(t.title)}</h2><p>${esc(t.desc)}</p><ol>${t.courses
+          .map((c) => `<li><a href="${academyCourseUrl(c.slug)}" rel="noopener">${esc(c.title)}</a> <span lang="ar">(${esc(c.titleAr)})</span> — ${LEVEL_EN[c.level]} · ${c.lessons} lessons · ${c.hours} hours</li>`)
+          .join("")}</ol></div>`,
+    ).join("") +
+    `<h2>How it works</h2><ol><li>Sign up for free.</li><li>Pick a track.</li><li>Learn and test yourself with quizzes and challenges.</li><li>Finish the course and earn your certificate.</li></ol>`,
+  jsonld: [academyCourseList("en")],
 });
 
 /* FAQ */
