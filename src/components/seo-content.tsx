@@ -128,9 +128,17 @@ export function SeoContent() {
           <article>
             <h2 className="font-heading-cyber text-lg font-extrabold text-main">تواصل مع CTO-DRS</h2>
             <p className="mt-2 text-sm text-sec">
-              البريد الرسمي:{" "}
+              البريد العام:{" "}
               <a href={`mailto:${BRAND.email}`} className="text-cyber underline decoration-dotted">
                 {BRAND.email}
+              </a>
+              {" "}· الدعم الفني:{" "}
+              <a href={`mailto:${BRAND.supportEmail}`} className="text-cyber underline decoration-dotted">
+                {BRAND.supportEmail}
+              </a>
+              {" "}· الأكاديمية:{" "}
+              <a href={`mailto:${BRAND.academyEmail}`} className="text-cyber underline decoration-dotted">
+                {BRAND.academyEmail}
               </a>{" "}
               — أو عبر أي قناة أدناه. للحالات العاجلة استخدم واتساب أو تيليجرام.
             </p>
