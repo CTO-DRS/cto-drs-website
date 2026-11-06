@@ -16,6 +16,7 @@ import { useAppRouter } from "@/lib/router";
 import { useAuth } from "@/lib/auth";
 import { getSupabase, type BookingRow, type ContactMessageRow } from "@/lib/supabase";
 import { useContent, useI18n } from "@/i18n";
+import { sendContactEmail } from "@/lib/contact-email";
 import { Field, INPUT_CLS } from "./auth-ui";
 
 export const STATUS_CLS: Record<string, string> = {
@@ -165,7 +166,7 @@ export function SbAccountScreen() {
           </TabsList>
 
           <TabsContent value="bookings" className="mt-5">
-            <MyBookings userId={session.user.id} />
+            <MyBookings userId={session.user.id} email={email} name={profile?.full_name ?? ""} phone={profile?.phone ?? ""} />
           </TabsContent>
           <TabsContent value="messages" className="mt-5">
             <MyMessages userId={session.user.id} />
@@ -255,8 +256,8 @@ function ProfileForm({
 }
 
 /* ── حجوزاتي ── */
-function MyBookings({ userId }: { userId: string }) {
-  const { t } = useI18n();
+function MyBookings({ userId, email, name, phone }: { userId: string; email: string; name: string; phone: string }) {
+  const { t, lang } = useI18n();
   const a = t.auth;
   const { SERVICES } = useContent();
   const fmtDate = useFmtDate();
@@ -298,6 +299,23 @@ function MyBookings({ userId }: { userId: string }) {
       return;
     }
     toast({ title: a.bookingCreated });
+    /* إشعار بالبريد إلى contact@ (أفضل جهد — الحجز محفوظ في Supabase) */
+    if (email) {
+      void sendContactEmail({
+        kind: "booking",
+        name: name.trim() || email.split("@")[0],
+        email,
+        phone: phone.trim() || undefined,
+        subject: `حجز من حساب العميل: ${service}`,
+        message: notes.trim() || undefined,
+        details: [
+          { label: "الخدمة", value: service },
+          { label: "التاريخ المفضل", value: date || "—" },
+          { label: "المصدر", value: "صفحة حسابي (Supabase bookings)" },
+        ],
+        lang: lang === "en" ? "en" : "ar",
+      });
+    }
     setService("");
     setDate("");
     setNotes("");

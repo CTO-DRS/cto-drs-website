@@ -30,6 +30,8 @@ import { getSupabase, SUPABASE_ENABLED } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { useI18n, useContent, countryName } from "@/i18n";
+import { Honeypot } from "@/components/honeypot";
+import { sendContactEmail, PURPOSE_KIND, KIND_EMAIL, mailtoHref, type ContactKind } from "@/lib/contact-email";
 
 const DRAFT_KEY = "cto-drs-contact-draft";
 const MAX_MSG = 5000;
@@ -59,6 +61,8 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [hp, setHp] = useState("");
+  const [mailFail, setMailFail] = useState<{ kind: ContactKind; body: string } | null>(null);
   const detectedRef = useRef(false);
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -159,28 +163,42 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
       return;
     }
     setLoading(true);
+    setMailFail(null);
+    const kind: ContactKind = PURPOSE_KIND[form.purpose] ?? "general";
     try {
-      /* Supabase مُعدّ: الحفظ في جدول contact_messages (يُسمح للزائر المجهول) */
+      /* ١) الإرسال بالبريد إلى العنوان المختص (يُحدَّد في الخادم حسب النوع) — شرط النجاح */
+      const mail = await sendContactEmail({
+        kind,
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone ? `${country?.dial ?? ""}${sanitizePhone(form.phone)}` : undefined,
+        subject: purpose?.label,
+        message: form.message.trim(),
+        details: country ? [{ label: c.lineCountry, value: `${countryName(lang, country)} (${country.dial})` }] : [],
+        lang,
+        website: hp,
+      });
+
+      /* ٢) الحفظ في Supabase (contact_messages) — أفضل جهد، لا يوقف الإرسال */
       const sb = SUPABASE_ENABLED ? getSupabase() : null;
       if (sb) {
         const details = [
           country ? `${c.lineCountry}: ${countryName(lang, country)} (${country.dial})` : "",
           form.phone ? `${c.linePhone}: ${country?.dial ?? ""}${sanitizePhone(form.phone)}` : "",
         ].filter(Boolean);
-        const { error } = await sb.from("contact_messages").insert({
-          user_id: authSession?.user.id ?? null,
-          name: form.name.trim(),
-          email: form.email.trim(),
-          subject: purpose?.label ?? null,
-          message: [form.message.trim(), details.length ? `\n— ${details.join(" · ")}` : ""].join(""),
-        });
-        if (error) {
-          toast({ title: c.toastFailTitle, description: error.message || c.toastFailDesc });
-          return;
+        try {
+          await sb.from("contact_messages").insert({
+            user_id: authSession?.user.id ?? null,
+            name: form.name.trim(),
+            email: form.email.trim(),
+            subject: purpose?.label ?? null,
+            message: [form.message.trim(), details.length ? `\n— ${details.join(" · ")}` : ""].join(""),
+          });
+        } catch {
+          /* تجاهل — البريد هو القناة الأساسية */
         }
       } else if (!STATIC_MODE) {
-        /* النسخة الثابتة بدون Supabase: لا حفظ في الخادم — ننتقل مباشرة لنجاح + واتساب */
-        const res = await fetch("/api/contact", {
+        await fetch("/api/contact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -191,12 +209,17 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
             phone: sanitizePhone(form.phone),
             message: form.message,
           }),
+        }).catch(() => null);
+      }
+
+      if (!mail.ok) {
+        setMailFail({ kind, body: composeText() });
+        toast({
+          title: c.toastFailTitle,
+          description: mail.status === 429 ? c.mailRateLimited : `${c.mailFailDesc} ${KIND_EMAIL[kind]}`,
+          variant: "destructive",
         });
-        const data = await res.json();
-        if (!res.ok) {
-          toast({ title: c.toastFailTitle, description: data.error ?? c.toastFailDesc });
-          return;
-        }
+        return;
       }
 
       setSent(true);
@@ -222,6 +245,7 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
       }
 
       setForm({ ...EMPTY, countryCode: form.countryCode, autoSend: form.autoSend });
+      setHp("");
       try {
         localStorage.removeItem(DRAFT_KEY);
       } catch {
@@ -360,7 +384,7 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
 
           {/* النموذج المطوَّر */}
           <Reveal delay={150} className="lg:col-span-3">
-            <form onSubmit={submit} noValidate className="card-glow flex h-full flex-col gap-5 rounded-2xl p-6 sm:p-7">
+            <form onSubmit={submit} noValidate className="card-glow relative flex h-full flex-col gap-5 rounded-2xl p-6 sm:p-7">
               {/* ١ — هدف المراسلة */}
               <fieldset>
                 <legend className="mb-2.5 flex items-center gap-2 text-xs font-bold text-sec">
@@ -401,6 +425,13 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                   })}
                 </div>
                 {errors.purpose && <p className="mt-1.5 text-[11px] text-[#ff2a6d]" role="alert">{errors.purpose}</p>}
+                {form.purpose && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-mute">
+                    <Mail className="h-3 w-3 text-cyber" aria-hidden="true" />
+                    {c.routedTo}{" "}
+                    <span dir="ltr" className="font-bold text-sec">{KIND_EMAIL[PURPOSE_KIND[form.purpose] ?? "general"]}</span>
+                  </p>
+                )}
               </fieldset>
 
               {/* ٢ — الدولة + رقم الجوال */}
@@ -574,6 +605,23 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                   className="data-[state=checked]:bg-[#25d366] data-[state=unchecked]:bg-input"
                 />
               </div>
+
+              <Honeypot value={hp} onChange={setHp} />
+              {mailFail && (
+                <div role="alert" className="rounded-xl border border-[rgba(255,42,109,0.45)] bg-[rgba(255,42,109,0.07)] p-3.5 text-xs leading-6 text-sec">
+                  <p className="font-bold text-main">{c.mailFailTitle}</p>
+                  <p>
+                    {c.mailFailDesc}{" "}
+                    <a
+                      href={mailtoHref(mailFail.kind, purpose?.label ?? "CTO.DRS", mailFail.body)}
+                      dir="ltr"
+                      className="font-bold text-cyber underline decoration-dotted"
+                    >
+                      {KIND_EMAIL[mailFail.kind]}
+                    </a>
+                  </p>
+                </div>
+              )}
 
               <button
                 type="submit"
