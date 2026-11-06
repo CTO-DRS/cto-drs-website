@@ -214,6 +214,10 @@ export const ar = {
     replyValue: "خلال 24 ساعة كحد أقصى",
     daysLabel: "أيام العمل",
     daysValue: "الأحد — الخميس • 9ص إلى 9م",
+    emailsTitle: "البريد الإلكتروني",
+    emailGeneral: "الاستفسارات العامة",
+    emailSupport: "الدعم الفني",
+    emailProjects: "المشاريع والاستشارات",
     formReady: "ممتاز! النموذج جاهز للإرسال ✓",
     formHint: "أكمل الخطوات لضمان رد أسرع وأدق",
     purposeLegend: "ما هدف مراسلتك؟",
@@ -305,6 +309,7 @@ export const ar = {
     ],
     ctaTitle: "ابدأ رحلتك التعليمية اليوم",
     ctaBody: "كل المسارات والدروس والتحديات متاحة مجاناً.",
+    emailLabel: "استفسارات الأكاديمية:",
   },
 
   footer: {
@@ -319,6 +324,10 @@ export const ar = {
     privacy: "سياسة الخصوصية",
     terms: "الشروط والأحكام",
     builtWith: "مبني بشغف وأمان",
+    contactTitle: "راسلنا",
+    emailGeneral: "عام",
+    emailSupport: "الدعم الفني",
+    emailAcademy: "الأكاديمية",
     links: {
       home: "الرئيسية",
       services: "الخدمات",

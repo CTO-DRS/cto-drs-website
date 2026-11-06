@@ -35,6 +35,7 @@ const ACADEMY_ORG = {
   name: "أكاديمية الرشيد",
   alternateName: "Al-Rasheed Academy",
   url: `${ACADEMY_URL}/`,
+  email: BRAND.academyEmail,
   parentOrganization: { "@type": "Organization", "@id": `${SITE}/#organization`, name: "CTO-DRS", url: `${SITE}/` },
 };
 
@@ -157,9 +158,9 @@ ${p.body}
 ${p.cta ? `<a class="cta" href="${p.cta.href}" target="_blank" rel="noopener">${esc(p.cta.label)}</a> ` : ""}<a class="cta" href="${appLink(lang, p.hash)}">${ctaLabel}</a>
 </main>
 <footer>
-<p>© ${new Date().getFullYear()} CTO-DRS — ${esc(PROFILE.roleEn)} · <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>
+<p>© ${new Date().getFullYear()} CTO-DRS — ${esc(PROFILE.roleEn)} · <a href="mailto:${BRAND.email}">${BRAND.email}</a> · ${isAr ? "الدعم الفني" : "Support"}: <a href="mailto:${BRAND.supportEmail}">${BRAND.supportEmail}</a></p>
 <p>${SOCIALS.map((s) => `<a href="${s.url}" target="_blank" rel="me noopener noreferrer">${esc(isAr ? s.label : EN.SOCIALS_EN[s.id]?.label ?? s.label)}</a>`).join("")}</p>
-<p>${isAr ? "أكاديمية الرشيد" : "Al-Rasheed Academy"}: ${academyLink}</p>
+<p>${isAr ? "أكاديمية الرشيد" : "Al-Rasheed Academy"}: ${academyLink} · <a href="mailto:${BRAND.academyEmail}">${BRAND.academyEmail}</a></p>
 </footer>
 </body>
 </html>`;
@@ -320,6 +321,7 @@ arPages.push({
   cta: { href: ACADEMY_REGISTER_URL, label: "سجّل مجاناً في الأكاديمية" },
   body:
     `<p>أكاديمية الرشيد منصة تعلّم (LMS) عربية أولاً متخصصة في الأمن السيبراني والبرمجة والاختراق الأخلاقي، تأخذك من الأساسيات حتى المستوى المتقدّم. المحتوى مجاني بالكامل، ومتاح بالعربية والإنجليزية: <a href="${ACADEMY_URL}" rel="noopener">academy.cto-drs.com</a>.</p>` +
+    `<p>للاستفسارات: <a href="mailto:${BRAND.academyEmail}">${BRAND.academyEmail}</a> · الدعم الفني: <a href="mailto:${BRAND.supportEmail}">${BRAND.supportEmail}</a></p>` +
     `<p><strong>${ACADEMY_STATS.tracks}</strong> مسارات · <strong>${ACADEMY_STATS.courses}</strong> دورة · <strong>${ACADEMY_STATS.lessons}</strong> درساً · <strong>${ACADEMY_STATS.quizzes}</strong> سؤال اختبار · <strong>${ACADEMY_STATS.ctf}</strong> تحديات CTF</p>` +
     `<h2>ماذا تقدّم الأكاديمية؟</h2><ul>` +
     [
@@ -359,17 +361,20 @@ arPages.push({
   slug: "contact",
   hash: "contact",
   title: "تواصل مع CTO-DRS | واتساب، تيليجرام، البريد",
-  description: `تواصل مع CTO-DRS لطلب مشروع أو استشارة تقنية: واتساب للأعمال، تيليجرام t.me/ctodrs، البريد ${BRAND.email}.`,
+  description: `تواصل مع CTO-DRS لطلب مشروع أو استشارة تقنية: واتساب للأعمال، تيليجرام t.me/ctodrs، البريد ${BRAND.email} والدعم الفني ${BRAND.supportEmail}.`,
   h1: "تواصل معي",
   priority: "0.8",
   body:
-    `<p>البريد: <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>` +
+    `<p>الاستفسارات العامة: <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>` +
+    `<p>الدعم الفني: <a href="mailto:${BRAND.supportEmail}">${BRAND.supportEmail}</a></p>` +
+    `<p>المشاريع والاستشارات: <a href="mailto:${BRAND.contactEmail}">${BRAND.contactEmail}</a></p>` +
+    `<p>أكاديمية الرشيد: <a href="mailto:${BRAND.academyEmail}">${BRAND.academyEmail}</a></p>` +
     SOCIALS.map((s) => `<div class="card"><strong>${esc(s.label)}</strong> — <a href="${s.url}" target="_blank" rel="me noopener noreferrer">${esc(s.handle)}</a></div>`).join(""),
   jsonld: [
     {
       "@type": "ContactPage",
       url: `${SITE}/contact/`,
-      mainEntity: { "@id": `${SITE}/#person`, email: BRAND.email, contactPoint: { "@type": "ContactPoint", contactType: "customer support", email: BRAND.email, availableLanguage: ["ar", "en"] } },
+      mainEntity: { "@id": `${SITE}/#person`, email: BRAND.email, contactPoint: [{ "@type": "ContactPoint", contactType: "customer support", email: BRAND.supportEmail, availableLanguage: ["ar", "en"] }, { "@type": "ContactPoint", contactType: "customer service", email: BRAND.email, availableLanguage: ["ar", "en"] }, { "@type": "ContactPoint", contactType: "sales", email: BRAND.contactEmail, availableLanguage: ["ar", "en"] }] },
     },
   ],
 });
@@ -542,6 +547,7 @@ enPages.push({
   cta: { href: ACADEMY_REGISTER_URL, label: "Sign up free at the academy" },
   body:
     `<p>Al-Rasheed Academy is an Arabic-first learning platform (LMS) for cybersecurity, programming and ethical hacking that takes you from the fundamentals to advanced topics. All content is free, in Arabic with an English interface: <a href="${ACADEMY_URL}" rel="noopener">academy.cto-drs.com</a>.</p>` +
+    `<p>Inquiries: <a href="mailto:${BRAND.academyEmail}">${BRAND.academyEmail}</a> · Technical support: <a href="mailto:${BRAND.supportEmail}">${BRAND.supportEmail}</a></p>` +
     `<p><strong>${ACADEMY_STATS.tracks}</strong> tracks · <strong>${ACADEMY_STATS.courses}</strong> courses · <strong>${ACADEMY_STATS.lessons}</strong> lessons · <strong>${ACADEMY_STATS.quizzes}</strong> quiz questions · <strong>${ACADEMY_STATS.ctf}</strong> CTF challenges</p>` +
     `<h2>What the academy offers</h2><ul>` +
     [
@@ -581,11 +587,14 @@ enPages.push({
   slug: "contact",
   hash: "contact",
   title: "Contact CTO-DRS | WhatsApp, Telegram, Email",
-  description: `Contact CTO-DRS for a project or technical consultation: WhatsApp Business, Telegram t.me/ctodrs, email ${BRAND.email}.`,
+  description: `Contact CTO-DRS for a project or technical consultation: WhatsApp Business, Telegram t.me/ctodrs, email ${BRAND.email}, support ${BRAND.supportEmail}.`,
   h1: "Get in Touch",
   priority: "0.8",
   body:
-    `<p>Email: <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>` +
+    `<p>General inquiries: <a href="mailto:${BRAND.email}">${BRAND.email}</a></p>` +
+    `<p>Technical support: <a href="mailto:${BRAND.supportEmail}">${BRAND.supportEmail}</a></p>` +
+    `<p>Projects &amp; consultations: <a href="mailto:${BRAND.contactEmail}">${BRAND.contactEmail}</a></p>` +
+    `<p>Al-Rasheed Academy: <a href="mailto:${BRAND.academyEmail}">${BRAND.academyEmail}</a></p>` +
     SOCIALS.map((s) => {
       const e = EN.SOCIALS_EN[s.id];
       return `<div class="card"><strong>${esc(e?.label ?? s.label)}</strong> — <a href="${s.url}" target="_blank" rel="me noopener noreferrer">${esc(e?.handle ?? s.handle)}</a></div>`;
@@ -595,7 +604,7 @@ enPages.push({
       "@type": "ContactPage",
       url: `${SITE}/en/contact/`,
       inLanguage: "en",
-      mainEntity: { "@id": `${SITE}/#person`, email: BRAND.email, contactPoint: { "@type": "ContactPoint", contactType: "customer support", email: BRAND.email, availableLanguage: ["ar", "en"] } },
+      mainEntity: { "@id": `${SITE}/#person`, email: BRAND.email, contactPoint: [{ "@type": "ContactPoint", contactType: "customer support", email: BRAND.supportEmail, availableLanguage: ["ar", "en"] }, { "@type": "ContactPoint", contactType: "customer service", email: BRAND.email, availableLanguage: ["ar", "en"] }, { "@type": "ContactPoint", contactType: "sales", email: BRAND.contactEmail, availableLanguage: ["ar", "en"] }] },
     },
   ],
 });

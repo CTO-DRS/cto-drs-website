@@ -114,6 +114,23 @@ export function Footer() {
               {BRAND.websiteLabel}
             </p>
             <SocialRow size="sm" className="mt-5" />
+            <div className="mt-5">
+              <h2 className="font-heading-cyber mb-2 text-xs font-bold text-main">{f.contactTitle}</h2>
+              <ul className="space-y-1.5">
+                {[
+                  { label: f.emailGeneral, email: BRAND.email },
+                  { label: f.emailSupport, email: BRAND.supportEmail },
+                  { label: f.emailAcademy, email: BRAND.academyEmail },
+                ].map((e) => (
+                  <li key={e.email} className="text-[11px] text-mute">
+                    {e.label}:{" "}
+                    <a href={`mailto:${e.email}`} dir="ltr" className="text-sec transition hover:text-cyber">
+                      {e.email}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* quick links */}

@@ -151,7 +151,7 @@ const JSON_LD = {
       "@id": `${SITE}/#person`,
       name: "CTO-DRS",
       url: SITE,
-      email: "mailto:contact@cto-drs.com",
+      email: "mailto:info@cto-drs.com",
       jobTitle: "Software Engineer",
       description:
         "مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر",
@@ -188,7 +188,7 @@ const JSON_LD = {
       name: "CTO-DRS",
       alternateName: "CTO.DRS",
       url: SITE,
-      email: "contact@cto-drs.com",
+      email: "info@cto-drs.com",
       logo: `${SITE}/icons/icon-512.png`,
       image: `${SITE}/og-image.png`,
       description:
@@ -201,11 +201,24 @@ const JSON_LD = {
         name: "أكاديمية الرشيد",
         alternateName: "Al-Rasheed Academy",
         url: "https://academy.cto-drs.com/",
+        email: "academy@cto-drs.com",
       },
       contactPoint: [
         {
           "@type": "ContactPoint",
           contactType: "customer support",
+          email: "support@cto-drs.com",
+          availableLanguage: ["Arabic", "English"],
+        },
+        {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          email: "info@cto-drs.com",
+          availableLanguage: ["Arabic", "English"],
+        },
+        {
+          "@type": "ContactPoint",
+          contactType: "sales",
           email: "contact@cto-drs.com",
           availableLanguage: ["Arabic", "English"],
         },
