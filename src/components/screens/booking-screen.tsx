@@ -21,6 +21,10 @@ import {
 import { cn } from "@/lib/utils";
 import { useAppRouter } from "@/lib/router";
 import { sendJson } from "@/lib/use-api";
+import { STATIC_MODE } from "@/lib/static-mode";
+import { useI18n } from "@/i18n";
+import { Honeypot } from "@/components/honeypot";
+import { sendContactEmail, KIND_EMAIL, mailtoHref, shortRef, type ContactKind } from "@/lib/contact-email";
 import type { Booking } from "@/lib/types";
 
 const SERVICE_TYPES = [
@@ -68,6 +72,10 @@ function fmtDate(iso: string) {
 
 export function BookingScreen() {
   const { navigate } = useAppRouter();
+  const { lang } = useI18n();
+  const en = lang === "en";
+  const [hp, setHp] = useState("");
+  const [mailFail, setMailFail] = useState<{ kind: ContactKind; body: string } | null>(null);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -126,24 +134,74 @@ export function BookingScreen() {
     if (Object.keys(errs).length > 0) return;
 
     setSending(true);
+    setMailFail(null);
+    /* الدورات التدريبية → academy@ ، بقية الحجوزات → contact@ (التوجيه النهائي في الخادم) */
+    const kind: ContactKind = serviceType === "دورة تدريبية" ? "academy" : "booking";
     try {
-      const booking = await sendJson<Booking>("/api/bookings", {
+      let booking: Booking | null = null;
+      if (!STATIC_MODE) {
+        booking = await sendJson<Booking>("/api/bookings", {
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim() || undefined,
+          serviceType,
+          date,
+          timeSlot,
+          notes: notes.trim() || undefined,
+        }).catch(() => null);
+      }
+      const ref = booking?.id ?? shortRef("BK");
+      const service = serviceType || "استشارة تقنية عامة";
+      const mail = await sendContactEmail({
+        kind,
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim() || undefined,
-        serviceType,
-        date,
-        timeSlot,
-        notes: notes.trim() || undefined,
+        subject: `حجز: ${service} — ${date} ${timeSlot}`,
+        message: notes.trim() || undefined,
+        details: [
+          { label: "رقم الحجز", value: ref },
+          { label: "الخدمة", value: service },
+          { label: "التاريخ", value: `${date} (${fmtDate(date)})` },
+          { label: "الفترة (توقيت الرياض)", value: timeSlot },
+        ],
+        lang: en ? "en" : "ar",
+        website: hp,
       });
-      setConfirmed(booking);
+      if (!mail.ok) {
+        setMailFail({
+          kind,
+          body: [`الاسم: ${name.trim()}`, `البريد: ${email.trim()}`, phone.trim() ? `الجوال: ${phone.trim()}` : "", `الخدمة: ${service}`, `التاريخ: ${date}`, `الفترة: ${timeSlot}`, notes.trim()].filter(Boolean).join("\n"),
+        });
+        toast({
+          title: en ? "Booking request not sent" : "تعذّر إرسال طلب الحجز",
+          description: `${en ? "Email us directly at" : "راسلنا مباشرة على"} ${KIND_EMAIL[kind]}`,
+          variant: "destructive",
+        });
+        return;
+      }
+      setConfirmed(
+        booking ?? {
+          id: ref,
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim() || null,
+          serviceType: service,
+          date,
+          timeSlot,
+          notes: notes.trim() || null,
+          status: "pending",
+          createdAt: new Date().toISOString(),
+        }
+      );
+      setHp("");
       toast({
-        title: "تم تأكيد طلب الحجز!",
-        description: `${serviceType} — ${fmtDate(date)}`,
+        title: en ? "Booking request received!" : "تم استلام طلب الحجز!",
+        description: `${service} — ${fmtDate(date)}`,
       });
     } catch (err) {
       toast({
-        title: "فشل إرسال طلب الحجز",
+        title: en ? "Booking request not sent" : "فشل إرسال طلب الحجز",
         description: err instanceof Error ? err.message : "خطأ غير معروف",
         variant: "destructive",
       });
@@ -185,10 +243,13 @@ export function BookingScreen() {
                     aria-hidden="true"
                   />
                   <h2 className="font-heading-cyber mt-4 text-2xl font-extrabold text-main">
-                    تم تأكيد طلب الحجز!
+                    {en ? "Booking request received!" : "تم استلام طلب الحجز!"}
                   </h2>
                   <p className="mt-2 text-sm text-sec">
-                    سنراسلك على البريد لتثبيت الموعد
+                    {en ? "We'll email you to confirm the slot — a copy is on its way to your inbox." : "سنراسلك على البريد لتثبيت الموعد — وصلتك نسخة تأكيد على بريدك."}{" "}
+                    <a href={`mailto:${KIND_EMAIL.booking}`} dir="ltr" className="text-cyber underline decoration-dotted">
+                      {KIND_EMAIL.booking}
+                    </a>
                   </p>
 
                   <div className="mt-6 space-y-3 rounded-xl border border-border-soft bg-elev-2/40 p-5 text-sm">
@@ -241,7 +302,7 @@ export function BookingScreen() {
                 <form
                   onSubmit={handleSubmit}
                   noValidate
-                  className="card-glow rounded-2xl p-6"
+                  className="card-glow relative rounded-2xl p-6"
                 >
                   <h2 className="font-heading-cyber text-lg font-bold text-main">
                     تفاصيل الحجز
@@ -402,6 +463,19 @@ export function BookingScreen() {
                       />
                     </div>
                   </div>
+
+                  <Honeypot value={hp} onChange={setHp} />
+                  {mailFail && (
+                    <div role="alert" className="mt-5 rounded-xl border border-[rgba(255,42,109,0.45)] bg-[rgba(255,42,109,0.07)] p-3.5 text-xs leading-6 text-sec">
+                      <p className="font-bold text-main">{en ? "Your request didn't reach us" : "لم يصلنا طلبك بعد"}</p>
+                      <p>
+                        {en ? "Send it directly to" : "أرسله مباشرة إلى"}{" "}
+                        <a href={mailtoHref(mailFail.kind, "طلب حجز استشارة — CTO.DRS", mailFail.body)} dir="ltr" className="font-bold text-cyber underline decoration-dotted">
+                          {KIND_EMAIL[mailFail.kind]}
+                        </a>
+                      </p>
+                    </div>
+                  )}
 
                   <button
                     type="submit"

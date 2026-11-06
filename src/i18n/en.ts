@@ -259,6 +259,10 @@ export const en: Dict = {
     toastOkDesc: "I'll get back to you within 24 hours",
     toastWaTitle: "Auto-send via WhatsApp",
     toastWaDesc: "Your message was copied to the clipboard — WhatsApp will open now, just tap Send",
+    mailFailTitle: "Your message couldn't be emailed",
+    mailFailDesc: "It hasn't reached us yet. Send it directly to",
+    mailRateLimited: "Too many attempts in a short time — wait a bit or email us directly",
+    routedTo: "Your message goes to",
   },
 
   cta: {
@@ -360,6 +364,7 @@ export const en: Dict = {
     okDesc: "The latest articles and updates will arrive straight in your inbox",
     failTitle: "Couldn't subscribe",
     tryAgain: "Please try again",
+    mailFailDesc: "Subscription didn't go through. Email us directly at",
   },
 
   cookie: {

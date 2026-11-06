@@ -8,6 +8,8 @@ import { SocialRow } from "@/components/social-channels";
 import { BRAND, ACADEMY_URL } from "@/lib/social";
 import { STATIC_MODE } from "@/lib/static-mode";
 import { useI18n } from "@/i18n";
+import { Honeypot } from "@/components/honeypot";
+import { sendContactEmail, mailtoHref } from "@/lib/contact-email";
 import { A11yControls, LanguageToggle } from "@/components/a11y-controls";
 
 /* التسميات من القاموس: t.footer.links[route.name] */
@@ -34,8 +36,10 @@ const MORE_LINKS: { route: AppRoute }[] = [
 export function Footer() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hp, setHp] = useState("");
+  const [nlFail, setNlFail] = useState(false);
   const { navigate } = useAppRouter();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const f = t.footer;
   const label = (r: AppRoute) => (r.slug && f.links[r.slug]) || f.links[r.name] || r.name;
 
@@ -52,32 +56,23 @@ export function Footer() {
     }
     setLoading(true);
     try {
-      /* النسخة الثابتة: الاشتراك يتم عبر البريد المباشر بدل قاعدة البيانات */
-      if (STATIC_MODE) {
-        window.location.href = `mailto:${BRAND.email}?subject=${encodeURIComponent(
-          f.mailSubject
-        )}&body=${encodeURIComponent(email)}`;
-        toast({
-          title: f.preparedTitle,
-          description: f.preparedDesc,
-        });
-        setEmail("");
-        return;
+      /* الاشتراك يُرسَل بالبريد إلى info@ ويصل المشترك تأكيد (عبر نقطة الأكاديمية) */
+      setNlFail(false);
+      const mail = await sendContactEmail({ kind: "newsletter", email: email.trim(), lang: lang === "en" ? "en" : "ar", website: hp });
+      if (!STATIC_MODE) {
+        await fetch("/api/newsletter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }).catch(() => null);
       }
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        toast({
-          title: f.okTitle,
-          description: f.okDesc,
-        });
+      if (mail.ok) {
+        toast({ title: f.okTitle, description: f.okDesc });
         setEmail("");
+        setHp("");
       } else {
-        toast({ title: f.failTitle, description: data.error ?? f.tryAgain });
+        setNlFail(true);
+        toast({ title: f.failTitle, description: `${f.mailFailDesc} ${BRAND.email}`, variant: "destructive" });
       }
     } catch {
       toast({ title: t.common.connErrTitle, description: t.common.connErrDesc });
@@ -195,7 +190,7 @@ export function Footer() {
           <div>
             <h2 className="font-heading-cyber mb-4 text-sm font-bold text-main">{f.newsletter}</h2>
             <p className="text-xs leading-6 text-sec">{f.newsletterDesc}</p>
-            <form onSubmit={subscribe} className="mt-4 flex gap-2">
+            <form onSubmit={subscribe} className="relative mt-4 flex gap-2">
               <label htmlFor="newsletter-email" className="sr-only">
                 {f.yourEmail}
               </label>
@@ -217,7 +212,16 @@ export function Footer() {
                 {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />}
                 {f.subscribe}
               </button>
+              <Honeypot value={hp} onChange={setHp} />
             </form>
+            {nlFail && (
+              <p role="alert" className="mt-2 text-[11px] leading-5 text-sec">
+                {f.mailFailDesc}{" "}
+                <a href={mailtoHref("newsletter", f.mailSubject, email)} dir="ltr" className="font-bold text-cyber underline decoration-dotted">
+                  {BRAND.email}
+                </a>
+              </p>
+            )}
             <p className="font-mono-cyber mt-3 text-[10px] text-mute" dir="ltr">
               NO SPAM • UNSUBSCRIBE ANYTIME
             </p>
