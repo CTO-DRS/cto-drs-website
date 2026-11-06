@@ -17,7 +17,14 @@ export const BRAND = {
   handle: "cto-drs",
   website: "https://cto-drs.com/",
   websiteLabel: "cto-drs.com",
-  email: "contact@cto-drs.com",
+  /** البريد العام */
+  email: "info@cto-drs.com",
+  /** الدعم الفني */
+  supportEmail: "support@cto-drs.com",
+  /** المشاريع والاستشارات (العنوان القديم — ما زال فعّالاً) */
+  contactEmail: "contact@cto-drs.com",
+  /** أكاديمية الرشيد */
+  academyEmail: "academy@cto-drs.com",
 } as const;
 
 /** أكاديمية الرشيد — منصة التعلّم (LMS) على نطاق فرعي مستقل */

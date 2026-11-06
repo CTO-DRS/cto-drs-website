@@ -22,7 +22,7 @@ import {
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { useI18n } from "@/i18n";
-import { ACADEMY_URL } from "@/lib/social";
+import { ACADEMY_URL, BRAND } from "@/lib/social";
 import {
   ACADEMY_REGISTER_URL,
   ACADEMY_TRACKS_URL,
@@ -282,6 +282,12 @@ export function AcademySection() {
                 <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
               </ExtLink>
             </div>
+            <p className="text-xs text-sec">
+              {a.emailLabel}{" "}
+              <a href={`mailto:${BRAND.academyEmail}`} dir="ltr" className="font-bold text-main transition hover:text-cyber">
+                {BRAND.academyEmail}
+              </a>
+            </p>
           </div>
         </Reveal>
       </div>

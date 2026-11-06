@@ -214,6 +214,10 @@ export const en: Dict = {
     replyValue: "Within 24 hours at most",
     daysLabel: "Working days",
     daysValue: "Sunday – Thursday • 9 AM to 9 PM (KSA)",
+    emailsTitle: "Email",
+    emailGeneral: "General inquiries",
+    emailSupport: "Technical support",
+    emailProjects: "Projects & consultations",
     formReady: "Great! The form is ready to send ✓",
     formHint: "Complete the steps for a faster, more accurate reply",
     purposeLegend: "What are you reaching out about?",
@@ -305,6 +309,7 @@ export const en: Dict = {
     ],
     ctaTitle: "Start learning today",
     ctaBody: "Every track, lesson and challenge is free.",
+    emailLabel: "Academy inquiries:",
   },
 
   footer: {
@@ -319,6 +324,10 @@ export const en: Dict = {
     privacy: "Privacy Policy",
     terms: "Terms & Conditions",
     builtWith: "Built with passion and security",
+    contactTitle: "Email us",
+    emailGeneral: "General",
+    emailSupport: "Technical support",
+    emailAcademy: "Academy",
     links: {
       home: "Home",
       services: "Services",

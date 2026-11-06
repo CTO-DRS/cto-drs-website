@@ -12,6 +12,7 @@ import {
   Globe2,
   Zap,
   ClipboardCheck,
+  Mail,
 } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
@@ -23,7 +24,7 @@ import {
   detectCountryCode,
   sanitizePhone,
 } from "@/lib/contact-options";
-import { SOCIAL_BY_ID } from "@/lib/social";
+import { SOCIAL_BY_ID, BRAND } from "@/lib/social";
 import { STATIC_MODE } from "@/lib/static-mode";
 import { getSupabase, SUPABASE_ENABLED } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
@@ -288,6 +289,30 @@ export function ContactSection({ showHeader = true }: { showHeader?: boolean }) 
                   <p className="text-[11px] text-mute">{c.daysLabel}</p>
                   <p className="text-sm font-bold text-main">{c.daysValue}</p>
                 </div>
+              </div>
+            </Reveal>
+
+            {/* البريد الإلكتروني الرسمي */}
+            <Reveal delay={180}>
+              <div className="card-glow rounded-2xl p-4">
+                <p className="mb-3 flex items-center gap-2 text-[11px] text-mute">
+                  <Mail className="h-4 w-4 text-cyber" aria-hidden="true" />
+                  {c.emailsTitle}
+                </p>
+                <ul className="space-y-2.5">
+                  {[
+                    { label: c.emailGeneral, email: BRAND.email },
+                    { label: c.emailSupport, email: BRAND.supportEmail },
+                    { label: c.emailProjects, email: BRAND.contactEmail },
+                  ].map((e) => (
+                    <li key={e.email} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5">
+                      <span className="text-xs text-sec">{e.label}</span>
+                      <a href={`mailto:${e.email}`} dir="ltr" className="break-all text-sm font-bold text-main transition hover:text-cyber">
+                        {e.email}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </Reveal>
 
