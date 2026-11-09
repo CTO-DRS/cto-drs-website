@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>تقرير الفحص الشامل — مشروع CTO-DRS</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+@page {
+  size: 794px 1123px;
+  margin: 0;
+}
+:root {
+  --ink: #1a1a1a;
+  --ink-2: #2d2d2d;
+  --muted: #6b6b6b;
+  --faint: #9a9a9a;
+  --line: #e2e2e2;
+  --soft: #f5f5f5;
+  --bg: #ffffff;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 794px;
+  background: #ffffff;
+  color: var(--ink-2);
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+  font-size: 15px;
+  line-height: 1.85;
+}
+@media screen {
+  html {
+    height: auto;
+    display: flex;
+    justify-content: center;
+    background: #ffffff;
+  }
+  body {
+    transform: scale(1);
+    transform-origin: top center;
+    margin: 24px auto;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.12);
+  }
+}
+p, td, li { line-break: strict; overflow-wrap: break-word; }
+p { text-align: justify; margin: 0 0 12px 0; }
+p, td, li, .content { overflow-wrap: break-word; word-break: normal; }
+
+/* ---------- Cover ---------- */
+.front-page {
+  width: 794px;
+  height: 1123px;
+  box-sizing: border-box;
+  break-after: page;
+  overflow: hidden;
+  padding: 56px 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.front-page .rule-top { height: 3px; background: var(--ink); width: 100%; margin-bottom: 48px; }
+.front-page .kicker {
+  font-size: 12px; letter-spacing: 4px; color: var(--muted);
+  text-transform: uppercase; margin-bottom: 26px; font-weight: 500;
+}
+.front-page .title { font-size: 52px; font-weight: 700; line-height: 1.35; color: var(--ink); margin-bottom: 14px; }
+.front-page .subtitle-en {
+  font-size: 17px; color: var(--muted); font-weight: 400;
+  letter-spacing: 0.5px; margin-bottom: 52px; direction: ltr; text-align: right;
+}
+.front-page .meta-grid {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 44px 0;
+  margin-bottom: 52px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 32px;
+}
+.front-page .meta-item { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; }
+.front-page .meta-item .k { color: var(--muted); }
+.front-page .meta-item .v { color: var(--ink); font-weight: 600; }
+.front-page .meta-item .v.mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; direction: ltr; unicode-bidi: embed; }
+.front-page .score-strip { display: flex; gap: 14px; align-items: stretch; }
+.front-page .score-box {
+  flex: 1 1 auto; min-width: 90px; max-width: 100%;
+  border: 1px solid var(--line); padding: 18px 12px 14px; text-align: center;
+}
+.front-page .score-box .num { font-size: 34px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.front-page .score-box .lbl { font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+.front-page .foot {
+  position: absolute; bottom: 56px; right: 64px; left: 64px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-top: 1px solid var(--line); padding-top: 46px;
+  font-size: 12px; color: var(--muted);
+}
+.front-page .foot .en { direction: ltr; unicode-bidi: embed; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; }
+
+/* ---------- TOC ---------- */
+.toc-block { padding: 0; }
+.toc-title { font-size: 24px; font-weight: 700; color: var(--ink); margin: 0 0 6px; }
+.toc-en { font-size: 12px; color: var(--faint); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 22px; }
+.toc-list { }
+.toc-row {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 8.5px 0; border-bottom: 1px solid var(--soft);
+  font-size: 14.5px;
+}
+.toc-row .t-num { font-family: 'IBM Plex Mono', monospace; color: var(--faint); font-size: 12px; min-width: 26px; }
+.toc-row .t-name { font-weight: 500; color: var(--ink-2); }
+.toc-row .t-en { color: var(--faint); font-size: 11px; letter-spacing: 1px; direction: ltr; unicode-bidi: embed; }
+.toc-row .leader { flex: 1 1 auto; border-bottom: 1px dotted var(--line); margin: 0 6px; min-width: 24px; }
+.toc-row .t-page { font-family: 'IBM Plex Mono', monospace; color: var(--ink); font-size: 12.5px; min-width: 22px; text-align: left; }
+
+/* ---------- Main content ---------- */
+.main-content {
+  padding: 58px 64px 46px 64px;
+}
+.chapter-header { break-after: avoid; break-inside: avoid; margin-top: 28px; }
+.chapter-header:first-child { margin-top: 0; }
+.sec-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: var(--faint); letter-spacing: 2.5px;
+  direction: ltr; unicode-bidi: embed; text-align: right;
+  margin-bottom: 4px;
+}
+.sec-title { font-size: 25px; font-weight: 700; color: var(--ink); line-height: 1.4; margin-bottom: 3px; }
+.sec-rule { height: 2px; background: var(--ink); width: 46px; margin: 10px 0 16px; }
+
+h3.sub {
+  font-size: 17px; font-weight: 700; color: var(--ink);
+  margin: 20px 0 8px; break-after: avoid;
+}
+.lead { font-size: 15.5px; color: var(--ink-2); }
+.small-note { font-size: 12.5px; color: var(--muted); }
+
+/* KPI strip */
+.kpi-strip { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 18px; }
+.kpi {
+  flex: 1 1 150px; min-width: 140px; max-width: 100%;
+  border: 1px solid var(--line); border-top: 2px solid var(--ink);
+  padding: 14px 14px 10px; break-inside: avoid;
+}
+.kpi .k-num { font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.15; font-family: 'IBM Plex Mono', monospace; direction: ltr; unicode-bidi: embed; text-align: right; }
+.kpi .k-lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* Verdict box */
+.verdict {
+  border: 1px solid var(--ink);
+  padding: 18px 20px; margin: 16px 0 18px;
+  break-inside: avoid;
+  background: var(--soft);
+}
+.verdict .v-title { font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 6px; }
+
+/* Score bars */
+.score-bars { margin: 10px 0 6px; }
+.sbar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; break-inside: avoid; }
+.sbar-row .s-name { flex: 0 0 190px; font-size: 13px; color: var(--ink-2); }
+.sbar-row .s-track { flex: 1 1 auto; min-width: 100px; height: 12px; background: var(--soft); border: 1px solid var(--line); position: relative; }
+.sbar-row .s-fill { height: 100%; background: var(--ink); }
+.sbar-row .s-val { flex: 0 0 44px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink); text-align: left; direction: ltr; }
+
+/* Severity badges */
+.badge {
+  display: inline-block; padding: 1.5px 10px; font-size: 11px; font-weight: 600;
+  border: 1px solid var(--ink); color: var(--ink); letter-spacing: 0.5px;
+  line-height: 1.7;
+}
+.badge.crit { background: var(--ink); color: #fff; }
+.badge.high { background: transparent; color: var(--ink); border-width: 2px; }
+.badge.med  { background: transparent; color: var(--ink-2); }
+.badge.low  { background: transparent; color: var(--muted); border-color: var(--faint); }
+.badge.info { background: transparent; color: var(--muted); border-color: var(--line); }
+
+/* Finding cards */
+.finding {
+  border: 1px solid var(--line);
+  border-right: 3px solid var(--ink);
+  padding: 16px 18px 12px;
+  margin: 0 0 16px;
+  break-inside: avoid;
+}
+.finding.f-high  { border-right-width: 3px; }
+.finding.f-med   { border-right: 3px solid var(--faint); }
+.finding.f-low   { border-right: 3px solid var(--line); }
+.finding .f-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.finding .f-id { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--faint); direction: ltr; }
+.finding .f-title { font-weight: 700; font-size: 15.5px; color: var(--ink); flex: 1 1 auto; min-width: 200px; }
+.finding .f-loc {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--muted);
+  direction: ltr; unicode-bidi: embed; text-align: left;
+  background: var(--soft); padding: 3px 8px; display: inline-block; margin: 2px 0 8px;
+  max-width: 100%; overflow-wrap: break-word;
+}
+.finding p { font-size: 13.8px; margin-bottom: 8px; }
+
+/* Evidence code block */
+.ev-cap {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--muted);
+  direction: ltr; unicode-bidi: embed; text-align: left;
+  margin: 8px 0 0; padding: 4px 10px; background: var(--ink); color: #f2f2f2;
+  display: block;
+}
+pre.evidence {
+  direction: ltr; text-align: left; unicode-bidi: embed;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; line-height: 1.55;
+  background: #fafafa; border: 1px solid var(--line); border-top: 0;
+  padding: 10px 12px; margin: 0 0 10px;
+  white-space: pre-wrap; overflow-wrap: break-word; word-break: break-all;
+  color: var(--ink-2);
+  max-width: 100%; box-sizing: border-box;
+}
+pre.evidence b { color: var(--ink); background: #ececec; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 13px; table-layout: fixed; }
+table.register { font-size: 12px; margin-bottom: 4px; }
+table.register td { padding: 5px 8px; }
+thead { display: table-header-group; }
+tr { break-inside: avoid; }
+th {
+  background: var(--ink-2); color: #ffffff; font-weight: 600;
+  padding: 7px 10px; text-align: right; font-size: 12.5px;
+  border: 1px solid var(--ink-2);
+}
+td { border: 1px solid var(--line); padding: 6.5px 10px; vertical-align: top; text-align: right; }
+tbody tr:nth-child(odd) { background: var(--soft); }
+td.mono, .mono { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; direction: ltr; unicode-bidi: embed; }
+td.c { text-align: center; }
+.pass { font-weight: 700; color: var(--ink); }
+.warn { font-weight: 700; color: var(--ink-2); }
+
+/* Charts */
+.chart-box { border: 1px solid var(--line); padding: 16px 18px 12px; margin: 14px 0 18px; break-inside: avoid; }
+.chart-title { font-weight: 700; font-size: 14px; color: var(--ink); margin-bottom: 2px; }
+.chart-sub { font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+.legend-grid { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; max-width: 100%; }
+.lg-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-2); flex: 0 1 auto; min-width: 90px; }
+.lg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.hbar-list { }
+.hbar { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; break-inside: avoid; }
+.hbar .hb-name { flex: 0 0 168px; font-size: 12.5px; color: var(--ink-2); }
+.hbar .hb-track { flex: 1 1 auto; min-width: 80px; height: 13px; background: var(--soft); }
+.hbar .hb-fill { height: 100%; background: var(--ink-2); }
+.hbar .hb-val { flex: 0 0 62px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--muted); direction: ltr; text-align: left; }
+.hbar .hb-name.mono-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 11px; direction: ltr; unicode-bidi: embed; text-align: right; }
+
+/* Lists */
+ul.tick { margin: 6px 0 12px; padding-right: 20px; }
+ul.tick li { margin-bottom: 6px; break-inside: avoid; }
+ol.steps { margin: 6px 0 12px; padding-right: 22px; }
+ol.steps li { margin-bottom: 8px; }
+
+/* Ending */
+.ending {
+  width: 794px; height: 1123px; box-sizing: border-box;
+  break-before: page; overflow: hidden;
+  padding: 64px; display: flex; flex-direction: column; justify-content: center;
+  position: relative;
+}
+.ending .rule { height: 3px; background: var(--ink); width: 100%; margin-bottom: 30px; }
+.ending .big { font-size: 30px; font-weight: 700; color: var(--ink); line-height: 1.6; margin-bottom: 18px; }
+.ending p { font-size: 14px; color: var(--muted); }
+.ending .foot {
+  position: absolute; bottom: 64px; right: 64px; left: 64px;
+  border-top: 1px solid var(--line); padding-top: 14px;
+  display: flex; justify-content: space-between; font-size: 11.5px; color: var(--faint);
+}
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="front-page">
+  <div class="rule-top"></div>
+  <div class="kicker">TECHNICAL INSPECTION REPORT</div>
+  <div class="title">تقرير الفحص الشامل<br>مشروع CTO-DRS</div>
+  <div class="subtitle-en">cto-drs-website-files-backup.zip &mdash; Comprehensive Project Audit</div>
+
+  <div class="meta-grid">
+    <div class="meta-item"><span class="k">هدف الفحص</span><span class="v">نسخة احتياطية كاملة للموقع</span></div>
+    <div class="meta-item"><span class="k">تاريخ الفحص</span><span class="v">9 نوفمبر 2026</span></div>
+    <div class="meta-item"><span class="k">حجم الحزمة</span><span class="v">55,093,527 بايت (52.54 MB)</span></div>
+    <div class="meta-item"><span class="k">عدد المدخلات</span><span class="v">411 ملفاً / 56.2 MB</span></div>
+    <div class="meta-item"><span class="k">المستودعات</span><span class="v">تطوير + نشر + سجل Git</span></div>
+    <div class="meta-item"><span class="k">نوع الفحص</span><span class="v">تحليل ساكن شامل (Static Audit)</span></div>
+    <div class="meta-item"><span class="k">معرّف النسخة (نشر)</span><span class="v mono">f2c0823 &middot; 2026-11-06</span></div>
+    <div class="meta-item"><span class="k">معرّف النسخة (تطوير)</span><span class="v mono">fd15743 &middot; 2026-11-01</span></div>
+  </div>
+
+  <div class="score-strip">
+    <div class="score-box"><div class="num">65</div><div class="lbl">التقييم العام من 100</div></div>
+    <div class="score-box"><div class="num">15</div><div class="lbl">نتيجة موثقة</div></div>
+    <div class="score-box"><div class="num">1+3</div><div class="lbl">حرجة + عالية</div></div>
+    <div class="score-box"><div class="num">410</div><div class="lbl">بصمات SHA-256 مطابقة</div></div>
+    <div class="score-box"><div class="num">26</div><div class="lbl">فحصاً منفذاً</div></div>
+  </div>
+
+  <div class="foot">
+    <span>إعداد: Z.ai &mdash; الفحص مبنى على الحزمة فقط دون أي وصول حي</span>
+    <span class="en">CTO-DRS / STATIC AUDIT / 2026-11</span>
+  </div>
+</div>
+
+<!-- ============ MAIN ============ -->
+<div class="main-content">
+
+<!-- ===== TOC ===== -->
+<div class="toc-block">
+  <div class="toc-title">المحتويات</div>
+  <div class="toc-en">TABLE OF CONTENTS</div>
+  <div class="toc-list">
+    <div class="toc-row"><span class="t-num">01</span><span class="t-name">الملخص التنفيذي</span><span class="t-en">Executive Summary</span><span class="leader"></span><span class="t-page">1</span></div>
+    <div class="toc-row"><span class="t-num">02</span><span class="t-name">نطاق الفحص والمنهجية</span><span class="t-en">Scope &amp; Methodology</span><span class="leader"></span><span class="t-page">2</span></div>
+    <div class="toc-row"><span class="t-num">03</span><span class="t-name">سلامة النسخة الاحتياطية والتحقق منها</span><span class="t-en">Backup Integrity</span><span class="leader"></span><span class="t-page">3</span></div>
+    <div class="toc-row"><span class="t-num">04</span><span class="t-name">البنية والمكدس التقني</span><span class="t-en">Architecture &amp; Stack</span><span class="leader"></span><span class="t-page">4</span></div>
+    <div class="toc-row"><span class="t-num">05</span><span class="t-name">النتائج الأمنية وأدلة الكود</span><span class="t-en">Security Findings</span><span class="leader"></span><span class="t-page">6</span></div>
+    <div class="toc-row"><span class="t-num">06</span><span class="t-name">جودة الكود والاعتماديات</span><span class="t-en">Code Quality</span><span class="leader"></span><span class="t-page">9</span></div>
+    <div class="toc-row"><span class="t-num">07</span><span class="t-name">فجوة الإصدارات ومسار المصادقة الحي</span><span class="t-en">Version Drift</span><span class="leader"></span><span class="t-page">12</span></div>
+    <div class="toc-row"><span class="t-num">08</span><span class="t-name">الخصوصية ومعرفات النشر العامة</span><span class="t-en">Privacy &amp; Public Identifiers</span><span class="leader"></span><span class="t-page">13</span></div>
+    <div class="toc-row"><span class="t-num">09</span><span class="t-name">خطة الإصلاح بالأولوية</span><span class="t-en">Remediation Plan</span><span class="leader"></span><span class="t-page">14</span></div>
+    <div class="toc-row"><span class="t-num">10</span><span class="t-name">سجل الفحص التفصيلي</span><span class="t-en">Inspection Log</span><span class="leader"></span><span class="t-page">15</span></div>
+    <div class="toc-row"><span class="t-num">11</span><span class="t-name">ملحق: سجل النتائج الكامل F-01 إلى F-15</span><span class="t-en">Findings Register</span><span class="leader"></span><span class="t-page">17</span></div>
+  </div>
+</div>
+
+<!-- ===== 01 EXECUTIVE SUMMARY ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 01 / EXECUTIVE SUMMARY</div>
+  <div class="sec-title">01 &mdash; الملخص التنفيذي</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p class="lead">خضع مشروع CTO-DRS في هذه النسخة الاحتياطية لفحص ساكن شامل تغطي سلامة النسخ والبنية المعمارية والأمان وجودة الكود وجاهزية النشر، شمل 411 مدخلاً وبصمات رقمية لكل الملفات وسجل Git الكامل لمستودعين. النتيجة الإجمالية <b>65 من 100</b>، وهي نتيجة تعكس مشروعاً مبنياً بعناية تقنية حقيقية من ناحية البنية والتوثيق والنسخ الاحتياطي، لكنها تتأثر بوضع أمني خطير في مسارات الإدارة داخل بنية الخادم. سلامة الحزمة نفسها ممتازة تماماً: كل البصمات مطابقة وحزم Git سليمة وسجل التاريخ كامل، ما يجعل هذه النسخة موثوقة كأساس للاستعادة.</p>
+
+<p>التقييم العام محسوب كمعدل متساوٍ لأربعة محاور رئيسية، وقد وُجدت <b>15 نتيجة</b>: واحدة حرجة وثلاث عالية وسبع متوسطة وثلاث منخفضة معلوماتية. البند الأهم الذي يستوجب إجراءً فورياً هو أن جميع مسارات الإدارة <span class="mono">/api/admin/*</span> في نسخة الخادم تعمل دون أي مصادقة على الإطلاق، بما فيها تغيير أدوار المستخدمين وحذفهم وقراءة رسائل التواصل الشخصية، ولا يوجد أي طبقة وسطى (middleware) أو حد للسرعة على أي نقطة API. في المقابل، مسار المصادقة الأحدث المبني على Supabase والموجود في الفرع <span class="mono">feat/supabase-auth</span> مصمم بشكل احترافي مع سياسات RLS كاملة وآلية منع تصعيد الصلاحيات، لكنه غير مدمج في الفرع الرئيسي، وهذه الفجوة نفسها نتيجة موثقة في هذا التقرير.</p>
+
+<div class="kpi-strip">
+  <div class="kpi"><div class="k-num">411</div><div class="k-lbl">ملفاً في الحزمة</div></div>
+  <div class="kpi"><div class="k-num">29,707</div><div class="k-lbl">سطر كود مفحوص</div></div>
+  <div class="kpi"><div class="k-num">33</div><div class="k-lbl">معالج API</div></div>
+  <div class="kpi"><div class="k-num">13</div><div class="k-lbl">جدول Prisma</div></div>
+  <div class="kpi"><div class="k-num">53</div><div class="k-lbl">commits في المستودعين</div></div>
+</div>
+
+<h3 class="sub">التقييم حسب المحاور</h3>
+<div class="score-bars">
+  <div class="sbar-row"><span class="s-name">سلامة النسخة الاحتياطية</span><div class="s-track"><div class="s-fill" style="width:95%"></div></div><span class="s-val">95</span></div>
+  <div class="sbar-row"><span class="s-name">البنية والمعمارية</span><div class="s-track"><div class="s-fill" style="width:75%"></div></div><span class="s-val">75</span></div>
+  <div class="sbar-row"><span class="s-name">جودة الكود والاعتماديات</span><div class="s-track"><div class="s-fill" style="width:65%"></div></div><span class="s-val">65</span></div>
+  <div class="sbar-row"><span class="s-name">جاهزية النشر والتشغيل</span><div class="s-track"><div class="s-fill" style="width:60%"></div></div><span class="s-val">60</span></div>
+  <div class="sbar-row"><span class="s-name">الأمان والتحكم بالوصول</span><div class="s-track"><div class="s-fill" style="width:30%"></div></div><span class="s-val">30</span></div>
+</div>
+<p class="small-note">المقياس: 90+ ممتاز، 75-89 جيد، 60-74 مقبول مع تحسينات، أقل من 60 يستوجب معالجة عاجلة. المعدل العام بوزن متساوٍ للمحاور الخمسة.</p>
+
+<div class="verdict">
+  <div class="v-title">الخلاصة الإدارية</div>
+  <p style="margin-bottom:0; font-size:14px;">المشروع قابل للاستمرار والاستعادة من هذه النسخة بثقة عالية، والمستوى الهندسي العام فوق المتوسط بوضوح. لكن قبل أي إطلاق أو تشغيل واسع لبنية الخادم (وضع standalone)، يجب إغلاق الثغرات الأمنية الأربع الأولى في خطة الإصلاح لأنها تتيح وصولاً كاملاً لبيانات المستخدمين وإدارة المنصة دون أي اعتراض. الأولوية التنفيذية مرتبة في القسم 09، وتستغرق البطاقة الحرجة الأولى ساعات قليلة من العمل المركز.</p>
+</div>
+
+<div class="chart-box">
+  <div class="chart-title">توزيع النتائج حسب الخطورة</div>
+  <div class="chart-sub">15 نتيجة موثقة في هذا الفحص &mdash; Findings by severity</div>
+  <div style="display:flex; flex-wrap:wrap; align-items:center; gap:26px;">
+    <svg width="200" height="200" viewBox="0 0 200 200" style="flex-shrink:0; max-width:100%;">
+      <g transform="rotate(-90 100 100)">
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#111111" stroke-width="34" stroke-dasharray="33.5 502.7" stroke-dashoffset="0"></circle>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#3d3d3d" stroke-width="34" stroke-dasharray="100.5 502.7" stroke-dashoffset="-33.5"></circle>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#787878" stroke-width="34" stroke-dasharray="234.6 502.7" stroke-dashoffset="-134"></circle>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#a8a8a8" stroke-width="34" stroke-dasharray="100.5 502.7" stroke-dashoffset="-368.6"></circle>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#d2d2d2" stroke-width="34" stroke-dasharray="33.5 502.7" stroke-dashoffset="-469.1"></circle>
+      </g>
+      <text x="100" y="94" text-anchor="middle" font-size="34" font-weight="700" fill="#1a1a1a" font-family="IBM Plex Mono, monospace">15</text>
+      <text x="100" y="116" text-anchor="middle" font-size="11" fill="#6b6b6b" font-family="IBM Plex Sans Arabic, sans-serif">نتيجة</text>
+    </svg>
+    <div class="legend-grid" style="flex:1 1 300px;">
+      <div class="lg-item"><span class="lg-dot" style="background:#111111"></span>حرجة Critical &mdash; 1</div>
+      <div class="lg-item"><span class="lg-dot" style="background:#3d3d3d"></span>عالية High &mdash; 3</div>
+      <div class="lg-item"><span class="lg-dot" style="background:#787878"></span>متوسطة Medium &mdash; 7</div>
+      <div class="lg-item"><span class="lg-dot" style="background:#a8a8a8"></span>منخفضة Low &mdash; 3</div>
+      <div class="lg-item"><span class="lg-dot" style="background:#d2d2d2"></span>معلوماتية Info &mdash; 1</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 02 SCOPE & METHODOLOGY ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 02 / SCOPE &amp; METHODOLOGY</div>
+  <div class="sec-title">02 &mdash; نطاق الفحص والمنهجية</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p>نطاق هذا الفحص هو الحزمة <span class="mono">cto-drs-website-files-backup.zip</span> كما وردت من منصة التخزين، وهي وثيقة نسخ احتياطي ذاتية الوصف تتضمن ثلاث طبقات: نسخة النشر الثابتة المنشورة على <span class="mono">cto-drs.com</span> (169 ملفاً)، ومصدر التطوير الكامل لمشروع Next.js (237 ملفاً)، وحزمتي Git Bundle تحفظان تاريخ المستودعين (38.5 MB). جرى الفحص بالتحليل الساكن فقط: قراءة مباشرة للملفات، فحص أنماط برمجية، تحقق تشفيري من البصمات، وتفكيك سجل Git من الحزم، دون أي تشغيل حي للتطبيق أو اتصال بخوادم الإنتاج أو قاعدة البيانات الفعلية.</p>
+
+<p>اعتمد الفحص أدوات معيارية: التحقق من سلامة الأرشيف بمكتبة zipfile وفحص كل بصمة SHA-256 مقابل ملف <span class="mono">checksums.sha256</span> المرفق داخل الحزمة نفسها، والتحقق من حزم Git بأمر <span class="mono">git bundle verify</span> مع تفكيكهما لاستخراج إحصاءات التاريخ والفروع، وماسح أنماط لأسرار الشهادات (12 نمطاً من الأنماط القياسية مثل مفاتيح AWS وGitHub وGoogle) شمل 197 ملفاً نصياً، وجرد كامل لمعالجات API وربطها بآليات المصادقة المستخدمة، إضافة إلى تحليل الاستيراد الفعلي مقابل قائمة الاعتماديات المعلنة في <span class="mono">package.json</span>.</p>
+
+<p>للفحص حدود واضحة يجب استيعابها عند قراءة النتائج: لم يُختبر التطبيق أثناء التشغيل، ولم تُفحص إعدادات Supabase الحية أو قواعد بيانات الإنتاج أو متغيرات البيئة الفعلية لأنها خارج الحزمة بطبيعتها، وسياسات RLS الحية قُيّمت من ملفات SQL المحفوظة في الفرع وليس من مثيل الإنتاج نفسه. أي نتيجة تتعلق بسلوك زمني أو تحميل حقيقي خارج النطاق، وما ورد في هذا التقرير يعكس حالة الكود كما هو محفوظ في الحزمة بتاريخ 8 نوفمبر 2026.</p>
+
+<!-- ===== 03 BACKUP INTEGRITY ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 03 / BACKUP INTEGRITY</div>
+  <div class="sec-title">03 &mdash; سلامة النسخة الاحتياطية والتحقق منها</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p class="lead">هذا المحور هو الأقوى في التقرير كله، وقد حصل على 95 من 100. الحزمة اجتازت كل فحوصات السلامة التشفيرية والبنيوية دون أي استثناء واحد، ووثّقت نفسها ذاتياً بمستوى نادر في النسخ الاحتياطية الشخصية.</p>
+
+<p>فحص الأرشيف أولاً: ملف ZIP سليم بنيوياً بالكامل، اختبار قراءة كل مدخل من مدخلاته الـ411 عبر اختبار CRC لم يُرجع أي ملف تالف، والحجم غير المضغوط 58,954,124 بايت مطابق للقائمة الداخلية. ثانياً التحقق التشفيري: ملف <span class="mono">checksums.sha256</span> المرفق يضم 410 بصمات (كل ملفات الحزمة عدا الملف نفسه)، وقد أعيد حساب بصمة كل ملف من القرص بعد فك الضغط وقورنت مع المرفق؛ النتيجة <b>410 من 410 مطابقة بنسبة 100%</b> بصفر تعارض وصفر ملف مفقود. ثالثاً الوثائق المرافقة: ملف <span class="mono">manifest.json</span> يعكس بدقة هوية المستودعين ومعرّفَي الالتزام وقوائم الملفات، ويؤكد أن فهرس الموقع الحي يطابق مستودع النشر، وملف <span class="mono">README-AR.md</span> يشرح بصراحة نطاق الحزمة وحدودها.</p>
+
+<p>رابعاً سجل Git: حزمة النشر <span class="mono">cto-drs.com.bundle</span> (12.75 MB) سجّلت تاريخاً كاملاً من 23 التزاماً آخرها <span class="mono">f2c0823</span> بتاريخ 6 نوفمبر 2026، وحزمة التطوير <span class="mono">cto-drs-website.bundle</span> (27.66 MB) تحفظ 30 التزاماً آخرها <span class="mono">fd15743</span> بتاريخ 1 نوفمبر، وكلتاهما اجتازت <span class="mono">git bundle verify</span> بتأكيد «سجل كامل» وخوارزمية sha1. حزمة التطوير تحفظ أيضاً فروعاً جانبية قيّمة (<span class="mono">feat/supabase-auth</span> و<span class="mono">feat/smart-search</span> و<span class="mono">feat/i18n-a11y</span> و<span class="mono">gh-pages</span>) بينما تحفظ حزمة النشر فرعَي <span class="mono">backup-static-v2</span> و<span class="mono">improve/site-v2</span>.</p>
+
+<div class="chart-box">
+  <div class="chart-title">توزيع الملفات على مكونات الحزمة</div>
+  <div class="chart-sub">411 مدخلاً &mdash; الحزمة مبنية على مستودعين وفهرس تحقق موحد</div>
+  <div class="hbar-list">
+    <div class="hbar"><span class="hb-name mono-lbl">development-source</span><div class="hb-track"><div class="hb-fill" style="width:100%"></div></div><span class="hb-val">237 file</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">published-site</span><div class="hb-track"><div class="hb-fill" style="width:71.3%"></div></div><span class="hb-val">169 file</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">(root) docs+checks</span><div class="hb-track"><div class="hb-fill" style="width:1.6%"></div></div><span class="hb-val">3 file</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">git-history</span><div class="hb-track"><div class="hb-fill" style="width:1.2%"></div></div><span class="hb-val">2 bundles</span></div>
+  </div>
+</div>
+
+<table>
+  <colgroup><col style="width:34%"><col style="width:22%"><col style="width:44%"></colgroup>
+  <thead><tr><th>الفحص</th><th>النتيجة</th><th>الملاحظة</th></tr></thead>
+  <tbody>
+    <tr><td>سلامة بنية ZIP</td><td class="c pass">ناجح</td><td>411 مدخلاً، صفر ملف تالف في اختبار CRC</td></tr>
+    <tr><td>بصمات SHA-256</td><td class="c pass">410/410</td><td>مطابقة كاملة، صفر تعارض أو ملف مفقود</td></tr>
+    <tr><td>الاتساق مع manifest.json</td><td class="c pass">ناجح</td><td>406 ملفات متتبعة، فهرس حي مطابق للنشر</td></tr>
+    <tr><td>حزمة Git للنشر</td><td class="c pass">ناجح</td><td>سجل كامل، 23 التزاماً، آخرها 2026-11-06</td></tr>
+    <tr><td>حزمة Git للتطوير</td><td class="c pass">ناجح</td><td>سجل كامل، 30 التزاماً، 5 فروع محفوظة</td></tr>
+    <tr><td>اكتمال الوثائق الذاتية</td><td class="c warn">كامل مع تحفظ</td><td>README-AR صادق بشأن حدود النطاق (بند مفصّل في 07)</td></tr>
+  </tbody>
+</table>
+<!-- ===== 04 ARCHITECTURE & STACK ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 04 / ARCHITECTURE &amp; STACK</div>
+  <div class="sec-title">04 &mdash; البنية والمكدس التقني</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p class="lead">المشروع تطبيق ويب أحادي الصفحة متعدد الشاشات مبني على Next.js 16.4.3 مع React 19.3.1 وTypeScript 5 بوضع strict، وواجهة مبنية على Tailwind CSS 4 ومكتبة shadcn/ui فوق مكونات Radix UI. البنية مقسمة عمداً إلى وضعين للبناء يخدمان هدفين مختلفين، وهذا قرر معماري واعٍ وواضح في <span class="mono">next.config.ts</span>.</p>
+
+<p>الوضع الأول هو خادم كامل بوضع <span class="mono">standalone</span> مع قاعدة بيانات SQLite عبر Prisma 6.19.3، وهذا هو وضع «البيئة الحية داخل المنصة» حسب التعليق في ملف الإعداد. الوضع الثاني هو تصدير ثابت <span class="mono">STATIC_EXPORT=1</span> بمجلد بناء منفصل <span class="mono">.next-static</span> ينشر على GitHub Pages مربوطاً بالدومين عبر ملف CNAME، وفيه تُقرأ البيانات من لقطات JSON مخبوزة في <span class="mono">/data/*.json</span> وتُخفى الميزات التي تحتاج خادماً برسائل موجهة. هذا الفصل يفسّر وجود طبقتين من البيانات في المشروع ويفسّر كذلك أهمية الفجوة بين المصدر والنشر التي سيأتي تفصيلها في القسم 07.</p>
+
+<p>سطح API يتكون من 33 معالجاً موزعة على 25 ملف مسار: 16 قراءة GET و9 كتابة POST و3 تحديث PATCH و5 حذف DELETE. مخطط Prisma يعرّف 13 جدولاً تغطي المستخدمين والخدمات والمشاريع والدورات والمقالات والمنتجات والطلبات والحجوزات والتعليقات والشهادات ورسائل التواصل والمشتركين وسجل الدردشة. الواجهة البرمجية من جانب العميل مبنية على zustand بحالة معتمة (persist) للسلة والمفضلة وجلسة المستخدم، مع طبقة <span class="mono">useApi</span> موحدة تحوّل مسارات API إلى لقطات ثابتة في وضع النشر تلقائياً.</p>
+
+<p>النسخة المنشورة سليمة بنيوياً وناضجة تشغيلياً: 169 ملفاً تشمل Service Worker بذاكرة <span class="mono">cto-drs-v1</span> وآلية network-first مع صفحة offline، وملف webmanifest سليم، وخريطة موقع بـ16 رابطاً، وملف robots.txt يسمح صراحة لمحركات البحث ونماذج الذكاء الاصطناعي بالزحف الكامل، وملف تحقق Google. سطر الأكواد إجمالاً في مصدر التطوير 26,221 سطراً موزعة كما في الرسم أدناه، وأكبر مكونات القياس هي ملفات .tsx للواجهات.</p>
+
+<div class="chart-box">
+  <div class="chart-title">توزيع أسطر الكود حسب النوع (مصدر التطوير)</div>
+  <div class="chart-sub">26,221 سطراً في development-source &mdash; 115 ملف .tsx و45 ملف .ts</div>
+  <div class="hbar-list">
+    <div class="hbar"><span class="hb-name mono-lbl">.tsx &nbsp;(UI)</span><div class="hb-track"><div class="hb-fill" style="width:100%"></div></div><span class="hb-val">18,507</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">.ts &nbsp;(lib/api)</span><div class="hb-track"><div class="hb-fill" style="width:28.7%"></div></div><span class="hb-val">5,317</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">.json</span><div class="hb-track"><div class="hb-fill" style="width:12.3%"></div></div><span class="hb-val">2,274</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">.sh &nbsp;(scripts)</span><div class="hb-track"><div class="hb-fill" style="width:6.2%"></div></div><span class="hb-val">1,143</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">.html &nbsp;(published)</span><div class="hb-track"><div class="hb-fill" style="width:5.4%"></div></div><span class="hb-val">993</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">.css</span><div class="hb-track"><div class="hb-fill" style="width:2.6%"></div></div><span class="hb-val">481</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">.prisma</span><div class="hb-track"><div class="hb-fill" style="width:0.9%"></div></div><span class="hb-val">168</span></div>
+  </div>
+</div>
+
+<table>
+  <colgroup><col style="width:26%"><col style="width:26%"><col style="width:48%"></colgroup>
+  <thead><tr><th>الطبقة</th><th>التقنية</th><th>ملاحظات الفحص</th></tr></thead>
+  <tbody>
+    <tr><td>الإطار</td><td class="mono">Next.js 16.4.3</td><td>وضعان للبناء (standalone / static export) بفصل نظيف</td></tr>
+    <tr><td>الواجهة</td><td class="mono">React 19.3.1 + TS 5 strict</td><td>أنماط أنواع صارمة، صفر استخدام صريح لـ any في src</td></tr>
+    <tr><td>التنسيق</td><td class="mono">Tailwind CSS 4</td><td>مع tw-animate-css وshadcn/ui (44 مكون Radix)</td></tr>
+    <tr><td>قاعدة البيانات</td><td class="mono">Prisma 6.19.3 / SQLite</td><td>13 جدولاً، علاقات سليمة، حذف تعاقبي محدود بمنطق واضح</td></tr>
+    <tr><td>الحالة</td><td class="mono">zustand 5 + persist</td><td>سلة ومفضلة وجلسة مستخدم في localStorage</td></tr>
+    <tr><td>الذكاء الاصطناعي</td><td class="mono">z-ai-web-dev-sdk</td><td>مسار دردشة واحد مع تعقيم رسائل وحد 2000 حرف</td></tr>
+    <tr><td>النشر</td><td class="mono">GitHub Pages + CNAME</td><td>cto-drs.com، خريطة موقع 16 رابطاً، PWA يعمل دون اتصال</td></tr>
+    <tr><td>سجل التاريخ</td><td class="mono">Git Bundle ×2</td><td>53 التزاماً، 7 فروع محفوظة، تحقق كامل ناجح</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">تسلسل الالتزامات في المستودعين</h3>
+<p>يُظهر تاريخ Git مسارين زمنيين متكاملين: مستودع التطوير نشط بين 30 أكتوبر و1 نوفمبر (30 التزاماً بذروة 16 التزاماً في 31 أكتوبر)، ثم انتقل النشاط لمستودع النشر بين 4 و6 نوفمبر (19 التزاماً بذروة 12 التزاماً في 4 نوفمبر) حتى آخر نشر في 6 نوفمبر. هذه الحركة الطبيعية من التطوير إلى النشر هي نفسها التي أنتجت الفجوة الموثقة في القسم 07: آخر نسخة محفوظة من الفرع الرئيسي للتطوير أقدم من آخر نشر بحوالي خمسة أيام تطوير مكثف.</p>
+
+<div class="chart-box">
+  <div class="chart-title">عدد الالتزامات يومياً في المستودعين</div>
+  <div class="chart-sub">53 التزاماً إجمالاً &mdash; الأرقام داخل الأشرطة تمثل commits لكل يوم</div>
+  <div class="hbar-list">
+    <div class="hbar"><span class="hb-name mono-lbl">website 10-30</span><div class="hb-track"><div class="hb-fill" style="width:41.7%"></div></div><span class="hb-val">5</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">website 10-31</span><div class="hb-track"><div class="hb-fill" style="width:100%"></div></div><span class="hb-val">16</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">website 11-01</span><div class="hb-track"><div class="hb-fill" style="width:56.3%"></div></div><span class="hb-val">9</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">cto-drs 10-30</span><div class="hb-track"><div class="hb-fill" style="width:25%"></div></div><span class="hb-val">3</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">cto-drs 10-31</span><div class="hb-track"><div class="hb-fill" style="width:8.3%"></div></div><span class="hb-val">1</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">cto-drs 11-04</span><div class="hb-track"><div class="hb-fill" style="width:75%"></div></div><span class="hb-val">12</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">cto-drs 11-05</span><div class="hb-track"><div class="hb-fill" style="width:25%"></div></div><span class="hb-val">3</span></div>
+    <div class="hbar"><span class="hb-name mono-lbl">cto-drs 11-06</span><div class="hb-track"><div class="hb-fill" style="width:33.3%"></div></div><span class="hb-val">4</span></div>
+  </div>
+  <div class="legend-grid">
+    <div class="lg-item"><span class="lg-dot" style="background:#3d3d3d"></span>cto-drs-website (تطوير)</div>
+    <div class="lg-item"><span class="lg-dot" style="background:#a8a8a8"></span>cto-drs.com (نشر)</div>
+  </div>
+</div>
+
+<!-- ===== 05 SECURITY FINDINGS ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 05 / SECURITY FINDINGS</div>
+  <div class="sec-title">05 &mdash; النتائج الأمنية وأدلة الكود</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p class="lead">هذا هو أخطر قسم في التقرير. النسخة الأقدم من بنية الخادم (الفرع الرئيسي main لمصدر التطوير) تحتوي على نمط أمني منهار بالكامل في طبقة API: صفر مصادقة على مستوى الخادم في كل المسارات الـ33، وصفر قيود على نقاط الإدارة. في المقابل يوجد في الفرع الجانبي <span class="mono">feat/supabase-auth</span> مسار مصادقة حديث مصمم باحتراف. المشكلة الأساسية أن النمطين يعيشان معاً والفرع الرئيسي ما زال هو المرجع.</p>
+
+<div class="finding f-high">
+  <div class="f-head"><span class="f-id">F-01</span><span class="badge crit">حرجة CRITICAL</span><span class="f-title">جميع مسارات الإدارة تعمل دون أي مصادقة على الخادم</span></div>
+  <span class="f-loc">src/app/api/admin/* &mdash; 13 endpoint</span>
+  <p>لم يُعثر على أي استدعاء لمصادقة من جانب الخادم في أي من معالجات API الـ33: لا جلسات، لا رموز، لا فحص أدوار، ولا يوجد ملف middleware في المشروع إطلاقاً. أي شخص يمكنه الوصول إلى بنية الخادم يستطيع استدعاء <span class="mono">GET /api/admin/users</span> والحصول على قائمة كل المستخدمين مع بريدهم وأدوارهم، وترقية أي حساب إلى مدير عبر <span class="mono">PATCH /api/admin/users/[id]</span>، أو حذف مستخدمين ورسائل تواصل ومشتركين وتعليقات ببساطة. الجدول أدناه يجرد نقاط الوصول الحساسة الثلاث عشرة كلها، وهي قابلة للاستغلال مباشرة بنقطة curl واحدة.</p>
+  <span class="ev-cap">development-source/src/app/api/admin/users/route.ts : 6-9</span>
+  <pre class="evidence">/** GET /api/admin/users — قائمة المستخدمين مع إحصاءات نشاطهم */
+export async function GET(_req: NextRequest) {
+  <b>/* لا يوجد أي فحص جلسة أو دور هنا — أي طلب يُخدم */</b>
+  const users = await db.user.findMany({
+    select: { id: true, name: true, email: true, role: true, ... }</pre>
+  <p style="margin-bottom:4px;"><b>الأثر:</b> كشف بيانات شخصية (بريد، هواتف من رسائل التواصل)، تدمير بيانات، وتصعيد صلاحيات كامل عبر طلبات عامة. <b>الشرط:</b> يعمل هذا النمط عندما يكون وضع الخادم (standalone) هو المشغّل، وهو الوصف الصريح في <span class="mono">next.config.ts</span> للبيئة الحية داخل المنصة. النسخة الثابتة المنشورة على GitHub Pages لا تضم مسارات API أصلاً، لكن كود الخادم هذا هو المرجع الحي في الفرع الرئيسي.</p>
+</div>
+
+<table>
+  <colgroup><col style="width:44%"><col style="width:18%"><col style="width:38%"></colgroup>
+  <thead><tr><th>المسار (API Endpoint)</th><th>الفعل</th><th>ما يتيحه دون مصادقة</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">/api/admin/stats</td><td class="mono">GET</td><td>إحصاءات المنصة الداخلية</td></tr>
+    <tr><td class="mono">/api/admin/users</td><td class="mono">GET</td><td>قائمة كل المستخدمين وبريدهم وأدوارهم</td></tr>
+    <tr><td class="mono">/api/admin/users/[id]</td><td class="mono">PATCH</td><td><b>ترقية أي حساب إلى مدير</b></td></tr>
+    <tr><td class="mono">/api/admin/users/[id]</td><td class="mono">DELETE</td><td>حذف أي مستخدم نهائياً</td></tr>
+    <tr><td class="mono">/api/admin/subscribers</td><td class="mono">GET</td><td>قائمة مشتركي النشرة</td></tr>
+    <tr><td class="mono">/api/admin/subscribers/[id]</td><td class="mono">DELETE</td><td>حذف مشترك</td></tr>
+    <tr><td class="mono">/api/admin/comments</td><td class="mono">GET</td><td>كل التعليقات بما يتجاوز الحاجة العامة</td></tr>
+    <tr><td class="mono">/api/admin/comments/[id]</td><td class="mono">DELETE</td><td>حذف تعليق</td></tr>
+    <tr><td class="mono">/api/contact</td><td class="mono">GET</td><td><b>رسائل التواصل: أسماء وبريد وهواتف</b></td></tr>
+    <tr><td class="mono">/api/contact/[id]</td><td class="mono">PATCH</td><td>تعديل حالة رسالة</td></tr>
+    <tr><td class="mono">/api/contact/[id]</td><td class="mono">DELETE</td><td>حذف رسالة</td></tr>
+    <tr><td class="mono">/api/testimonials/[id]</td><td class="mono">DELETE</td><td>حذف شهادة</td></tr>
+    <tr><td class="mono">/api/bookings</td><td class="mono">PATCH</td><td>تغيير حالة أي حجز</td></tr>
+  </tbody>
+</table>
+
+<div class="finding f-high">
+  <div class="f-head"><span class="f-id">F-02</span><span class="badge high">عالية HIGH</span><span class="f-title">المصادقة في بنية الخادم تعتمد على حالة العميل فقط</span></div>
+  <span class="f-loc">src/lib/store.ts : 15-37 &nbsp;|&nbsp; src/app/api/auth/login/route.ts : 26-32</span>
+  <p>نقطة الدخول <span class="mono">POST /api/auth/login</span> تتحقق من كلمة المرور بشكل صحيح ثم تُرجع بيانات المستخدم كـJSON خالص دون إنشاء جلسة أو رمز أو كوكي آمن، والواجهة تخزن ذلك في zustand مع persist أي داخل localStorage. حماية شاشة الإدارة تتم بمقارنة <span class="mono">user.role !== "admin"</span> في الكود العميلي حصراً، أي أن تعديل القيمة محلياً في المتصفح يفتح كل الواجهات الإدارية، ونتيجة F-01 تجعل الأمر أسوأ لأن الطلبات المباشرة لا تحتاج حتى ذلك. مسار Supabase الأحدث يعالج هذا بشكل صحيح بجلسات حقيقية، لكنه غير مدمج كما أوضحنا.</p>
+  <span class="ev-cap">development-source/src/lib/store.ts : 14-16, 34-37</span>
+  <pre class="evidence">interface AppState {
+  /** authenticated user (client session) */   <b>// الجلسة كلها حالة عميل</b>
+  user: AuthUser | null;
+  setUser: (u: AuthUser | null) =&gt; void;
+...
+export const useAppStore = create&lt;AppState&gt;()(
+  persist(                                    <b>// persist = localStorage</b>
+    (set) =&gt; ({ user: null, setUser: (user) =&gt; set({ user }), ...</pre>
+  <p style="margin-bottom:4px;"><b>الأثر:</b> انتحال أي دور من المتصفح مباشرة، وعدم وجود أي تحقق خادمي عند كل طلب إداري.</p>
+</div>
+
+<div class="finding f-high">
+  <div class="f-head"><span class="f-id">F-03</span><span class="badge high">عالية HIGH</span><span class="f-title">غياب أي حد للسرعة (Rate Limiting) على كل نقاط API</span></div>
+  <span class="f-loc">src/app/api/* (33 handlers) &mdash; zero rate-limit hits</span>
+  <p>البحث عن أي آلية تقييد (rate limit أو throttle أو خوارزميات نافذة) في كل مصدر المشروع لم يُرجع نتيجة واحدة، بما في ذلك نقاط الكتابة العامة التسع: التسجيل، الدخول، التعليقات، رسائل التواصل، النشرة، الطلبات، الحجوزات، الشهادات، ومسار الدردشة الذكية. مسار الدردشة <span class="mono">POST /api/chat</span> خاص الخطورة لأنه يستدعي نموذج ذكاء اصطناعي خارجي عبر SDK بأثر تكلفة مباشر، وأي سكربت بسيط يمكنه ضخ آلاف الطلبات واستنزاف الحصة أو تكديس سجلات <span class="mono">ChatLog</span> في قاعدة SQLite حتى امتلاء القرص. هذا يضاف عملياً إلى F-01 في جعل مسارات الإدارة نفسها قابلة للضخ العنيف دون أي مقاومة.</p>
+  <p style="margin-bottom:4px;"><b>الأثر:</b> إساءة استخدام وسبام وتكلفة تشغيلية غير محدودة على مسار الذكاء الاصطناعي، وإجهاد SQLite بكتابة غير محدودة. <b>ملاحظة:</b> النسخة الحديثة في فرع Supabase تستخدم مصيدة فارغة (honeypot) في النماذج بحسب رسالة آخر التزام، وهي طبقة مفيدة لكنها ليست بديلاً عن تقييد السرعة الخادمي.</p>
+</div>
+
+<div class="finding f-high">
+  <div class="f-head"><span class="f-id">F-04</span><span class="badge high">عالية HIGH</span><span class="f-title">بيانات دخول إدارية تجريبية مثبتة في الكود والواجهة</span></div>
+  <span class="f-loc">src/components/screens/login-screen.tsx : 28-45 &nbsp;|&nbsp; scripts/seed.ts : 858-872</span>
+  <p>شاشة الدخول تعرض حرفياً حساب مدير كامل ببريده وكلمة مروره كأزرار «تعبئة سريعة» (<span class="mono">admin@ctodrs.com / admin123</span> وحساب عميل <span class="mono">demo1234</span>)، وسكربت التهيئة ينشئ نفس الحساب في قاعدة البيانات بدور admin. أي زائر للنسخة الخادمية يعرف بيانات المدير قبل أن يرى نموذج الدخول أصلاً، وبدمج ذلك مع F-01 وF-02 يصبح امتلاك المنصة عملاً بمفتاح معلن في الصفحة الرئيسية. هذا النمط مقبول في بيئة demo معزولة فقط، ويجب إزالته كلياً قبل أي تشغيل حقيقي.</p>
+  <span class="ev-cap">development-source/scripts/seed.ts : 858-872</span>
+  <pre class="evidence">await prisma.user.create({
+  data: {
+    name: "مدير النظام",
+    email: "admin@ctodrs.com",
+    <b>password: hashPassword("admin123"),   // كلمة مرور معلنة في الواجهة</b>
+    role: "admin",
+  },
+});
+await prisma.user.create({
+  data: { ... email: "demo@ctodrs.com", <b>password: hashPassword("demo1234")</b>, ...</pre>
+  <p style="margin-bottom:4px;"><b>الأثر:</b> وصول إداري كامل لمن يعرف كلمة المرور المعلنة، وإعادة الضبط عبر <span class="mono">db:reset</span> تعيد إنشاء الحساب نفسه.</p>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-05</span><span class="badge med">متوسطة MEDIUM</span><span class="f-title">مسار المصادقة الحي يعيش خارج الفرع الرئيسي</span></div>
+  <span class="f-loc">git-history/cto-drs-website.bundle &rarr; feat/supabase-auth</span>
+  <p>الفرع <span class="mono">feat/supabase-auth</span> (آخر التزام 6 نوفمبر) يحتوي 12 ملفاً لمصادقة Supabase كاملة، ومعه مخطط SQL بسياسات RLS جاهزة، لكن كل ذلك غير مدمج في main الذي يتوقف عند 1 نوفمبر. عملياً يعني هذا أن كود المصادقة الأهم في المشروع موجود في فرع جانبي وحزمة backup فقط، وأن أي استعادة من main تُنتج نسخة بدون مصادقة خادمية حقيقية، وهو ما يجعل هذه الفجوة نتيجة أمنية-تشغيلية مزدوجة. التفصيل الكامل للفرق الزمني في القسم 07.</p>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-06</span><span class="badge med">متوسطة MEDIUM</span><span class="f-title">نسختان متعارضتان لسياسة إدخال رسائل التواصل</span></div>
+  <span class="f-loc">supabase/schema.sql : 70 &nbsp;vs&nbsp; supabase/migration-002.sql : 75-76</span>
+  <p>النسخة الأساسية من المخطط تسمح بإدخال رسالة تواصل لأي أحد (<span class="mono">with check (true)</span>)، بينما الترحيل الثاني يشدد الشرط إلى (<span class="mono">user_id is null or user_id = auth.uid()</span> مع <span class="mono">status = 'new'</span>). وجود النسختين معاً في المستودع يخلق غموضاً حقيقياً: أيهما مطبق فعلاً في بيئة Supabase الحية؟ إن كانت النسخة الأقدم هي المطبقة فالجدول مفتوح للضخ غير المشروط من أي عميل مسجل أو حتى مجهول. هذا يستوجب فحصاً مباشراً لبيئة الإنتاج وتوحيد المصدر على ترحيل واحد نهائي.</p>
+  <span class="ev-cap">supabase/schema.sql : 70 &nbsp;vs&nbsp; supabase/migration-002.sql : 75-76</span>
+  <pre class="evidence"><b>schema.sql:70</b>
+create policy "contact insert anyone" on public.contact_messages
+  for insert <b>with check (true);</b>
+<b>migration-002.sql:75-76</b>
+create policy "contact insert anyone" on public.contact_messages for insert
+  <b>with check ((user_id is null or user_id = auth.uid()) and status = 'new');</b></pre>
+</div>
+
+<h3 class="sub">الإيجابيات الأمنية الموثقة</h3>
+<p>الإنصاف الأمني يقتضي توثيق ما هو سليم، وهناك عناصر قوية فعلاً في هذا المشروع. تشفير كلمات المرور في مسار Prisma يستخدم scrypt مع ملح عشوائي 16 بايت ومقارنة زمنية ثابتة <span class="mono">timingSafeEqual</span>، وهي ممارسة صحيحة تماماً بلغة Node. لا يوجد أي سر حقيقي مكشوف في أي ملف: ماسح الأنماط الاثني عشر عبر 197 ملفاً لم يعثر على مفاتيح API أو رموز أو بنوك مفاتيح خاصة، وملفات <span class="mono">.env*</span> غير متتبعة ومغطاة في <span class="mono">.gitignore</span>، وسكربت النشر يقرأ مفاتيح Spaceship حصراً من متغيرات بيئة. مسار التسجيل يثبّت الدور نصاً ثابتاً <span class="mono">"user"</span> فلا يوجد تجاوز صلاحيات عبر نموذج التسجيل، ومسار الدردشة يعقّم الرسائل ويحد كل رسالة بـ2000 حرف ويحصر الأدوار في user/assistant فقط. وأخيراً فرع Supabase يتضمن دالة <span class="mono">is_admin()</span> بوضع security definer مع مشغّل <span class="mono">protect_role</span> يمنع أي مستخدم من رفع دوره بنفسه، وهي بنية RLS ناضجة مع 10 سياسات على 3 جداول.</p>
+<!-- ===== 06 CODE QUALITY ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 06 / CODE QUALITY</div>
+  <div class="sec-title">06 &mdash; جودة الكود والاعتماديات</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p class="lead">جودة الكود في المشروع فوق المتوسط بوضوح: أنماط TypeScript صارمة ومفعلة في التطوير، الكود منظم في طبقات واضحة، وتعليقات عربية موثقة بأسلوب مهني، والنسبة الضحلة من التعليقات المؤقتة تقارب الصفر. لكن هناك مجموعة مفاتيح تجاهل بنيوية أنتجت تراكم مخاطر صامتة، أهمها تعطيل فحص أخطاء الأنواع عند البناء وتعطيل أهم قواعد ESLint وغياب الاختبارات كلياً.</p>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-07</span><span class="badge med">متوسطة MEDIUM</span><span class="f-title">فحص أخطاء TypeScript معطل عند البناء</span></div>
+  <span class="f-loc">next.config.ts : 11-16</span>
+  <p>الإعداد يجمع بين تناقض حاد: <span class="mono">strict: true</span> في tsconfig.json مفعّل، بينما <span class="mono">ignoreBuildErrors: true</span> في إعداد Next يلغي أثره كلياً عند البناء الفعلي، لأن أي خطأ نوع يُطبع في التطوير فقط ويُتجاهل إنتاجياً. هذا يعني أن ضمانات الأنواع التي يبدو أن المشروع يقدمها ليست مضمونة في النتيجة النهائية، وأن أي خطأ نوع جديد لا يمنع النشر أبداً. العلاج تدريجي وأمني: تفعيل الفحص في CI أولاً دون منع النشر، ثم تحويله حاجزاً بعد تنظيف الأخطاء المتراكمة.</p>
+  <span class="ev-cap">development-source/next.config.ts : 11-16</span>
+  <pre class="evidence">const shared = {
+  typescript: {
+    <b>ignoreBuildErrors: true,    // يلغي أثر strict: true إنتاجياً</b>
+  },
+  reactStrictMode: false,
+};</pre>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-08</span><span class="badge med">متوسطة MEDIUM</span><span class="f-title">تسجيل كل استعلامات Prisma مفعّل بلا شرط بيئة</span></div>
+  <span class="f-loc">src/lib/db.ts : 7-12</span>
+  <p>عميل Prisma الوحيد في المشروع ينشأ مع <span class="mono">log: ['query']</span> بلا تمييز بين التطوير والإنتاج، فكل استعلام يُطبع في سجلات الخادم الحي. الاستعلامات تتضمن قيم الحقول عملياً، ما يعني تسرباً واحتمالاً لبيانات المستخدمين إلى ملفات السجل، ويضاف إلى ذلك أثر أداء واضح في قاعدة ملفية مثل SQLite تحت الحمل. التعديل بسيط ومحدد: اربط مستوى السجل بمتغير بيئة أو افحص <span class="mono">NODE_ENV</span> كما فُعل أصلاً مع التخزين العالمي في نفس الملف.</p>
+  <span class="ev-cap">development-source/src/lib/db.ts : 7-12</span>
+  <pre class="evidence">export const db =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    <b>log: ['query'],    // يعمل في الإنتاج أيضاً — بدون شرط NODE_ENV</b>
+  })</pre>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-09</span><span class="badge med">متوسطة MEDIUM</span><span class="f-title">سكربتات تشغيل خطرة باسم مباشر الاستخدام</span></div>
+  <span class="f-loc">package.json : 10 &nbsp;|&nbsp; scripts/seed.ts : 25-37</span>
+  <p>الأمر <span class="mono">npm run db:push</span> مُعد بافتراضي <span class="mono">--accept-data-loss</span>، أي أن استخدام المطور المعتاد للمسار يتجاوز حماية Prisma الافتراضية ضد فقدان البيانات ويطبق تغييرات المخطط مهما كلفت. ويقابله سكربت تهيئة يبدأ بحذف مطلق لكل الجداول الـ12 عبر <span class="mono">deleteMany</span> بالترتيب قبل إعادة البناء. توثيقات المشروع نفسها تحذر من تشغيل هذه الأوامر على الإنتاج، لكن الحماية البنيوية غير موجودة: لا تحقق من بيئة التشغيل، ولا تأكيد تفاعلي، ولا اسم بديل آمن مثل <span class="mono">db:push:force</span> مع افتراضي محافظ.</p>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-10</span><span class="badge med">متوسطة MEDIUM</span><span class="f-title">أهم قواعد ESLint معطلة جماعياً</span></div>
+  <span class="f-loc">eslint.config.mjs : 11-22</span>
+  <p>ملف الإعداد يعطل صراحة ثلاث عشرة قاعدة، وأخطرها الأربع الأولى: منع <span class="mono">any</span> الصريح، ومنع المتغيرات غير المستخدمة، وقاعدة الاعتماديات في React hooks الأهم للالتقاط المشكلات الديناميكية، ومنع التأكيدات الصماء <span class="mono">!</span>. نتيجة عملية أن الـlint يعمل لكنه لا يصطاد شيئاً من الفئات الأشهر للأخطاء، وهذه القواعد بالذات هي التي تعوض جزئياً عن تعطيل فحص البناء في F-07. القائمة معلنة وليست مخفية، وهذا يعكس قراءة واعية بأسلوب «سرعة الآن مقابل دائم لاحقاً»، والأفضل عكس القرار على مرحلتين كما في خطة الإصلاح.</p>
+  <span class="ev-cap">development-source/eslint.config.mjs : 11-22 (selection)</span>
+  <pre class="evidence">rules: {
+  "@typescript-eslint/no-explicit-any": "off",
+  "@typescript-eslint/no-unused-vars": "off",
+  <b>"react-hooks/exhaustive-deps": "off",   // أخطر إيقاف بينها</b>
+  "@typescript-eslint/no-non-null-assertion": "off",
+  "@next/next/no-img-element": "off",
+  ...</pre>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-11</span><span class="badge med">متوسطة MEDIUM</span><span class="f-title">غياب كامل للاختبارات الآلية</span></div>
+  <span class="f-loc">development-source/tests/ &mdash; 0 test/spec files</span>
+  <p>لا يوجد في المشروع ملف اختبار واحد بامتدادات <span class="mono">*.test.*</span> أو <span class="mono">*.spec.*</span> ولا أي إطار اختبار في الاعتماديات، ومجلد tests يحتوي ثلاثة سكربتات shell لبناء بيئة التشغيل لا أكثر. البنية الحالية تستدعي الاختبار بوضوح: 13 جدول Prisma وعلاقات، ومسارات API بمنطق تعقيم وحدود، ودوال تشفير كلمات مرور، ومحول لقطات ثابتة. غياب الاختبارات يعني أن كل تعديل مستقبلي على مسارات المصادقة أو الترحيلات يُقيّم يدوياً بالتجربة الحية، وهو ما يفسر جزئياً تراكم النتائج الأمنية أعلاه دون اكتشافها.</p>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-12</span><span class="badge low">منخفضة LOW</span><span class="f-title">31 من 83 اعتمادية معلنة غير مستوردة أو خارج موضعها</span></div>
+  <span class="f-loc">package.json dependencies vs. src imports</span>
+  <p>تحليل الاستيراد الفعلي في src وscripts يظهر أن 31 اعتمادية من الـ83 المعلنة لا تُستورد مباشرة، بينها مكتبات ثقيلة مثل <span class="mono">@mdxeditor/editor</span> و<span class="mono">react-syntax-highlighter</span> و<span class="mono">@dnd-kit/*</span> و<span class="mono">@tanstack/react-query</span> و<span class="mono">next-auth</span> و<span class="mono">next-intl</span> و<span class="mono">zod</span> و<span class="mono">lodash</span>. بعضها استثناء مشروع مثل <span class="mono">react-dom</span> (مطلوب زمنياً من Next دون استيراد مباشر)، وأدوات مثل <span class="mono">eslint-plugin-*</span> و<span class="mono">typescript-eslint</span> و<span class="mono">browserslist</span> موضعها الطبيعي devDependencies لا dependencies. الأثر عملي: تثبيت أبطأ وسطح توريد أوسع ورسائل تحديث مخدّعة، والحل جرد واحد ثم نقل الأدوات إلى devDependencies وحذف غير المستخدم حقاً.</p>
+</div>
+
+<h3 class="sub">مؤشرات جودة إيجابية مقاسة</h3>
+<p>القياس الكمي للنظافة العامة يظهر صورة إيجابية: استخدام صريح لـ<span class="mono">any</span> في مصدر التطوير صفر حالة، وتعليقات مؤقتة TODO/FIXME/HACK حالة واحدة فقط في ملف التواصل، واستدعاءات <span class="mono">console.log</span> حالة واحدة، وأسماء ملفات ومجلدات متسقة النمط عبر src كاملاً، ومكونات UI مجمعة في مجلد موحد مع فصل واضح للشاشات عن المكونات العامة. استخدام <span class="mono">dangerouslySetInnerHTML</span> محصور في حالتين موثقتين: حقن JSON-LD ثابت مبني بـ<span class="mono">JSON.stringify</span> على كائن معرفة في الكود (نمط آمن معياري لبيانات SEO)، وداخل مكوّن الرسوم chart.tsx من مكتبة shadcn القياسية. هذه المؤشرات مع غيرها تصعد بدرجة هذا المحور إلى 65 رغم النتائج أعلاه.</p>
+
+<!-- ===== 07 VERSION DRIFT ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 07 / VERSION DRIFT</div>
+  <div class="sec-title">07 &mdash; فجوة الإصدارات ومسار المصادقة الحي</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p class="lead">أهم اكتشاف بنيوي في الفحص: النسخة الحية المنشورة أحدث من الفرع الرئيسي لمصدر التطوير بخمسة أيام تطوير مكثف، وأهم ما في الفجوة هو كود المصادقة كله. هذا يعني أن هذه الحزمة الممتازة كأرشيف، غير قادرة وحدها على إعادة بناء الموقع الحي كما هو اليوم من الفرع الرئيسي.</p>
+
+<p>السلسلة الزمنية واضحة من سجل Git: آخر التزام في الفرع الرئيسي لمصدر التطوير <span class="mono">fd15743</span> بتاريخ 1 نوفمبر 09:28 UTC، ثم انتقل العمل إلى فرع <span class="mono">feat/supabase-auth</span> الذي تطور حتى آخر التزام له <span class="mono">9dd3e57</span> بتاريخ 6 نوفمبر 11:32 UTC ولم يُدمج في main، وفي نفس اليوم بتوقيت 11:49 نُشر آخر التزام على مستودع النشر برسالة تصرح حرفياً: «Deploy: Supabase auth live — public URL/anon key/Google client id at build — sign-up, account, bookings». أي أن الموقع الحي يعمل اليوم بمصادقة Supabase كاملة، بينما لا يحتوي الفرع الرئيسي المحفوظ على أي إشارة لـSupabase.</p>
+
+<p>الأثر التشغيلي لهذا الاكتشاف يتفرع في ثلاثة اتجاهات. أولاً الاستعادة: أي بناء من main يعيد إنتاج نسخة قديمة بمصادقة عميلية فقط، والسؤال العملي «كيف نعيد بناء الإنتاج؟» يجيب اليوم عبر تركيب ثلاث قطع: main ثم دمج feat/supabase-auth ثم إعدادات البناء المنشورة. ثانياً الأمان: النتائج الحرجة في القسم 05 تصف الفرع الرئيسي، والفرع الأحدث يعالج جزءاً كبيراً منها، فدمجه ليس تحسيناً بل هو إغلاق فعلي للثغرات. ثالثاً التوثيق: الحزمة ذاتها تنبه بصدق إلى هذا التفاوت في README-AR («مصدر التطوير المحفوظ أقدم من آخر نشر»)، وهذا الوعي الذاتي يستحق الإشادة، لكن المعالجة الفعلية هي دمج الفرع وإعادة إنتاج النسخة الاحتياطية بعد الدمج.</p>
+
+<div class="verdict">
+  <div class="v-title">ترتيب قطع اللغز لإعادة بناء النسخة الحية من هذه الحزمة</div>
+  <ol class="steps" style="margin-bottom:0;">
+    <li><b>الأساس:</b> فرع main من حزمة cto-drs-website.bundle (commit fd15743) — كل التطبيق عدا المصادقة الحية.</li>
+    <li><b>الطبقة الحرجة:</b> دمج فرع feat/supabase-auth (آخر التزام 9dd3e57) — كود Supabase ومخطط RLS وملفات المصادقة الـ12.</li>
+    <li><b>قيم البناء:</b> معرفات النشر العامة (Supabase URL/anon key وGoogle Client ID) مأخوذة من حزمة published-site وقت البناء.</li>
+    <li><b>التحقق:</b> مطابقة ناتج البناء مع published-site حرفياً، وهي الوظيفة التي صمم ملف checksums.sha256 أصلاً لتقديمها.</li>
+  </ol>
+</div>
+
+<!-- ===== 08 PRIVACY ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 08 / PRIVACY &amp; PUBLIC IDENTIFIERS</div>
+  <div class="sec-title">08 &mdash; الخصوصية ومعرفات النشر العامة</div>
+  <div class="sec-rule"></div>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-13</span><span class="badge low">منخفضة LOW</span><span class="f-title">ملفات شخصية وأوراق عمل متتبعة داخل المستودع</span></div>
+  <span class="f-loc">development-source/upload/ (18 ملفاً، ~6.7 MB)</span>
+  <p>مجلد upload داخل مصدر التطوير متتبع في Git ويحوي ملفات شخصية مختلطة بملفات العمل: صور شخصية بصيغ زمنية بأسماء أجهزة (<span class="mono">Dofoto_٢٠٢٦٠٦٢٢</span>، لقطات شاشة متعددة)، وملف PDF بمسمى ملاحظة (<span class="mono">note_1030_111000248.pdf</span>)، وبروفايل شخصي بصيغتين. المشكلة ليست الحجم بل الدوام: هذه الملفات دخلت تاريخ Git دائم، فحزمة الـ38.5 MB تحفظها بكل نسخ تاريخها، وأي مشاركة مستقبلية للمستودع أو للحزمة تكشفها. المعالجة الصحيحة إزالة تاريخية بأداة filter-repo ثم إضافة المجلد إلى .gitignore، مع أخذ نسخة احتياطية قبل إعادة الكتابة.</p>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-14</span><span class="badge low">منخفضة LOW</span><span class="f-title">reactStrictMode معطل في الوضعين</span></div>
+  <span class="f-loc">next.config.ts : 15</span>
+  <p>وضع React الصارم معطل عمداً في الإعدادات المشتركة للوضعين. هذا خيار شائع لتجنب ازدواج التشغيل في التطوير مع كود غير متوافق، لكنه يعني فقدان طبقة مجانية تلتقط مشكلات الآثار الجانبية وأنماط الحياة غير الآمنة في المكونات. مع حجم واجهة المشروع (115 ملفاً تفاعلياً) ووجود حالة معقدة في zustand، إعادة تفعيله في بيئة التطوير وحدها خطوة منخفضة الكلفة عالية العائد على استقرار الشاشات.</p>
+</div>
+
+<div class="finding f-med">
+  <div class="f-head"><span class="f-id">F-15</span><span class="badge info">معلوماتية INFO</span><span class="f-title">معرفات عامة by design في حزمة النشر</span></div>
+  <span class="f-loc">published-site/_next/static/chunks/2-ls5gx8hthn-.js</span>
+  <p>حزمة النشر تتضمن زمنياً ثلاثة معرفات عامة بطبيعة التصميم: رابط مشروع Supabase (<span class="mono">jlbsrwlxrtztkpsbhkyg.supabase.co</span>) ومفتاح anon موقّع JWT ينتهي في نوفمبر 2036، ومعرف عميل Google (<span class="mono">558065336539-sfh0n6p8p98p239namljf35pahkkio5u</span>). هذه ليست أسراراً ولا تُعد نتيجة سلبية: مفتاح anon صمم للعامة وحمايته الحقيقية هي سياسات RLS على الخادم، ورسالة التزام النشر تصرح بذلك حرفياً («public URL/anon key... عام وليس سراً»). تُوثق هنا لثلاثة أسباب: لأن رؤيتها في فحص آلي يجب ألا تخلط مع تسرب حقيقي، ولأن حمايتها مرهونة بـRLS كما في F-05 وF-06، ولأن دورة تجديد المفتاح (10 سنوات) تستوجب إجراءً مجدولاً.</p>
+</div>
+
+<p>قراءة الخصوصية العامة للحزمة تتطلب توازناً بين طبقتين. في طبقة النسخة المنشورة، ملف robots.txt يسمح صراحة بالزحف الكامل لمحركات البحث ونماذج الذكاء الاصطناعي بخط مكتوب عمداً («الزحف مسموح بالكامل»)، وهو قرار محتوى واعٍ لا يخص هذا الفحص الأمني. في طبقة الكود الخادمي، أرقى نقاط جمع البيانات (رسائل التواصل مع الهاتف والبلد، وسجلات دردشة بمعرّف جلسة) هي نفسها التي تظهر مدى حساسية فتح مساراتها دون مصادقة كما في F-01، فحماية الخصوصية هنا هي حماية المصادقة نفسها.</p>
+
+<!-- ===== 09 REMEDIATION PLAN ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 09 / REMEDIATION PLAN</div>
+  <div class="sec-title">09 &mdash; خطة الإصلاح بالأولوية</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p>الخطة مقسمة ثلاث بطاقات زمنية مرتبة بالأثر: بطاقة P0 هي شرط للاستمرار بأي تشغيل خادمي حي، وبطاقة P1 تُغلق بنيوياً كل ما وُجد في الفحص، وبطاقة P2 تحول المشروع من «يعمل» إلى «يُدار بثقة». كل بند مربوط بمعرّف النتيجة التي يعالجها ومعيار قبول قابل للتحقق، بحيث يمكن تحويل الجدول مباشرة إلى قضايا في أداة إدارة المشروع.</p>
+
+<h3 class="sub">البطاقة P0 — فورية قبل أي تشغيل حي (0-48 ساعة)</h3>
+<table>
+  <colgroup><col style="width:8%"><col style="width:34%"><col style="width:12%"><col style="width:46%"></colgroup>
+  <thead><tr><th>#</th><th>الإجراء</th><th>يعالج</th><th>معيار القبول</th></tr></thead>
+  <tbody>
+    <tr><td class="c">1</td><td>طبقة حماية خادمية على كل مسارات /api/admin/* و/contact و/bookings (وسيط تحقق جلسة أو JWT مع فحص role=admin)</td><td class="c pass">F-01, F-02</td><td>كل الطلبات الإدارية بلا جلسة صالحة تُرجع 401، وبقاء الواجهة العاملة</td></tr>
+    <tr><td class="c">2</td><td>حذف حسابات العرض التوضيحي من شاشة الدخول وسكربت seed، وإبطال admin123 في أي قاعدة حية فوراً</td><td class="c pass">F-04</td><td>لا وجود للنصين admin123 أو demo1234 في الشجرة، ولا حسابات demo في الإنتاج</td></tr>
+    <tr><td class="c">3</td><td>التحقق الحي من سياسات RLS في Supabase (اختبار مجهول: قراءة contact_messages وbookings يجب أن يفشل)</td><td class="c pass">F-05, F-06</td><td>توحيد النسخة المطبقة على migration-002 وتوثيق نتيجة اختبار النفي</td></tr>
+    <tr><td class="c">4</td><td>تقييد سرعة خادمي على نقاط الكتابة العامة وتحديداً /api/chat (نافذة ثابتة لكل IP أو جلسة)</td><td class="c pass">F-03</td><td>ضخ 20 طلباً متتالياً من نفس المصدر يُرجع 429 بعد الحد المحدد</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">البطاقة P1 — قصيرة المدى (أسبوعان)</h3>
+<table>
+  <colgroup><col style="width:8%"><col style="width:34%"><col style="width:12%"><col style="width:46%"></colgroup>
+  <thead><tr><th>#</th><th>الإجراء</th><th>يعالج</th><th>معيار القبول</th></tr></thead>
+  <tbody>
+    <tr><td class="c">5</td><td>دمج فرع feat/supabase-auth في main وحذف مسار المصادقة العميلي القديم، ثم إعادة إنتاج النسخة الاحتياطية</td><td class="c pass">F-02, F-05</td><td>لا بقايا لمسار localStorage في الشجرة، ونسخة backup جديدة موحدة التاريخ</td></tr>
+    <tr><td class="c">6</td><td>ربط log في PrismaClient ببيئة التشغيل (query فقط في التطوير)</td><td class="c pass">F-08</td><td>سجلات الإنتاج خالية من نصوص الاستعلامات</td></tr>
+    <tr><td class="c">7</td><td>تأمين سكربتات القاعدة: إزالة --accept-data-loss من الافتراضي، وشرط NODE_ENV في seed قبل أي deleteMany</td><td class="c pass">F-09</td><td>تشغيل db:push على بيانات موجودة يتوقف بسؤال، وseed يرفض العمل على الإنتاج</td></tr>
+    <tr><td class="c">8</td><td>إعادة تفعيل قواعد ESLint الأساسية (no-unused-vars ثم exhaustive-deps) وتنظيف النتائج على دفعات</td><td class="c pass">F-10</td><td>lint نظيف بلا إيقافات على القواعد الأربع الحرجة</td></tr>
+    <tr><td class="c">9</td><td>إسقال ignoreBuildErrors عبر CI: تقرير أنواع أولاً ثم حاجز بعد تصفير الأخطاء</td><td class="c pass">F-07</td><td>بناء يفشل على خطأ نوع جديد، وصفر أخطاء متراكمة وقت التفعيل</td></tr>
+    <tr><td class="c">10</td><td>هيكل اختبارات: إطار واحد (vitest) مع اختبارات للتشفير ومسارات API وسياسات RLS ثم ربطها بـCI</td><td class="c pass">F-11</td><td>أوامر test في CI تنفذ وتغطي مسارات الدخول والإدارة والصلاحيات</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">البطاقة P2 — تحسين مستدام (شهر)</h3>
+<table>
+  <colgroup><col style="width:8%"><col style="width:34%"><col style="width:12%"><col style="width:46%"></colgroup>
+  <thead><tr><th>#</th><th>الإجراء</th><th>يعالج</th><th>معيار القبول</th></tr></thead>
+  <tbody>
+    <tr><td class="c">11</td><td>جرد الاعتماديات: نقل أدوات البناء إلى devDependencies وحذف غير المستخدم بعد تأكيد بعدم الاستدلال الزمني (dynamic import)</td><td class="c pass">F-12</td><td>قائمة dependencies تحت 50 مدخلاً وكل مدخل مستخدم فعلاً</td></tr>
+    <tr><td class="c">12</td><td>إزالة الملفات الشخصية من تاريخ Git (filter-repo) مع نسخة احتياطية قبل إعادة الكتابة، وإضافة upload/ إلى gitignore</td><td class="c pass">F-13</td><td>لا صور شخصية أو PDF في أي commit تاريخي، وحزمة bundle أصغر حجماً</td></tr>
+    <tr><td class="c">13</td><td>تفعيل reactStrictMode في بيئة التطوير ومعالجة التحذيرات الناتجة</td><td class="c pass">F-14</td><td>تشغيل dev بلا تحذيرات وضع صارم</td></tr>
+    <tr><td class="c">14</td><td>إجراء تجديد مفتاح anon مجدول قبل أكتوبر 2036 وتوثيق دورة التدوير في README</td><td class="c pass">F-15</td><td>وثيقة تدوير مفاتيح مع تذكير مجدول</td></tr>
+    <tr><td class="c">15</td><td>خط CI كامل (lint + type-check + test + build) على كل pull request</td><td class="c pass">F-07..F-11</td><td>فحص GitHub Actions أخضر على الفرع الرئيسي</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 10 INSPECTION LOG ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">SECTION 10 / INSPECTION LOG</div>
+  <div class="sec-title">10 &mdash; سجل الفحص التفصيلي</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p>هذا هو السجل التنفيذي الكامل لكل ما أُجري فعلاً في الفحص، بترتيب التنفيذ، مع النطاق والأداة والنتيجة الموثقة. الهدف منه قابلية المراجعة: كل سطر هنا يمكن إعادة إجرائه على الحزمة نفسها بنفس الأداة وإنتاج نفس النتيجة، وهذا هو المعيار الذي يميز الفحص الموثق عن الانطباع العام.</p>
+
+<table>
+  <colgroup><col style="width:6%"><col style="width:34%"><col style="width:26%"><col style="width:12%"><col style="width:22%"></colgroup>
+  <thead><tr><th>#</th><th>الفحص المنفذ</th><th>النطاق / الأداة</th><th>النتيجة</th><th>الإحصاء الموثق</th></tr></thead>
+  <tbody>
+    <tr><td class="c">1</td><td>سلامة بنية الأرشيف ZIP</td><td>zipfile testzip</td><td class="c pass">ناجح</td><td>411 مدخلاً، صفر تالف</td></tr>
+    <tr><td class="c">2</td><td>إعادة حساب بصمات SHA-256 ومقارنتها</td><td>checksums.sha256</td><td class="c pass">ناجح</td><td>410/410 مطابقة</td></tr>
+    <tr><td class="c">3</td><td>اتساق manifest.json مع المحتوى</td><td>فحص بنيوي</td><td class="c pass">ناجح</td><td>406 ملفات متتبعة</td></tr>
+    <tr><td class="c">4</td><td>التحقق من حزمة Git للنشر</td><td>git bundle verify</td><td class="c pass">ناجح</td><td>سجل كامل، 23 commit</td></tr>
+    <tr><td class="c">5</td><td>التحقق من حزمة Git للتطوير</td><td>git bundle verify</td><td class="c pass">ناجح</td><td>سجل كامل، 30 commit</td></tr>
+    <tr><td class="c">6</td><td>استخراج الفروع المحفوظة</td><td>git bundle list-heads</td><td class="c pass">ناجح</td><td>7 فروع في الحزمتين</td></tr>
+    <tr><td class="c">7</td><td>مطابقة معرّفات الالتزام مع manifest</td><td>مقارنة يدوية</td><td class="c pass">ناجح</td><td>f2c0823 / fd15743</td></tr>
+    <tr><td class="c">8</td><td>مسح الأسرار والأنماط الحساسة</td><td>12 نمطاً × 197 ملفاً</td><td class="c warn">نتائج</td><td>لا أسرار؛ 8 مواضع نصوص تجريبية</td></tr>
+    <tr><td class="c">9</td><td>جرد ملفات البيئة المتتبعة</td><td>فحص أسماء .env*</td><td class="c pass">ناجح</td><td>صفر ملفات env متتبعة</td></tr>
+    <tr><td class="c">10</td><td>جرد معالجات API وأفعالها</td><td>مسح نمطي regex</td><td class="c pass">ناجح</td><td>33 معالجاً في 25 ملفاً</td></tr>
+    <tr><td class="c">11</td><td>تغطية المصادقة على مستوى الخادم</td><td>بحث getServerSession/auth</td><td class="c pass" style="color:#1a1a1a;">نتيجة حرجة</td><td>صفر استخدام في main</td></tr>
+    <tr><td class="c">12</td><td>البحث عن طبقة وسطى middleware</td><td>فحص البنية</td><td class="c warn">غير موجود</td><td>لا ملف middleware</td></tr>
+    <tr><td class="c">13</td><td>البحث عن تقييد السرعة</td><td>مسح rate/throttle</td><td class="c warn">غير موجود</td><td>صفر آليات</td></tr>
+    <tr><td class="c">14</td><td>فحص تجاوز الدور عبر التسجيل</td><td>قراءة register route</td><td class="c pass">ناجح</td><td>الدور مثبت "user"</td></tr>
+    <tr><td class="c">15</td><td>تقييم تشفير كلمات المرور</td><td>قراءة password.ts</td><td class="c pass">ناجح</td><td>scrypt + timingSafeEqual</td></tr>
+    <tr><td class="c">16</td><td>فحص سياسات RLS في فرع Supabase</td><td>قراءة schema.sql</td><td class="c pass">ناجح</td><td>10 سياسات على 3 جداول</td></tr>
+    <tr><td class="c">17</td><td>كشف تعارض سياسات بين ملفات SQL</td><td>مقارنة schema/migration</td><td class="c warn">تعارض</td><td>نسختان لسياسة insert</td></tr>
+    <tr><td class="c">18</td><td>فحص إعدادات TypeScript</td><td>tsconfig + next.config</td><td class="c warn">تناقض</td><td>strict مفعل وbuild يتجاهل</td></tr>
+    <tr><td class="c">19</td><td>فحص قواعد ESLint</td><td>قراءة eslint.config</td><td class="c warn">نتائج</td><td>13 قاعدة معطلة صراحة</td></tr>
+    <tr><td class="c">20</td><td>جرد الاختبارات الآلية</td><td>مسح test/spec</td><td class="c warn">غير موجود</td><td>صفر ملفات اختبار</td></tr>
+    <tr><td class="c">21</td><td>تحليل الاستيراد مقابل الاعتماديات</td><td>مطابقة imports/package.json</td><td class="c warn">نتائج</td><td>31 غير مستوردة من 83</td></tr>
+    <tr><td class="c">22</td><td>فحص أنماط HTML الخطرة</td><td>مسح dangerouslySetInnerHTML</td><td class="c pass">ناجح</td><td>حالتان موثقتان آمنة</td></tr>
+    <tr><td class="c">23</td><td>فحص النظافة (TODO/console/any)</td><td>مسح نمطي</td><td class="c pass">ناجح</td><td>1 / 1 / 0 حالة</td></tr>
+    <tr><td class="c">24</td><td>فحص الملفات الشخصية المتتبعة</td><td>جرد upload/</td><td class="c warn">نتائج</td><td>18 ملفاً ~6.7 MB</td></tr>
+    <tr><td class="c">25</td><td>فحص ملفات النشر (SEO/PWA)</td><td>CNAME/robots/sitemap/sw</td><td class="c pass">ناجح</td><td>16 رابطاً وخريطة كاملة</td></tr>
+    <tr><td class="c">26</td><td>فحص المعرفات العامة في الحزمة المنشورة</td><td>مسح chunks</td><td class="c pass">by design</td><td>Supabase URL/anon + Google ID</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 11 FINDINGS REGISTER ===== -->
+<div class="chapter-header">
+  <div class="sec-tag">APPENDIX A / FINDINGS REGISTER</div>
+  <div class="sec-title">11 &mdash; ملحق: سجل النتائج الكامل</div>
+  <div class="sec-rule"></div>
+</div>
+
+<p>السجل النهائي للنتائج الـ15 كلها بمعرّفات موحدة، وكل صف يربط النتيجة بموضعها الدقيق وحالتها. حالة جميع النتائج «مفتوحة» عند تاريخ الفحص لأن هذا هو أول فحص شامل للحزمة، وخطة الإصلاح في القسم 09 تغطي كل صف هنا ببند معالجة مرتبط صراحة.</p>
+
+<p>منهجية التصنيف: تُصنف النتيجة حرجة إذا كانت قابلة للاستغلال بطلب واحد بلا مصادقة وأثرها وصول أو تدمير شامل، وعالية إذا كانت تفتح باباً عملياً مع خطوة إضافية واحدة أو أثراً تشغيلياً مباشراً، ومتوسطة إن كانت ثغرة بنيوية تحتاج ظروفاً أو تفسح مجالاً تدريجياً، ومنخفضة إن كانت مخاطرها هامشية أو تنظيمية، ومعلوماتية إن كانت توثيقية بحتة بلا فعل مطلوب فوري. درجات المحاور في الملخص التنفيذي مشتقة من توزيع النتائج على المحاور مع اعتبار الإيجابيات الموثقة، والوزن متساوٍ بين المحاور الخمسة لغياب أولوية تجارية معلنة.</p>
+
+<table class="register" style="break-before: auto;">
+  <colgroup><col style="width:9%"><col style="width:13%"><col style="width:44%"><col style="width:22%"><col style="width:12%"></colgroup>
+  <thead><tr><th>المعرّف</th><th>الخطورة</th><th>النتيجة</th><th>الموضع الأساسي</th><th>الحالة</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">F-01</td><td class="c"><span class="badge crit">حرجة</span></td><td>مسارات إدارية بلا مصادقة: ترقية أدوار وحذف مستخدمين وقراءة PII</td><td class="mono">api/admin/*</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-02</td><td class="c"><span class="badge high">عالية</span></td><td>مصادقة عميلية فقط: جلسة في localStorage وفحص دور في الواجهة</td><td class="mono">lib/store.ts</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-03</td><td class="c"><span class="badge high">عالية</span></td><td>لا rate limiting على نقاط الكتابة ومسار الذكاء الاصطناعي</td><td class="mono">api/chat</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-04</td><td class="c"><span class="badge high">عالية</span></td><td>بيانات دخول مدير معلنة في الواجهة ومنشأة في القاعدة (admin123)</td><td class="mono">login-screen</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-05</td><td class="c"><span class="badge med">متوسطة</span></td><td>مسار المصادقة الحي (Supabase) خارج الفرع الرئيسي وغير مدمج</td><td class="mono">feat/supabase-auth</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-06</td><td class="c"><span class="badge med">متوسطة</span></td><td>تعارض نسختين من سياسة إدخال رسائل التواصل في ملفات SQL</td><td class="mono">supabase/*.sql</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-07</td><td class="c"><span class="badge med">متوسطة</span></td><td>ignoreBuildErrors يلغي أثر strict:true عند البناء الإنتاجي</td><td class="mono">next.config.ts</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-08</td><td class="c"><span class="badge med">متوسطة</span></td><td>تسجيل استعلامات Prisma بلا شرط بيئة في الإنتاج</td><td class="mono">lib/db.ts</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-09</td><td class="c"><span class="badge med">متوسطة</span></td><td>سكربتات قاعدة خطرة: data loss افتراضي وحذف شامل في seed</td><td class="mono">package.json</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-10</td><td class="c"><span class="badge med">متوسطة</span></td><td>13 قاعدة ESLint معطلة بينها الأربع الحرجة</td><td class="mono">eslint.config</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-11</td><td class="c"><span class="badge med">متوسطة</span></td><td>غياب كامل للاختبارات الآلية</td><td class="mono">tests/</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-12</td><td class="c"><span class="badge low">منخفضة</span></td><td>31/83 اعتمادية غير مستوردة أو خارج موضعها الصحيح</td><td class="mono">package.json</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-13</td><td class="c"><span class="badge low">منخفضة</span></td><td>ملفات شخصية وصور متتبعة في upload/ وداخل تاريخ Git</td><td class="mono">upload/</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-14</td><td class="c"><span class="badge low">منخفضة</span></td><td>reactStrictMode معطل في الوضعين</td><td class="mono">next.config.ts</td><td class="c">مفتوحة</td></tr>
+    <tr><td class="mono">F-15</td><td class="c"><span class="badge info">معلوماتية</span></td><td>معرفات عامة by design في حزمة النشر (anon key وGoogle ID)</td><td class="mono">published-site</td><td class="c">موثقة</td></tr>
+  </tbody>
+</table>
+
+</div><!-- /main-content -->
+
+<!-- ============ ENDING ============ -->
+<div class="ending">
+  <div class="rule"></div>
+  <div class="big">الحزمة سليمة.<br>المصدر منظّم.<br>الأولوية الوحيدة العاجلة: إغلاق طبقة API الإدارية.</div>
+  <p style="max-width:600px;">هذا التقرير نتاج فحص ساكن للحزمة بتاريخ 9 نوفمبر 2026، وكل رقم فيه قابل لإعادة الإنتاج من الملفات نفسها. الفحص التالي المقترح بعد دمج فرع المصادقة وتنفيذ بطاقة P0 هو فحص تحقق مختصر يركز على فرق الحالة الأمنية فقط.</p>
+  <div class="foot">
+    <span>CTO-DRS &mdash; Comprehensive Static Audit</span>
+    <span>Z.ai &middot; 2026-11</span>
+  </div>
+</div>
+
+</body>
+</html>
