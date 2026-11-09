@@ -5,19 +5,19 @@
 
 الموقع الرسمي | Official site: https://cto-drs.com
 المطوّر | Developer: CTO-DRS (Software Engineer)
-البريد | Email: admin@ctodrs.com
+البريد | Email: contact@cto-drs.com
 GitHub: https://github.com/CTO-DRS
 
 ## الصفحات الرئيسية | Key Pages
 
 - [الرئيسية | Home](https://cto-drs.com/): نظرة شاملة على الهوية والخدمات والتطبيقات
-- [الخدمات | Services](https://cto-drs.com/#/services): تطوير تطبيقات أندرويد، مواقع ويب آمنة، اختبار اختراق أخلاقي، أدوات Python
-- [مركز التحميل | Downloads](https://cto-drs.com/#/downloads): تنزيل مباشر لكل التطبيقات من GitHub Releases
-- [الأسئلة الشائعة | FAQ](https://cto-drs.com/#/faq): مدة التنفيذ، الضمان، الدفعات، الصيانة
-- [تواصل معي | Contact](https://cto-drs.com/#/contact): نموذج تواصل + واتساب + تيليجرام
+- [الخدمات | Services](https://cto-drs.com/services/): تطوير تطبيقات أندرويد، مواقع ويب آمنة، اختبار اختراق أخلاقي، أدوات Python
+- [مركز التحميل | Downloads](https://cto-drs.com/downloads/): تنزيل مباشر لكل التطبيقات من GitHub Releases
+- [الأسئلة الشائعة | FAQ](https://cto-drs.com/faq/): مدة التنفيذ، الضمان، الدفعات، الصيانة
+- [تواصل معي | Contact](https://cto-drs.com/contact/): نموذج تواصل + واتساب + تيليجرام
 - [المتجر | Store](https://cto-drs.com/#/store): منتجات رقمية
 - [المدونة | Blog](https://cto-drs.com/#/blog): مقالات تقنية
-- [الدورات | Courses](https://cto-drs.com/#/courses): دورات برمجة وأمن سيبراني
+- [الدورات | Courses](https://cto-drs.com/courses/): دورات برمجة وأمن سيبراني
 
 ## التطبيقات مفتوحة المصدر | Open-Source Apps (تنزيل مباشر)
 

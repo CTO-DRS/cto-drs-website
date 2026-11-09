@@ -17,7 +17,7 @@ export const BRAND = {
   handle: "cto-drs",
   website: "https://cto-drs.com/",
   websiteLabel: "cto-drs.com",
-  email: "admin@ctodrs.com",
+  email: "contact@cto-drs.com",
 } as const;
 
 export const SOCIALS: SocialLink[] = [
