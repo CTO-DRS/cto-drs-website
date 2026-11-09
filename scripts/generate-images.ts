@@ -4,7 +4,8 @@ import path from 'path';
 
 const OUT_DIR = '/home/z/my-project/public/images';
 
-const images: Array<{ name: string; prompt: string; size: string }> = [
+type ImgSize = '1152x864' | '1344x768' | '1024x1024' | '768x1344' | '864x1152' | '1440x720' | '720x1440';
+const images: Array<{ name: string; prompt: string; size: ImgSize }> = [
   {
     name: 'profile.jpg',
     prompt:

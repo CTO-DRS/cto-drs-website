@@ -9,6 +9,7 @@ import {
   useRef,
   useSyncExternalStore,
 } from "react";
+import { useI18n } from "@/i18n";
 
 /* ─────────────────────────────────────────────
    Hash based SPA router — works on the single
@@ -35,6 +36,7 @@ export type RouteName =
   | "booking"
   | "login"
   | "register"
+  | "reset"
   | "account"
   | "dashboard"
   | "pricing"
@@ -74,6 +76,7 @@ const VALID: RouteName[] = [
   "booking",
   "login",
   "register",
+  "reset",
   "account",
   "dashboard",
   "pricing",
@@ -89,6 +92,34 @@ const VALID: RouteName[] = [
   "notifications",
 ];
 
+/* أقسام داخل الرئيسية لها رابط مباشر: #/academy → الرئيسية + التمرير لقسم id="academy" */
+export const HOME_SECTIONS = ["academy"] as const;
+export type HomeSection = (typeof HOME_SECTIONS)[number];
+export const ACADEMY_ROUTE: AppRoute = { name: "home", slug: "academy" };
+
+function isHomeSection(v: string | undefined): v is HomeSection {
+  return !!v && (HOME_SECTIONS as readonly string[]).includes(v);
+}
+
+function hashFor(r: AppRoute) {
+  if (r.name === "home" && isHomeSection(r.slug)) return `#/${r.slug}`;
+  return `#/${r.name}${r.slug ? `/${r.slug}` : ""}`;
+}
+
+/** التمرير إلى قسم في الرئيسية — ينتظر تحميل القسم الديناميكي (حتى ~4 ثوانٍ) */
+function scrollToSection(id: string) {
+  let tries = 0;
+  const attempt = () => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    if (++tries < 40) window.setTimeout(attempt, 100);
+  };
+  window.setTimeout(attempt, 60);
+}
+
 function parseHashFrom(hash: string): AppRoute {
   let raw: string;
   try {
@@ -98,6 +129,7 @@ function parseHashFrom(hash: string): AppRoute {
   }
   if (!raw) return { name: "home" };
   const [name, slug] = raw.split("/");
+  if (isHomeSection(name)) return { name: "home", slug: name };
   if (VALID.includes(name as RouteName)) {
     return { name: name as RouteName, slug: slug || undefined };
   }
@@ -130,40 +162,7 @@ const Ctx = createContext<RouterCtx>({
   back: () => {},
 });
 
-/* عناوين المستند لكل مسار — تحسين SEO وإمكانية الوصول */
-const ROUTE_TITLES: Partial<Record<RouteName, string>> = {
-  home: "الرئيسية",
-  about: "نبذة عني",
-  services: "الخدمات",
-  projects: "المشاريع",
-  courses: "الدورات",
-  blog: "المدونة",
-  store: "المتجر الرسمي",
-  cart: "سلة المشتريات",
-  checkout: "إتمام الشراء",
-  team: "الفريق",
-  testimonials: "آراء العملاء",
-  faq: "الأسئلة الشائعة",
-  contact: "تواصل معي",
-  booking: "حجز استشارة",
-  login: "تسجيل الدخول",
-  register: "إنشاء حساب",
-  account: "حسابي",
-  dashboard: "لوحة التحكم",
-  pricing: "الأسعار",
-  tools: "الأدوات",
-  downloads: "مركز التحميل",
-  videos: "الفيديوهات",
-  gallery: "معرض الصور",
-  events: "الفعاليات",
-  privacy: "سياسة الخصوصية",
-  terms: "شروط الاستخدام",
-  wishlist: "المفضلة",
-  orders: "الطلبات",
-  notifications: "الإشعارات",
-  "not-found": "الصفحة غير موجودة",
-};
-const BASE_TITLE = "CTO-DRS | هندسة البرمجيات والأمن السيبراني والابتكار";
+/* عناوين المستند لكل مسار — من قاموس اللغة (src/i18n) */
 
 export function AppRouterProvider({ children }: { children: React.ReactNode }) {
   const hash = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
@@ -178,20 +177,32 @@ export function AppRouterProvider({ children }: { children: React.ReactNode }) {
       prevHashRef.current = hash;
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     }
-  }, [hash]);
+    // رابط قسم داخل الرئيسية (مثل #/academy) — عند التنقل أو الفتح المباشر
+    if (route.name === "home" && isHomeSection(route.slug)) scrollToSection(route.slug);
+  }, [hash, route]);
 
   // تحديث عنوان المستند تلقائياً حسب الشاشة الحالية
+  const { t } = useI18n();
   useEffect(() => {
-    const section = ROUTE_TITLES[route.name];
-    document.title = route.name === "home" || !section ? BASE_TITLE : `${section} — CTO-DRS`;
-  }, [route.name]);
+    const section = t.routes[route.name];
+    const desired = route.name === "home" || !section ? t.meta.baseTitle : `${section} — CTO-DRS`;
+    const apply = () => {
+      if (document.title !== desired) document.title = desired;
+    };
+    apply();
+    // بيانات Next الوصفية قد تُحقن بعد التركيب وتعيد العنوان الافتراضي — نعيد تطبيق عنواننا
+    const mo = new MutationObserver(apply);
+    mo.observe(document.head, { subtree: true, childList: true, characterData: true });
+    return () => mo.disconnect();
+  }, [route.name, t]);
 
   const navigate = useCallback((r: AppRoute) => {
     const current = parseHashFrom(window.location.hash);
     historyRef.current = [...historyRef.current.slice(-20), current];
-    const target = `#/${r.name}${r.slug ? `/${r.slug}` : ""}`;
+    const target = hashFor(r);
     if (window.location.hash === target) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (r.name === "home" && isHomeSection(r.slug)) scrollToSection(r.slug);
+      else window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     window.location.hash = target;
@@ -202,7 +213,7 @@ export function AppRouterProvider({ children }: { children: React.ReactNode }) {
     const prev = stack[stack.length - 1];
     if (prev) {
       historyRef.current = stack.slice(0, -1);
-      window.location.hash = `#/${prev.name}${prev.slug ? `/${prev.slug}` : ""}`;
+      window.location.hash = hashFor(prev);
     } else if (window.history.length > 1) {
       window.history.back();
     } else {
@@ -221,5 +232,5 @@ export function useAppRouter() {
 
 /** helper to build a hash href (for <a> tags) */
 export function routeHref(r: AppRoute) {
-  return `#/${r.name}${r.slug ? `/${r.slug}` : ""}`;
+  return hashFor(r);
 }

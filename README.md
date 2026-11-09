@@ -124,7 +124,7 @@ bun run dev
 ### حسابات تجريبية | Demo Accounts
 | الدور | البريد | كلمة المرور |
 |---|---|---|
-| مدير النظام | `admin@ctodrs.com` | `admin123` |
+| مدير النظام | `contact@cto-drs.com` | `admin123` |
 | عميل | `demo@ctodrs.com` | `demo1234` |
 
 > لوحة التحكم: `http://localhost:3000/#/dashboard` (تتطلب دخول بحساب مدير)
@@ -155,3 +155,11 @@ src/
 ---
 
 © CTO.DRS — مبني بشغف وأمان 🛡️
+
+## 🌐 اللغات والوصولية (i18n + a11y)
+
+- **القاموس**: `src/i18n/ar.ts` (الافتراضي) و `src/i18n/en.ts` — نفس الشكل، يفرضه النوع `Dict`.
+- **المحتوى المترجم** (البيانات/التطبيقات/الأسئلة/سجلات الـ API حسب slug): `src/i18n/content-en.ts`.
+- **المزوّد**: `LanguageProvider` + `useI18n()` / `useContent()` في `src/i18n/index.tsx` — يحفظ الاختيار في `localStorage` (`cto-drs-lang`) ويحترم `?lang=en`، ويبدّل `<html lang/dir>`.
+- **صفحات SEO الإنجليزية**: `scripts/seo-pages.ts` يُخرج `/en/` + 7 أقسام مع `hreflang` (ar, en, x-default) ويضيفها إلى `sitemap.xml`.
+- **الوصولية**: `src/lib/a11y.tsx` (حجم النص A−/A/A+ وتقليل الحركة، محفوظان) + `src/components/a11y-controls.tsx` في التذييل.

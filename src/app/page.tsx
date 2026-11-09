@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { Terminal } from "lucide-react";
 import { ParticleBackground } from "@/components/particle-background";
 import { Navbar } from "@/components/navbar";
@@ -23,6 +23,10 @@ import { SWRegister } from "@/components/sw-register";
 import { SeoContent } from "@/components/seo-content";
 import { AppRouterProvider, useAppRouter } from "@/lib/router";
 import { STATIC_MODE } from "@/lib/static-mode";
+import { AuthProvider } from "@/lib/auth";
+import { SUPABASE_ENABLED } from "@/lib/supabase";
+import { useI18n } from "@/i18n";
+import { useA11y } from "@/lib/a11y";
 
 /* ─────────────────────────────────────────────
    تحميل كسول — الأقسام أسفل الطية والشاشات الأخرى
@@ -30,8 +34,9 @@ import { STATIC_MODE } from "@/lib/static-mode";
    ───────────────────────────────────────────── */
 
 function ScreenLoader() {
+  const { t } = useI18n();
   return (
-    <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-live="polite">
+    <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-live="polite" aria-label={t.common.loadingAria}>
       <div className="flex flex-col items-center gap-3">
         <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00f0ff] via-[#7c3aed] to-[#ff2a6d] shadow-[0_0_36px_rgba(0,240,255,0.4)]">
           <Terminal className="h-6 w-6 text-[#030303]" strokeWidth={2.5} />
@@ -71,12 +76,12 @@ const dynScreen = (mod: Promise<unknown>, exportName: string) =>
 
 const DashboardSection = dynSection(import("@/components/dashboard-section"), "DashboardSection");
 const VideosSection = dynSection(import("@/components/videos-section"), "VideosSection");
-const CoursesSection = dynSection(import("@/components/courses-section"), "CoursesSection");
 const ToolsSection = dynSection(import("@/components/tools-section"), "ToolsSection");
 const GallerySection = dynSection(import("@/components/gallery-section"), "GallerySection");
 const QuickAccess = dynSection(import("@/components/quick-access"), "QuickAccess");
 const ContactSection = dynSection(import("@/components/contact-section"), "ContactSection");
 const CtaSection = dynSection(import("@/components/cta-section"), "CtaSection");
+const AcademySection = dynSection(import("@/components/academy-section"), "AcademySection");
 
 const ServicesScreen = dynScreen(import("@/components/screens/services-screen"), "ServicesScreen");
 const ProjectsScreen = dynScreen(import("@/components/screens/projects-screen"), "ProjectsScreen");
@@ -108,6 +113,12 @@ const DownloadsScreen = dynScreen(import("@/components/screens/downloads-screen"
 const VideosScreenX = dynScreen(import("@/components/screens/videos-screen"), "VideosScreen");
 const GalleryScreenX = dynScreen(import("@/components/screens/gallery-screen"), "GalleryScreen");
 const NotFoundScreen = dynScreen(import("@/components/screens/not-found-screen"), "NotFoundScreen");
+/* شاشات Supabase (حسابات حقيقية) — تُستخدم فقط عند ضبط متغيرات Supabase وقت البناء */
+const SbLoginScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-auth-screens"), "SbLoginScreen") : NotFoundScreen;
+const SbRegisterScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-auth-screens"), "SbRegisterScreen") : NotFoundScreen;
+const SbResetScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-auth-screens"), "SbResetScreen") : NotFoundScreen;
+const SbAccountScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-account-screen"), "SbAccountScreen") : NotFoundScreen;
+const SbAdminScreen = SUPABASE_ENABLED ? dynScreen(import("@/components/auth/sb-admin-screen"), "SbAdminScreen") : NotFoundScreen;
 
 function HomeView() {
   return (
@@ -119,7 +130,7 @@ function HomeView() {
       <ProjectsSection />
       <MetricsBand />
       <VideosSection />
-      <CoursesSection />
+      <AcademySection />
       <ToolsSection />
       <GallerySection />
       <QuickAccess />
@@ -131,7 +142,8 @@ function HomeView() {
 
 function ScreenSwitch() {
   const { route } = useAppRouter();
-  const key = `${route.name}${route.slug ? `-${route.slug}` : ""}`;
+  // أقسام الرئيسية (#/academy) لا تعيد تركيب الصفحة — فقط تمرير
+  const key = route.name === "home" ? "home" : `${route.name}${route.slug ? `-${route.slug}` : ""}`;
 
   let screen: React.ReactNode;
   switch (route.name) {
@@ -172,16 +184,19 @@ function ScreenSwitch() {
       screen = <BookingScreen />;
       break;
     case "login":
-      screen = <LoginScreen />;
+      screen = SUPABASE_ENABLED ? <SbLoginScreen /> : <LoginScreen />;
       break;
     case "register":
-      screen = <RegisterScreen />;
+      screen = SUPABASE_ENABLED ? <SbRegisterScreen /> : <RegisterScreen />;
+      break;
+    case "reset":
+      screen = SUPABASE_ENABLED ? <SbResetScreen /> : <NotFoundScreen />;
       break;
     case "account":
-      screen = <AccountScreen />;
+      screen = SUPABASE_ENABLED ? <SbAccountScreen /> : <AccountScreen />;
       break;
     case "dashboard":
-      screen = <DashboardScreenX />;
+      screen = SUPABASE_ENABLED ? <SbAdminScreen /> : <DashboardScreenX />;
       break;
     case "contact":
       screen = <ContactScreen />;
@@ -246,6 +261,8 @@ function ScreenSwitch() {
 
 export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const { t } = useI18n();
+  const { reduceMotion } = useA11y();
 
   useEffect(() => {
     console.log(
@@ -257,7 +274,9 @@ export default function Home() {
   }, []);
 
   return (
+    <MotionConfig reducedMotion={reduceMotion ? "always" : "user"}>
     <AppRouterProvider>
+    <AuthProvider>
       {/* رابط تخطي التنقل — وصولية لوحة المفاتيح (بدون تغيير الهاش) */}
       <a
         href="#main-content"
@@ -267,13 +286,13 @@ export default function Home() {
           main?.setAttribute("tabindex", "-1");
           main?.focus({ preventScroll: false });
         }}
-        className="sr-only focus:not-sr-only focus:fixed focus:right-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-[#00f0ff] focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-[#030303] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#ff2a6d]"
+        className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-[#00f0ff] focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-[#030303] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#ff2a6d]"
       >
-        تخطي إلى المحتوى الرئيسي
+        {t.common.skipToContent}
       </a>
       <ScrollProgress />
       <div className="relative flex min-h-screen flex-col">
-        <ParticleBackground />
+        {!reduceMotion && <ParticleBackground />}
         <Navbar onOpenSearch={() => setSearchOpen(true)} />
         <CommandPalette open={searchOpen} setOpen={setSearchOpen} />
 
@@ -291,6 +310,8 @@ export default function Home() {
         <ScrollToTop />
         <SWRegister />
       </div>
+    </AuthProvider>
     </AppRouterProvider>
+    </MotionConfig>
   );
 }

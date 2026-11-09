@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import {
   BookOpen,
@@ -23,8 +23,7 @@ import {
 import { useApi } from "@/lib/use-api";
 import { useAppRouter } from "@/lib/router";
 import type { Course } from "@/lib/types";
-
-const fmtPrice = (n: number) => n.toLocaleString("en-US") + " ر.س";
+import { useI18n, localizeApiCourse } from "@/i18n";
 
 /** 1.2K style compact formatting for large numbers. */
 const fmtCount = (n: number) =>
@@ -32,14 +31,11 @@ const fmtCount = (n: number) =>
 
 type SortKey = "popular" | "rating" | "price-asc" | "price-desc";
 
-const LEVELS = ["الكل", "مبتدئ", "متوسط", "متقدم"] as const;
+const ALL = "__all__";
+/* قيم المستوى الداخلية تبقى بالعربية (كما في البيانات) — تُترجم عند العرض */
+const LEVELS = [ALL, "مبتدئ", "متوسط", "متقدم"] as const;
 
-const SORTS: { key: SortKey; label: string }[] = [
-  { key: "popular", label: "الأكثر شعبية" },
-  { key: "rating", label: "الأعلى تقييماً" },
-  { key: "price-asc", label: "السعر: من الأقل" },
-  { key: "price-desc", label: "السعر: من الأعلى" },
-];
+const SORTS: SortKey[] = ["popular", "rating", "price-asc", "price-desc"];
 
 /** Color-coded level badge styles (allowed palette only). */
 const levelStyle = (level: string) => {
@@ -51,10 +47,17 @@ const levelStyle = (level: string) => {
 };
 
 export function CoursesScreen() {
-  const { data: courses, loading, error, reload } = useApi<Course[]>("/api/courses");
+  const { data: rawCourses, loading, error, reload } = useApi<Course[]>("/api/courses");
   const { navigate } = useAppRouter();
-  const [activeCat, setActiveCat] = useState("الكل");
-  const [level, setLevel] = useState<string>("الكل");
+  const { t, lang } = useI18n();
+  const cs = t.courses;
+  const fmtPrice = (n: number) => n.toLocaleString("en-US") + t.meta.currency;
+  const courses = useMemo(() => rawCourses?.map((c) => localizeApiCourse(lang, c)), [rawCourses, lang]);
+  const [activeCat, setActiveCat] = useState(ALL);
+  const [level, setLevel] = useState<string>(ALL);
+  useEffect(() => {
+    queueMicrotask(() => setActiveCat(ALL));
+  }, [lang]);
   const [sort, setSort] = useState<SortKey>("popular");
 
   const categories = useMemo(() => {
@@ -74,8 +77,8 @@ export function CoursesScreen() {
     if (!courses) return [] as Course[];
     const list = courses.filter(
       (c) =>
-        (activeCat === "الكل" || c.category === activeCat) &&
-        (level === "الكل" || c.level.includes(level))
+        (activeCat === ALL || c.category === activeCat) &&
+        (level === ALL || c.level.includes(level))
     );
     const sorted = [...list].sort((a, b) => {
       switch (sort) {
@@ -96,9 +99,9 @@ export function CoursesScreen() {
     <>
       <PageHero
         badge="COURSES.LAB"
-        title="أكاديمية"
-        highlight="الدورات"
-        subtitle="دورات عملية مباشرة من الخبرة — تطوير الويب، الأمن السيبراني، ولغات البرمجة بمستويات مختلفة"
+        title={cs.title}
+        highlight={cs.highlight}
+        subtitle={cs.subtitle}
       />
 
       <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">
@@ -113,7 +116,7 @@ export function CoursesScreen() {
                 <p className="font-heading-cyber text-xl font-extrabold text-main">
                   {stats.total.toLocaleString("en-US")}
                 </p>
-                <p className="text-xs text-mute">عدد الدورات</p>
+                <p className="text-xs text-mute">{cs.statCourses}</p>
               </div>
             </div>
             <div className="glass flex items-center gap-4 rounded-2xl p-4">
@@ -124,7 +127,7 @@ export function CoursesScreen() {
                 <p className="font-heading-cyber text-xl font-extrabold text-main">
                   {fmtCount(stats.students)}
                 </p>
-                <p className="text-xs text-mute">إجمالي الطلاب</p>
+                <p className="text-xs text-mute">{cs.statStudents}</p>
               </div>
             </div>
             <div className="glass flex items-center gap-4 rounded-2xl p-4">
@@ -136,7 +139,7 @@ export function CoursesScreen() {
                   {stats.avg.toFixed(1)}
                   <span className="text-xs font-bold text-mute"> / 5</span>
                 </p>
-                <p className="text-xs text-mute">متوسط التقييم</p>
+                <p className="text-xs text-mute">{cs.statRating}</p>
               </div>
             </div>
           </Reveal>
@@ -144,25 +147,27 @@ export function CoursesScreen() {
 
         {/* ── Filters: category pills + level & sort selects ── */}
         <div className="mb-8 flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="تصفية الدورات حسب التصنيف">
-            {["الكل", ...categories].map((cat) =>
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label={cs.filterAria}>
+            {[ALL, ...categories].map((cat) =>
               activeCat === cat ? (
                 <button
                   key={cat}
+                  type="button"
                   onClick={() => setActiveCat(cat)}
                   className="btn-gradient rounded-full px-4 py-1.5 text-xs font-bold"
                   aria-pressed="true"
                 >
-                  {cat}
+                  {cat === ALL ? t.common.all : cat}
                 </button>
               ) : (
                 <button
                   key={cat}
+                  type="button"
                   onClick={() => setActiveCat(cat)}
                   className="tag-pill cursor-pointer transition hover:border-[rgba(0,240,255,0.6)] hover:bg-[rgba(0,240,255,0.1)]"
                   aria-pressed="false"
                 >
-                  {cat}
+                  {cat === ALL ? t.common.all : cat}
                 </button>
               )
             )}
@@ -170,36 +175,36 @@ export function CoursesScreen() {
           <div className="flex flex-wrap items-center gap-3">
             <Select value={level} onValueChange={setLevel}>
               <SelectTrigger
-                aria-label="تصفية حسب المستوى"
+                aria-label={cs.levelAria}
                 className="h-10 w-[150px] rounded-xl border border-border-strong bg-elev-2/60 text-xs text-main"
               >
-                <SelectValue placeholder="المستوى" />
+                <SelectValue placeholder={cs.levelPh} />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-border-soft">
                 {LEVELS.map((lv) => (
                   <SelectItem key={lv} value={lv} className="text-xs">
-                    {lv === "الكل" ? "كل المستويات" : lv}
+                    {lv === ALL ? cs.allLevels : cs.levels[lv] ?? lv}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
               <SelectTrigger
-                aria-label="ترتيب الدورات"
+                aria-label={cs.sortAria}
                 className="h-10 w-[180px] rounded-xl border border-border-strong bg-elev-2/60 text-xs text-main"
               >
-                <SelectValue placeholder="الترتيب" />
+                <SelectValue placeholder={cs.sortPh} />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-border-soft">
                 {SORTS.map((s) => (
-                  <SelectItem key={s.key} value={s.key} className="text-xs">
-                    {s.label}
+                  <SelectItem key={s} value={s} className="text-xs">
+                    {cs.sorts[s]}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <span className="font-mono-cyber mr-auto text-[11px] text-mute">
-              {filtered.length} دورة
+            <span className="font-mono-cyber ms-auto text-[11px] text-mute" aria-live="polite">
+              {cs.count(filtered.length)}
             </span>
           </div>
         </div>
@@ -210,18 +215,19 @@ export function CoursesScreen() {
         {!loading && !error && filtered.length === 0 && (
           <EmptyState
             icon={GraduationCap}
-            title="لا توجد دورات مطابقة"
-            description="جرّب تغيير التصنيف أو المستوى أو إعادة ضبط الترتيب لعرض المزيد من الدورات."
+            title={cs.emptyTitle}
+            description={cs.emptyDesc}
             action={
               <button
+                type="button"
                 onClick={() => {
-                  setActiveCat("الكل");
-                  setLevel("الكل");
+                  setActiveCat(ALL);
+                  setLevel(ALL);
                   setSort("popular");
                 }}
                 className="btn-gradient rounded-full px-5 py-2 text-xs font-bold"
               >
-                إعادة ضبط الفلاتر
+                {cs.reset}
               </button>
             }
           />
@@ -248,14 +254,14 @@ export function CoursesScreen() {
                       </div>
                     )}
                     <span
-                      className={`absolute right-3 top-3 rounded-full border px-2.5 py-1 text-[10px] font-bold backdrop-blur-sm ${levelStyle(course.level)}`}
+                      className={`absolute start-3 top-3 rounded-full border px-2.5 py-1 text-[10px] font-bold backdrop-blur-sm ${levelStyle(course.level)}`}
                     >
-                      {course.level}
+                      {cs.levels[course.level] ?? course.level}
                     </span>
                     {course.featured && (
-                      <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full border border-[rgba(255,215,0,0.4)] bg-[rgba(255,215,0,0.15)] px-2.5 py-1 text-[10px] font-bold text-[#ffd700] backdrop-blur-sm">
+                      <span className="absolute end-3 top-3 flex items-center gap-1 rounded-full border border-[rgba(255,215,0,0.4)] bg-[rgba(255,215,0,0.15)] px-2.5 py-1 text-[10px] font-bold text-[#ffd700] backdrop-blur-sm">
                         <Star className="h-3 w-3 fill-[#ffd700]" aria-hidden="true" />
-                        مميزة
+                        {t.common.featuredF}
                       </span>
                     )}
                   </div>
@@ -277,12 +283,12 @@ export function CoursesScreen() {
                       <span aria-hidden="true" className="text-[color:var(--border-strong)]">•</span>
                       <span className="flex items-center gap-1">
                         <PlaySquare className="h-3.5 w-3.5" aria-hidden="true" />
-                        {course.lessons.toLocaleString("en-US")} درساً
+                        {cs.lessons(course.lessons)}
                       </span>
                       <span aria-hidden="true" className="text-[color:var(--border-strong)]">•</span>
                       <span className="flex items-center gap-1">
                         <Users className="h-3.5 w-3.5" aria-hidden="true" />
-                        {fmtCount(course.students)} طالب
+                        {cs.students(fmtCount(course.students))}
                       </span>
                     </div>
 
@@ -300,11 +306,12 @@ export function CoursesScreen() {
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => navigate({ name: "course-detail", slug: course.slug })}
                       className="btn-outline-cyber h-10 w-full rounded-full text-xs font-bold"
-                      aria-label={`تفاصيل دورة ${course.title}`}
+                      aria-label={cs.detailsAria(course.title)}
                     >
-                      تفاصيل الدورة
+                      {cs.details}
                     </button>
                   </div>
                 </article>

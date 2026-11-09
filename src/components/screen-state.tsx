@@ -1,14 +1,17 @@
 "use client";
 
 import { Inbox, Loader2 } from "lucide-react";
+import { useI18n } from "@/i18n";
 
 /** Grid of shimmering skeleton cards used while lists load. */
 export function ListSkeleton({ count = 6, className = "" }: { count?: number; className?: string }) {
+  const { t } = useI18n();
   return (
     <div
       className={`grid gap-5 sm:grid-cols-2 lg:grid-cols-3 ${className}`}
       aria-busy="true"
-      aria-label="جارٍ التحميل"
+      aria-label={t.common.loadingAria}
+      role="status"
     >
       {Array.from({ length: count }).map((_, i) => (
         <div
@@ -26,11 +29,12 @@ export function ListSkeleton({ count = 6, className = "" }: { count?: number; cl
 }
 
 /** Centered full-area loading spinner. */
-export function ScreenLoader({ label = "جارٍ التحميل..." }: { label?: string }) {
+export function ScreenLoader({ label }: { label?: string }) {
+  const { t } = useI18n();
   return (
-    <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-mute">
-      <Loader2 className="h-8 w-8 animate-spin text-cyber" />
-      <p className="font-mono-cyber text-xs tracking-widest">{label}</p>
+    <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-mute" role="status">
+      <Loader2 className="h-8 w-8 animate-spin text-cyber" aria-hidden="true" />
+      <p className="font-mono-cyber text-xs tracking-widest">{label ?? t.common.loading}</p>
     </div>
   );
 }
@@ -50,7 +54,7 @@ export function EmptyState({
   return (
     <div className="card-glow mx-auto flex max-w-md flex-col items-center rounded-2xl px-6 py-14 text-center">
       <span className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[rgba(0,240,255,0.25)] bg-[rgba(0,240,255,0.06)]">
-        <Icon className="h-7 w-7 text-cyber" />
+        <Icon className="h-7 w-7 text-cyber" aria-hidden="true" />
       </span>
       <h3 className="font-heading-cyber text-lg font-bold text-main">{title}</h3>
       <p className="mt-2 text-sm leading-6 text-sec">{description}</p>
@@ -61,16 +65,17 @@ export function EmptyState({
 
 /** Error state with retry. */
 export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
+  const { t } = useI18n();
   return (
-    <div className="mx-auto flex max-w-md flex-col items-center rounded-2xl border border-[rgba(255,42,109,0.3)] bg-[rgba(255,42,109,0.05)] px-6 py-12 text-center">
-      <h3 className="font-heading-cyber text-lg font-bold text-main">حدث خطأ</h3>
+    <div role="alert" className="mx-auto flex max-w-md flex-col items-center rounded-2xl border border-[rgba(255,42,109,0.3)] bg-[rgba(255,42,109,0.05)] px-6 py-12 text-center">
+      <h3 className="font-heading-cyber text-lg font-bold text-main">{t.common.errorTitle}</h3>
       <p className="mt-2 text-sm text-sec">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
           className="btn-outline-cyber mt-5 rounded-full px-5 py-2 text-xs font-bold"
         >
-          إعادة المحاولة
+          {t.common.retry}
         </button>
       )}
     </div>

@@ -24,7 +24,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useAppRouter } from "@/lib/router";
-import { FAQS, type FaqCat } from "@/lib/faq-data";
+import { type FaqCat } from "@/lib/faq-data";
+import { useI18n, useContent } from "@/i18n";
+
+const ALL = "__all__";
 
 /* ─────────── data ─────────── */
 
@@ -40,16 +43,19 @@ const CATEGORIES: { name: FaqCat; icon: LucideIcon }[] = [
 export function FaqScreen() {
   const { navigate } = useAppRouter();
   const [query, setQuery] = useState("");
-  const [activeCat, setActiveCat] = useState<"الكل" | FaqCat>("الكل");
+  const [activeCat, setActiveCat] = useState<typeof ALL | FaqCat>(ALL);
+  const { t } = useI18n();
+  const fq = t.faq;
+  const { FAQS } = useContent();
 
   const filtered = useMemo(() => {
-    const q = query.trim();
+    const q = query.trim().toLowerCase();
     return FAQS.filter((f) => {
-      const matchCat = activeCat === "الكل" || f.cat === activeCat;
-      const matchQuery = !q || f.q.includes(q) || f.a.includes(q);
+      const matchCat = activeCat === ALL || f.cat === activeCat;
+      const matchQuery = !q || f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q);
       return matchCat && matchQuery;
     });
-  }, [query, activeCat]);
+  }, [query, activeCat, FAQS]);
 
   const grouped = useMemo(
     () =>
@@ -72,9 +78,9 @@ export function FaqScreen() {
     <>
       <PageHero
         badge="FAQ.CENTER"
-        title="الأسئلة"
-        highlight="الشائعة"
-        subtitle="كل ما تحتاج معرفته عن الخدمات، آلية العمل، الدفع والدعم — بإجابات مباشرة"
+        title={fq.title}
+        highlight={fq.highlight}
+        subtitle={fq.subtitle}
       />
 
       <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">
@@ -84,24 +90,24 @@ export function FaqScreen() {
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="relative max-w-md flex-1">
                 <Search
-                  className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-mute"
+                  className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-mute"
                   aria-hidden="true"
                 />
                 <input
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="ابحث في الأسئلة والإجابات..."
-                  aria-label="ابحث في الأسئلة الشائعة"
-                  className="h-11 w-full rounded-xl border border-border-strong bg-elev-2/60 pr-11 pl-4 text-sm outline-none transition placeholder:text-mute focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.15)]"
+                  placeholder={fq.searchPh}
+                  aria-label={fq.searchAria}
+                  className="h-11 w-full rounded-xl border border-border-strong bg-elev-2/60 ps-11 pe-4 text-sm outline-none transition placeholder:text-mute focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.15)]"
                 />
               </div>
               <p className="font-mono-cyber shrink-0 text-xs text-mute" aria-live="polite">
-                النتائج: {filtered.length} من {FAQS.length}
+                {fq.results(filtered.length, FAQS.length)}
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-2" role="group" aria-label="تصفية حسب التصنيف">
-              {(["الكل", ...CATEGORIES.map((c) => c.name)] as const).map((cat) => (
+            <div className="flex flex-wrap items-center gap-2" role="group" aria-label={fq.filterAria}>
+              {([ALL, ...CATEGORIES.map((c) => c.name)] as const).map((cat) => (
                 <button
                   key={cat}
                   type="button"
@@ -109,7 +115,7 @@ export function FaqScreen() {
                   aria-pressed={activeCat === cat}
                   className={pillCls(activeCat === cat)}
                 >
-                  {cat}
+                  {cat === ALL ? t.common.all : fq.cats[cat] ?? cat}
                 </button>
               ))}
             </div>
@@ -121,18 +127,18 @@ export function FaqScreen() {
           <Reveal>
             <EmptyState
               icon={SearchX}
-              title="لا توجد أسئلة مطابقة"
-              description="لم نجد سؤالاً يحتوي على كلمة البحث — جرّب كلمات أخرى أو أعد تعيين التصفية."
+              title={fq.emptyTitle}
+              description={fq.emptyDesc}
               action={
                 <button
                   type="button"
                   onClick={() => {
                     setQuery("");
-                    setActiveCat("الكل");
+                    setActiveCat(ALL);
                   }}
                   className="btn-outline-cyber rounded-full px-6 py-2.5 text-xs font-bold"
                 >
-                  إعادة تعيين البحث
+                  {fq.reset}
                 </button>
               }
             />
@@ -145,8 +151,8 @@ export function FaqScreen() {
                   <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,240,255,0.25)] bg-[rgba(0,240,255,0.07)]">
                     <CatIcon className="h-4 w-4 text-cyber" aria-hidden="true" />
                   </span>
-                  <h2 className="font-heading-cyber text-lg font-bold text-main">{name}</h2>
-                  <span className="tag-pill">{items.length} أسئلة</span>
+                  <h2 className="font-heading-cyber text-lg font-bold text-main">{fq.cats[name] ?? name}</h2>
+                  <span className="tag-pill">{fq.count(items.length)}</span>
                 </div>
                 <Accordion type="single" collapsible className="w-full">
                   {items.map((f, i) => {
@@ -157,7 +163,7 @@ export function FaqScreen() {
                         value={value}
                         className="card-glow hover:transform-none! mb-3 rounded-xl px-5"
                       >
-                        <AccordionTrigger className="hover:no-underline text-right">
+                        <AccordionTrigger className="hover:no-underline text-start">
                           <span className="flex items-center gap-3">
                             <HelpCircle
                               className="h-4 w-4 shrink-0 text-cyber"
@@ -166,7 +172,7 @@ export function FaqScreen() {
                             <span className="text-sm font-bold text-main">{f.q}</span>
                           </span>
                         </AccordionTrigger>
-                        <AccordionContent className="pr-7 text-sm leading-7 text-sec">
+                        <AccordionContent className="ps-7 text-sm leading-7 text-sec">
                           {f.a}
                         </AccordionContent>
                       </AccordionItem>
@@ -185,19 +191,16 @@ export function FaqScreen() {
               <MessageCircle className="h-6 w-6 text-[#ff2a6d]" aria-hidden="true" />
             </span>
             <h2 className="font-heading-cyber text-2xl font-bold text-main">
-              لم تجد إجابتك؟
+              {fq.ctaTitle}
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-sec">
-              فريقنا جاهز للرد على كل استفساراتك — راسلنا مباشرة أو احجز استشارة مجانية
-              وسنعود إليك خلال ساعات العمل.
-            </p>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-sec">{fq.ctaBody}</p>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={() => navigate({ name: "contact" })}
                 className="btn-gradient inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm"
               >
-                تواصل معنا
+                {fq.ctaContact}
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               </button>
               <button
@@ -206,7 +209,7 @@ export function FaqScreen() {
                 className="btn-outline-cyber inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold"
               >
                 <CalendarClock className="h-4 w-4" aria-hidden="true" />
-                احجز استشارة
+                {fq.ctaBook}
               </button>
             </div>
           </div>

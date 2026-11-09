@@ -3,9 +3,11 @@ import { IBM_Plex_Sans_Arabic, Plus_Jakarta_Sans, Fira_Code } from "next/font/go
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
-import { APPS, directReleaseUrl } from "@/lib/apps";
+import { APPS, directReleaseUrl, sourceZipUrl } from "@/lib/apps";
 import { FAQS } from "@/lib/faq-data";
 import { SOCIALS } from "@/lib/social";
+import { LanguageProvider } from "@/i18n";
+import { A11yProvider, EARLY_PREFS_SCRIPT } from "@/lib/a11y";
 
 const SITE = "https://cto-drs.com";
 
@@ -45,6 +47,14 @@ export const metadata: Metadata = {
     "برمجة",
   ],
   authors: [{ name: "CTO-DRS", url: "https://github.com/CTO-DRS" }],
+  alternates: {
+    canonical: "/",
+    languages: {
+      ar: "/",
+      en: "/en/",
+      "x-default": "/",
+    },
+  },
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
@@ -102,7 +112,7 @@ const APP_ENTITIES = APPS.map((app, i) => ({
   alternateName: app.title,
   description: app.description,
   url: `https://github.com/CTO-DRS/${app.repo}`,
-  downloadUrl: directReleaseUrl(app),
+  downloadUrl: app.directFile ? directReleaseUrl(app.repo, app.directFile) : sourceZipUrl(app.repo),
   softwareVersion: app.version.replace(/^v/, ""),
   applicationCategory: app.category === "android" ? "MobileApplication" : "DeveloperApplication",
   operatingSystem: app.platforms.join(", "),
@@ -141,7 +151,7 @@ const JSON_LD = {
       "@id": `${SITE}/#person`,
       name: "CTO-DRS",
       url: SITE,
-      email: "mailto:admin@ctodrs.com",
+      email: "mailto:info@cto-drs.com",
       jobTitle: "Software Engineer",
       description:
         "مطور تقني مهتم بهندسة البرمجيات والأمن السيبراني وتطوير تطبيقات أندرويد الأصلية والابتكار مفتوح المصدر",
@@ -155,11 +165,12 @@ const JSON_LD = {
       ],
       sameAs: [
         "https://github.com/CTO-DRS",
-        "https://t.me/CTO_DRS",
+        "https://t.me/ctodrs",
         "https://x.com/cto_drs",
         "https://www.instagram.com/cto.drs",
         "https://www.tiktok.com/@cto.drs",
         "https://youtube.com/@cto-drs",
+        "https://linktr.ee/cto.drs",
       ],
       mainEntityOfPage: { "@id": `${SITE}/#profilepage` },
     },
@@ -177,18 +188,38 @@ const JSON_LD = {
       name: "CTO-DRS",
       alternateName: "CTO.DRS",
       url: SITE,
-      email: "admin@ctodrs.com",
+      email: "info@cto-drs.com",
       logo: `${SITE}/icons/icon-512.png`,
       image: `${SITE}/og-image.png`,
       description:
         "جهة تطوير تقنية مفتوحة المصدر — تطبيقات أندرويد أصلية، أدوات خصوصية وأمن سيبراني، ولغات وأدوات مطورين",
       foundingDate: "2024",
       sameAs: SOCIALS.map((s) => s.url),
+      subOrganization: {
+        "@type": "EducationalOrganization",
+        "@id": "https://academy.cto-drs.com/#organization",
+        name: "أكاديمية الرشيد",
+        alternateName: "Al-Rasheed Academy",
+        url: "https://academy.cto-drs.com/",
+        email: "academy@cto-drs.com",
+      },
       contactPoint: [
         {
           "@type": "ContactPoint",
           contactType: "customer support",
-          email: "admin@ctodrs.com",
+          email: "support@cto-drs.com",
+          availableLanguage: ["Arabic", "English"],
+        },
+        {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          email: "info@cto-drs.com",
+          availableLanguage: ["Arabic", "English"],
+        },
+        {
+          "@type": "ContactPoint",
+          contactType: "sales",
+          email: "contact@cto-drs.com",
           availableLanguage: ["Arabic", "English"],
         },
       ],
@@ -229,6 +260,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        {/* تطبيق تفضيلات اللغة/حجم النص/الحركة قبل أول رسم */}
+        <script id="early-prefs" dangerouslySetInnerHTML={{ __html: EARLY_PREFS_SCRIPT }} />
+      </head>
       <body
         className={`${plexArabic.variable} ${jakarta.variable} ${firaCode.variable} antialiased bg-app text-main overflow-x-clip`}
       >
@@ -239,8 +274,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
         />
         <ThemeProvider>
-          {children}
-          <Toaster />
+          <LanguageProvider>
+            <A11yProvider>
+              {children}
+              <Toaster />
+            </A11yProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
