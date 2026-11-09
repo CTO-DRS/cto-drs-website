@@ -33,6 +33,12 @@ if [ -d "$API_DIR" ]; then
   echo "→ تم إخفاء مسارات API مؤقتًا للبناء الثابت"
 fi
 
+# ── 1.5) تنظيف الأنواع المولدة القديمة ───────────────────────
+# مخلفات next dev / next build سابقة تضمّ tsconfig (‎.next/types و‎.next/dev/types)
+# وتشير إلى مسارات API المخفية أعلاه فتفشل type-check على checkout غير نظيف.
+# يولّد next build الأنواع من جديد أثناء البناء الثابت.
+rm -rf .next/dev/types .next/types
+
 # ── 2) البناء الثابت ─────────────────────────────────────────
 echo "→ بناء النسخة الثابتة (STATIC_EXPORT=1)…"
 STATIC_EXPORT=1 NEXT_PUBLIC_STATIC=1 bunx next build
