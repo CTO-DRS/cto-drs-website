@@ -853,24 +853,27 @@ async function main() {
   }
   console.log(`✓ المنتجات: ${productsData.length}`);
 
-  // ---- المستخدمون (2) ----
-  await prisma.user.create({
-    data: {
-      name: "مدير النظام",
-      email: "contact@cto-drs.com",
-      password: hashPassword("admin123"),
-      role: "admin",
-    },
-  });
-  await prisma.user.create({
-    data: {
-      name: "مستخدم تجريبي",
-      email: "demo@ctodrs.com",
-      password: hashPassword("demo1234"),
-      role: "user",
-    },
-  });
-  console.log("✓ المستخدمون: 2");
+  // ---- المستخدمون ----
+  // بيانات الدخول التجريبية الثابتة أزيلت نهائياً (F-04 من تقرير الفحص الشامل).
+  // حساب المدير يُنشأ فقط من متغيرات البيئة — لا كلمة مرور افتراضية أبداً.
+  const adminEmail = (process.env.ADMIN_EMAIL ?? "").trim().toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD ?? "";
+  if (adminEmail && adminPassword.length >= 12) {
+    await prisma.user.create({
+      data: {
+        name: "مدير النظام",
+        email: adminEmail,
+        password: hashPassword(adminPassword),
+        role: "admin",
+      },
+    });
+    console.log(`✓ المستخدمون: حساب المدير (${adminEmail})`);
+  } else {
+    console.warn(
+      "! تخطي إنشاء حساب المدير — اضبط ADMIN_EMAIL و ADMIN_PASSWORD (12 حرفاً على الأقل) لإنشائه (F-04: لا كلمات مرور افتراضية)"
+    );
+  }
+  console.log("✓ المستخدمون: تم");
 
   // ---- الحجوزات (4) ----
   const bookingsData = [

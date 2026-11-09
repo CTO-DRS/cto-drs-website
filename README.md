@@ -121,11 +121,16 @@ bun run dev
 
 افتح `http://localhost:3000`
 
-### حسابات تجريبية | Demo Accounts
-| الدور | البريد | كلمة المرور |
-|---|---|---|
-| مدير النظام | `contact@cto-drs.com` | `admin123` |
-| عميل | `demo@ctodrs.com` | `demo1234` |
+### حساب الإدارة | Admin Account
+
+لا توجد حسابات تجريبية بكلمات مرور معلنة — أزيلت نهائياً (المُخرَج F-04 من تقرير الفحص الأمني).
+
+- حساب المدير يُنشأ حصراً من متغيرات البيئة:
+  - `ADMIN_EMAIL` — بريد حساب المدير
+  - `ADMIN_PASSWORD` — كلمة مرور قوية (12 حرفاً على الأقل، إلزامية، لا افتراضي)
+- تطوير محلي: `ADMIN_EMAIL=... ADMIN_PASSWORD=... bunx tsx scripts/seed.ts`
+- النشر الخادمي: `scripts/init-db.js` يرفض التهيئة بدون `ADMIN_PASSWORD` (فشل مغلق)
+- جلسات الخادم موقّعة HMAC وتتطلب ضبط `AUTH_SECRET` (≥ 32 حرفاً) في الإنتاج — انظر `docs/P0-SECURITY-AR.md`
 
 > لوحة التحكم: `http://localhost:3000/#/dashboard` (تتطلب دخول بحساب مدير)
 

@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { COUNTRY_BY_CODE, PURPOSE_BY_ID, sanitizePhone } from "@/lib/contact-options";
+import { requireAdmin } from "@/lib/session";
+import { rateLimit, tooManyRequests, RATE_LIMITS } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
+  // قراءة كل رسائل التواصل = بيانات شخصية — جلسة إدارية مطلوبة (F-01)
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return auth.response;
   try {
     const messages = await db.contactMessage.findMany({
       orderBy: { createdAt: "desc" },
@@ -33,6 +38,8 @@ export async function GET(_req: NextRequest) {
 }
 
 export async function POST(req: Request) {
+  const rl = rateLimit(req, "contact", RATE_LIMITS.contact.limit, RATE_LIMITS.contact.windowMs);
+  if (!rl.ok) return tooManyRequests(rl.retryAfter);
   try {
     const body = await req.json();
     const name = typeof body.name === "string" ? body.name.trim() : "";

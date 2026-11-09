@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,9 @@ const AR_MONTHS = [
   "ديسمبر",
 ];
 
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return auth.response;
   try {
     const [
       users,

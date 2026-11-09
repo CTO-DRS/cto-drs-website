@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/session";
+import { rateLimit, tooManyRequests, RATE_LIMITS } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +35,9 @@ function serialize(o: {
 }
 
 export async function GET(req: NextRequest) {
+  // قراءة الطلبات = بيانات شخصية ومالية — جلسة إدارية مطلوبة (F-01)
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return auth.response;
   try {
     const email = req.nextUrl.searchParams.get("email");
 
@@ -49,6 +54,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, "orders", RATE_LIMITS.orders.limit, RATE_LIMITS.orders.windowMs);
+  if (!rl.ok) return tooManyRequests(rl.retryAfter);
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {

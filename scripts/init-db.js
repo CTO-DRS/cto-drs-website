@@ -6,7 +6,7 @@
    البيئة:
      DATABASE_URL   (افتراضي: file:/app/db/custom.db)
      ADMIN_EMAIL    (افتراضي: contact@cto-drs.com)
-     ADMIN_PASSWORD (افتراضي: admin123)
+     ADMIN_PASSWORD (إلزامي — 12 حرفاً على الأقل، لا يوجد افتراضي — F-04)
    ═══════════════════════════════════════════════════════════ */
 "use strict";
 
@@ -34,8 +34,16 @@ async function main() {
   const { PrismaClient } = require("@prisma/client");
   const prisma = new PrismaClient();
 
-  const email = process.env.ADMIN_EMAIL || "contact@cto-drs.com";
-  const password = process.env.ADMIN_PASSWORD || "admin123";
+  const email = (process.env.ADMIN_EMAIL || "contact@cto-drs.com").trim().toLowerCase();
+  const password = (process.env.ADMIN_PASSWORD || "").trim();
+
+  // F-04: لا كلمات مرور افتراضية إطلاقاً — الفشل المغلق قبل أي إنشاء حساب
+  if (!password || password.length < 12) {
+    console.error(
+      "[init-db] FAILED: اضبط ADMIN_PASSWORD (12 حرفاً على الأقل) و ADMIN_EMAIL قبل التهيئة — لا يوجد افتراضي (F-04)"
+    );
+    process.exit(1);
+  }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {

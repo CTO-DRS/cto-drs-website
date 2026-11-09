@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
-/** GET /api/admin/users — قائمة المستخدمين مع إحصاءات نشاطهم (بدون كلمات المرور) */
-export async function GET(_req: NextRequest) {
+/** GET /api/admin/users — قائمة المستخدمين مع إحصاءات نشاطهم (بدون كلمات المرور) — جلسة إدارية مطلوبة */
+export async function GET(req: NextRequest) {
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return auth.response;
   try {
     const users = await db.user.findMany({
       select: {

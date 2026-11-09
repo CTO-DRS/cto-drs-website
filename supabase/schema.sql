@@ -67,12 +67,16 @@ alter table public.bookings enable row level security;
 create policy "profiles self read" on public.profiles for select using (id = auth.uid() or public.is_admin());
 create policy "profiles self update" on public.profiles for update using (id = auth.uid() or public.is_admin());
 
-create policy "contact insert anyone" on public.contact_messages for insert with check (true);
+-- موحّد مع migration-002.sql (إغلاق F-06): الإدخال من مجهول بلا user_id أو لصاحبه، وبالحالة new حصراً
+create policy "contact insert anyone" on public.contact_messages for insert
+  with check ((user_id is null or user_id = auth.uid()) and status = 'new');
 create policy "contact admin read" on public.contact_messages for select using (public.is_admin() or user_id = auth.uid());
 create policy "contact admin update" on public.contact_messages for update using (public.is_admin());
 create policy "contact admin delete" on public.contact_messages for delete using (public.is_admin());
 
-create policy "bookings own insert" on public.bookings for insert with check (user_id = auth.uid());
+-- موحّد مع migration-002.sql (إغلاق F-06): الإدخال بحالة pending حصراً
+create policy "bookings own insert" on public.bookings for insert
+  with check (user_id = auth.uid() and status = 'pending');
 create policy "bookings own or admin read" on public.bookings for select using (user_id = auth.uid() or public.is_admin());
 create policy "bookings own cancel or admin update" on public.bookings for update using (user_id = auth.uid() or public.is_admin());
 create policy "bookings admin delete" on public.bookings for delete using (public.is_admin());

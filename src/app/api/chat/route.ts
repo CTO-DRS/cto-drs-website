@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import ZAI from "z-ai-web-dev-sdk";
 import { db } from "@/lib/db";
+import { rateLimit, tooManyRequests, RATE_LIMITS } from "@/lib/rate-limit";
 
 const SYSTEM_PROMPT = `أنت "مساعد CTO-DRS الذكي" — المساعد الافتراضي في المنصة الرسمية لهوية CTO-DRS التقنية.
 
@@ -21,6 +22,9 @@ const SYSTEM_PROMPT = `أنت "مساعد CTO-DRS الذكي" — المساعد
 - لا تخترع معلومات غير موجودة في السياق أعلاه`;
 
 export async function POST(req: Request) {
+  // تقييد السرعة: هذا المسار يستدعي نموذج ذكاء اصطناعي بأثر تكلفة مباشر (F-03)
+  const rl = rateLimit(req, "chat", RATE_LIMITS.chat.limit, RATE_LIMITS.chat.windowMs);
+  if (!rl.ok) return tooManyRequests(rl.retryAfter);
   try {
     const body = await req.json();
     const sessionId = typeof body.sessionId === "string" ? body.sessionId : "anon";

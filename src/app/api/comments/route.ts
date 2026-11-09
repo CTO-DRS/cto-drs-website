@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { rateLimit, tooManyRequests, RATE_LIMITS } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, "comments", RATE_LIMITS.comments.limit, RATE_LIMITS.comments.windowMs);
+  if (!rl.ok) return tooManyRequests(rl.retryAfter);
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {

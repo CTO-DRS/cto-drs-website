@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/password";
+import { rateLimit, tooManyRequests, RATE_LIMITS } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, "register", RATE_LIMITS.register.limit, RATE_LIMITS.register.windowMs);
+  if (!rl.ok) return tooManyRequests(rl.retryAfter);
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
