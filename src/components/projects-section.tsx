@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Eye, Info, FolderGit2, Star, GitFork, X, CalendarDays, Layers, Github, Code2, Download, type LucideIcon } from "lucide-react";
+import { Info, FolderGit2, Star, Layers, Github, Code2, Download } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { type Project } from "@/lib/data";
