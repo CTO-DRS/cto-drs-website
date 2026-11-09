@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 type Ctx = { params: Promise<{ id: string }> };
 
-/** PATCH /api/admin/users/[id] — تغيير صلاحية المستخدم */
+/** PATCH /api/admin/users/[id] — تغيير صلاحية المستخدم — جلسة إدارية مطلوبة */
 export async function PATCH(req: NextRequest, ctx: Ctx) {
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return auth.response;
   try {
     const { id } = await ctx.params;
     const body = await req.json().catch(() => null);
@@ -45,8 +48,10 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
   }
 }
 
-/** DELETE /api/admin/users/[id] — حذف مستخدم */
-export async function DELETE(_req: NextRequest, ctx: Ctx) {
+/** DELETE /api/admin/users/[id] — حذف مستخدم — جلسة إدارية مطلوبة */
+export async function DELETE(req: NextRequest, ctx: Ctx) {
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return auth.response;
   try {
     const { id } = await ctx.params;
 
