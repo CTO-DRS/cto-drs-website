@@ -1,6 +1,6 @@
-# خط CI كامل — بطاقة P1 (البنود 9 و10) من تقرير الفحص الشامل
+# خط CI كامل — بطاقة P1 (البنود 9 و10) + بطاقة P2 (البند 15) من تقرير الفحص الشامل
 # يفشل على: أي خطأ ESLint (القواعد الأربع الحرجة مفعّلة)، أي خطأ نوع TypeScript،
-# أي اختبار vitest ساقط، أو فشل بناء الإنتاج standalone.
+# أي اختبار vitest ساقط، أو فشل أيٍّ من بناءي الإنتاج (standalone أو static export).
 name: CI
 
 on:
@@ -39,3 +39,30 @@ jobs:
 
       - name: Build (standalone)
         run: bun run build
+
+  static-build:
+    name: static export (GitHub Pages)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies (lockfile مثبّت)
+        run: bun install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
+      - name: Build (static export — البند 15 من بطاقة P2)
+        run: bun run build:static
+
+      - name: Verify static output exists
+        run: |
+          test -f out/index.html || { echo "❌ out/index.html مفقود"; exit 1; }
+          test -f out/CNAME || { echo "❌ out/CNAME مفقود"; exit 1; }
+          echo "✅ النسخة الثابتة سليمة: $(du -sh out | cut -f1)"

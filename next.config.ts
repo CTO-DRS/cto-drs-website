@@ -14,7 +14,9 @@ const shared = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  reactStrictMode: false,
+  // F-14: وضع React الصارم مفعّل في التطوير — يكشف الأعراض الجانبية
+  // والاستدعاءات المزدوجة مبكراً (لا تأثير في الإنتاج)
+  reactStrictMode: true,
 };
 
 const nextConfig: NextConfig = isStaticExport

@@ -65,6 +65,9 @@ final-*.png
 site-analysis-*.png
 dev.log
 
+# F-13: ملفات شخصية وأوراق عمل — لا تُتتبع في المستودع نهائياً
+upload/
+
 # static export build output
 out/
 .next-static/
