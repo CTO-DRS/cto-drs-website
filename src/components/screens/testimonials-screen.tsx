@@ -47,7 +47,7 @@ const TEXTAREA_CLS =
 /* ─────────── screen ─────────── */
 
 export function TestimonialsScreen() {
-  const { data, loading, error, reload } = useApi<Testimonial[]>("/api/testimonials");
+  const { data, error, reload } = useApi<Testimonial[]>("/api/testimonials");
 
   const list = useMemo(() => data ?? [], [data]);
   const avg = list.length ? list.reduce((s, t) => s + t.rating, 0) / list.length : 0;

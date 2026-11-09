@@ -6,7 +6,6 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  LogIn,
   Mail,
   UserRoundPlus,
   UserRound,

@@ -17,6 +17,14 @@ function daysAgo(days: number, hour = 12) {
 }
 
 async function main() {
+  // F-09: السكربت هدّام (deleteMany على كل الجداول) — يرفض العمل على بيئة إنتاج
+  if (process.env.NODE_ENV === "production") {
+    console.error(
+      "🛑 رفض التنفيذ: NODE_ENV=production — هذا السكربت يحذف كل بيانات القاعدة (deleteMany). " +
+        "لا تُشغَّل التهيئة على الإنتاج أبداً؛ استخدم الترحيلات (prisma migrate) وإنشاء المدير من متغيرات البيئة."
+    );
+    process.exit(1);
+  }
   console.log("🌱 بدء تهيئة قاعدة البيانات...");
 
   // ---- حذف البيانات القديمة (بترتيب الاعتماديات) ----

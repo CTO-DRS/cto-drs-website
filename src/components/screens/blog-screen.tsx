@@ -175,7 +175,7 @@ function PostCard({ post, index }: { post: Post; index: number }) {
 /* ─────────── screen ─────────── */
 
 export function BlogScreen() {
-  const { data, loading, error, reload } = useApi<Post[]>("/api/blog");
+  const { data, error, reload } = useApi<Post[]>("/api/blog");
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
