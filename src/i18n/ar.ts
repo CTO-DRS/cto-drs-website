@@ -175,6 +175,7 @@ export const ar = {
     title: "أحدث",
     highlight: "الفيديوهات",
     subtitle: "شروحات ودروس مرئية في البرمجة والأمن السيبراني",
+    watchOnYouTube: "شاهدها على قناتنا في يوتيوب",
   },
 
   toolsSection: {

@@ -1,16 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { PlayCircle, Clock3 } from "lucide-react";
+import { PlayCircle, Clock3, ExternalLink } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { useI18n, useContent } from "@/i18n";
+import { SOCIAL_BY_ID } from "@/lib/social";
 
 export function VideosSection() {
   const { t } = useI18n();
   const { VIDEOS } = useContent();
   return (
-    <section id="blog" className="relative px-4 py-20 sm:py-24">
+    <section id="videos" className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           badge="VIDEOS • 06"
@@ -21,7 +22,13 @@ export function VideosSection() {
         <div className="grid gap-5 md:grid-cols-3">
           {VIDEOS.map((v, i) => (
             <Reveal key={v.title} delay={i * 100}>
-              <a href="#blog" className="card-glow group block overflow-hidden rounded-2xl">
+              <a
+                href={v.url ?? SOCIAL_BY_ID.youtube.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${v.title} — ${t.videosSection.watchOnYouTube}`}
+                className="card-glow group block overflow-hidden rounded-2xl"
+              >
                 <div className="relative h-44 overflow-hidden">
                   <Image
                     src={v.thumb}
@@ -45,6 +52,10 @@ export function VideosSection() {
                     {v.title}
                   </h3>
                   <p className="mt-2 line-clamp-2 text-xs leading-6 text-sec">{v.description}</p>
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-bold text-cyber opacity-0 transition group-hover:opacity-100" aria-hidden="true">
+                    <ExternalLink className="h-3 w-3" />
+                    {t.videosSection.watchOnYouTube}
+                  </span>
                 </div>
               </a>
             </Reveal>

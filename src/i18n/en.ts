@@ -175,6 +175,7 @@ export const en: Dict = {
     title: "Latest",
     highlight: "Videos",
     subtitle: "Video tutorials and walkthroughs on programming and cybersecurity",
+    watchOnYouTube: "Watch on our YouTube channel",
   },
 
   toolsSection: {
