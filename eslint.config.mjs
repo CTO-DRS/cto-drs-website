@@ -10,14 +10,20 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   rules: {
     // TypeScript rules
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unused-vars": "off",
+    // P1/8 (F-10): إعادة تفعيل القواعد الحرجة الأربع — ممنوع إيقافها لاحقاً
+    "@typescript-eslint/no-unused-vars": ["error", {
+      argsIgnorePattern: "^_",
+      varsIgnorePattern: "^_",
+      ignoreRestSiblings: true,
+    }],
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/prefer-as-const": "off",
     "@typescript-eslint/no-unused-disable-directive": "off",
-    
+
     // React rules
-    "react-hooks/exhaustive-deps": "off",
+    // P1/8 (F-10): exhaustive-deps مفعّلة كخطأ — صفر نتائج وقت التفعيل
+    "react-hooks/exhaustive-deps": "error",
     "react-hooks/purity": "off",
     "react/no-unescaped-entities": "off",
     "react/display-name": "off",
@@ -29,11 +35,11 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "@next/next/no-html-link-for-pages": "off",
     
     // General JavaScript rules
-    "prefer-const": "off",
-    "no-unused-vars": "off",
+    // P1/8 (F-10): القاعدتان المتبقيتان من الأربع الحرجة
+    "prefer-const": "error",
+    "no-empty": ["error", { allowEmptyCatch: true }],
     "no-console": "off",
     "no-debugger": "off",
-    "no-empty": "off",
     "no-irregular-whitespace": "off",
     "no-case-declarations": "off",
     "no-fallthrough": "off",

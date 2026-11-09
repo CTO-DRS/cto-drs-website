@@ -86,7 +86,7 @@ export function OrdersScreen() {
             />
           ) : (
             <div className="grid gap-4 lg:grid-cols-2">
-              {data.map((order, i) => (
+              {data.map((order) => (
                 <div key={order.id} className="card-glow rounded-2xl p-5">
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <span dir="ltr" className="font-mono-cyber truncate text-xs font-bold text-cyber">

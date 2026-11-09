@@ -90,30 +90,56 @@ function AdminPanel({ selfId }: { selfId: string }) {
   const fmtDate = useFmtDate();
   const [data, setData] = useState<Data | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  // true مبدئياً: أول جلب يجري عند التركيب — لا setState تزامني داخل load (react-hooks/set-state-in-effect)
+  const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async () => {
+  // جلب نقٍ بلا setState — يستخدمه الـ effect والتحديث اليدوي معاً
+  // نوع إرجاع صريح: يمنع تردّي الاستدلال عبر حدود الدالة ويُدقيق تضييق "error" in r
+  const fetchData = useCallback(async (): Promise<
+    { error: string } | { users: Profile[]; messages: ContactMessageRow[]; bookings: BookingRow[] } | null
+  > => {
     const sb = getSupabase();
-    if (!sb) return;
-    setLoading(true);
-    setErr(null);
+    if (!sb) return null;
     const [u, m, b] = await Promise.all([
       sb.from("profiles").select("*").order("created_at", { ascending: false }),
       sb.from("contact_messages").select("*").order("created_at", { ascending: false }),
       sb.from("bookings").select("*").order("created_at", { ascending: false }),
     ]);
-    setLoading(false);
     const e = u.error || m.error || b.error;
-    if (e) {
-      setErr(e.message || a.loadError);
-      return;
-    }
-    setData({ users: (u.data as Profile[]) ?? [], messages: (m.data as ContactMessageRow[]) ?? [], bookings: (b.data as BookingRow[]) ?? [] });
+    if (e) return { error: e.message || a.loadError };
+    return {
+      users: (u.data as Profile[]) ?? [],
+      messages: (m.data as ContactMessageRow[]) ?? [],
+      bookings: (b.data as BookingRow[]) ?? [],
+    };
   }, [a.loadError]);
 
+  // تطبيق النتيجة — يُستدعى من متابِعات async فقط (لا setState تزامني في الـ effect)
+  const apply = useCallback((r: NonNullable<Awaited<ReturnType<typeof fetchData>>>) => {
+    setLoading(false);
+    if ("error" in r) setErr(r.error);
+    else {
+      setErr(null);
+      setData(r);
+    }
+  }, []);
+
+  // للأحداث فقط (تحديث/إعادة محاولة/بعد التعديل)
+  const load = useCallback(async () => {
+    const r = await fetchData();
+    if (r) apply(r);
+  }, [fetchData, apply]);
+
   useEffect(() => {
-    void load();
-  }, [load]);
+    let cancelled = false;
+    void fetchData().then((r) => {
+      if (cancelled || !r) return;
+      apply(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchData, apply]);
 
   const byId = useMemo(() => new Map((data?.users ?? []).map((p) => [p.id, p])), [data]);
 
@@ -180,7 +206,7 @@ function AdminPanel({ selfId }: { selfId: string }) {
   return (
     <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">
       <div className="mb-6 flex justify-end">
-        <Button variant="outline" size="sm" onClick={load} disabled={loading} aria-busy={loading} className="rounded-full">
+        <Button variant="outline" size="sm" onClick={() => { setLoading(true); void load(); }} disabled={loading} aria-busy={loading} className="rounded-full">
           <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />
           {a.refresh}
         </Button>
@@ -202,7 +228,7 @@ function AdminPanel({ selfId }: { selfId: string }) {
 
       {err ? (
         <div className="mt-8">
-          <ErrorState message={err} onRetry={load} />
+          <ErrorState message={err} onRetry={() => { setErr(null); setLoading(true); void load(); }} />
         </div>
       ) : !data ? (
         <div className="mt-8">

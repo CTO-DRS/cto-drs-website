@@ -269,18 +269,40 @@ function MyBookings({ userId, email, name, phone }: { userId: string; email: str
   const [errors, setErrors] = useState<{ service?: string; date?: string }>({});
   const [busy, setBusy] = useState(false);
 
-  const load = useCallback(async () => {
+  // جلب نقٍ بلا setState — يستخدمه الـ effect والتحديث اليدوي معاً
+  const fetchData = useCallback(async () => {
     const sb = getSupabase();
-    if (!sb) return;
-    setLoadErr(null);
+    if (!sb) return null;
     const { data, error } = await sb.from("bookings").select("*").eq("user_id", userId).order("created_at", { ascending: false });
-    if (error) setLoadErr(error.message);
-    else setRows((data as BookingRow[]) ?? []);
+    if (error) return error.message;
+    return (data as BookingRow[]) ?? [];
   }, [userId]);
 
+  // تطبيق النتيجة — من متابِعات async فقط (لا setState تزامني في الـ effect)
+  const apply = useCallback((r: NonNullable<Awaited<ReturnType<typeof fetchData>>>) => {
+    if (typeof r === "string") setLoadErr(r);
+    else {
+      setLoadErr(null);
+      setRows(r);
+    }
+  }, []);
+
+  // للأحداث فقط (إعادة المحاولة / بعد إنشاء حجز)
+  const load = useCallback(async () => {
+    const r = await fetchData();
+    if (r !== null) apply(r);
+  }, [fetchData, apply]);
+
   useEffect(() => {
-    void load();
-  }, [load]);
+    let cancelled = false;
+    void fetchData().then((r) => {
+      if (cancelled || r === null) return;
+      apply(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchData, apply]);
 
   async function onCreate(e: FormEvent) {
     e.preventDefault();
@@ -391,7 +413,7 @@ function MyBookings({ userId, email, name, phone }: { userId: string; email: str
       <div>
         <h3 className="font-heading-cyber mb-3 text-sm font-bold text-main">{a.myBookings}</h3>
         {loadErr ? (
-          <ErrorState message={loadErr} onRetry={load} />
+          <ErrorState message={loadErr} onRetry={() => { setLoadErr(null); void load(); }} />
         ) : !rows ? (
           <ListSkeleton count={2} className="lg:grid-cols-1" />
         ) : rows.length === 0 ? (
@@ -439,20 +461,42 @@ function MyMessages({ userId }: { userId: string }) {
   const [rows, setRows] = useState<ContactMessageRow[] | null>(null);
   const [loadErr, setLoadErr] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
+  // جلب نقٍ بلا setState — يستخدمه الـ effect وإعادة المحاولة معاً
+  const fetchData = useCallback(async () => {
     const sb = getSupabase();
-    if (!sb) return;
-    setLoadErr(null);
+    if (!sb) return null;
     const { data, error } = await sb.from("contact_messages").select("*").eq("user_id", userId).order("created_at", { ascending: false });
-    if (error) setLoadErr(error.message);
-    else setRows((data as ContactMessageRow[]) ?? []);
+    if (error) return error.message;
+    return (data as ContactMessageRow[]) ?? [];
   }, [userId]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  // تطبيق النتيجة — من متابِعات async فقط (لا setState تزامني في الـ effect)
+  const apply = useCallback((r: NonNullable<Awaited<ReturnType<typeof fetchData>>>) => {
+    if (typeof r === "string") setLoadErr(r);
+    else {
+      setLoadErr(null);
+      setRows(r);
+    }
+  }, []);
 
-  if (loadErr) return <ErrorState message={loadErr} onRetry={load} />;
+  // لإعادة المحاولة من زر الخطأ فقط
+  const load = useCallback(async () => {
+    const r = await fetchData();
+    if (r !== null) apply(r);
+  }, [fetchData, apply]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchData().then((r) => {
+      if (cancelled || r === null) return;
+      apply(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchData, apply]);
+
+  if (loadErr) return <ErrorState message={loadErr} onRetry={() => { setLoadErr(null); void load(); }} />;
   if (!rows) return <ListSkeleton count={2} />;
   if (rows.length === 0)
     return (

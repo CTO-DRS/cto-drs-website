@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { smartSearch, type SearchHit } from "@/lib/smart-search";
 import { useI18n } from "@/i18n";
 import {
   CommandDialog,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -60,34 +59,41 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
   const { t, lang } = useI18n();
   const s = t.search;
 
+  const [query, setQuery] = useState("");
+  // إغلاق موحّد: يصفّر البحث عند كل مسار إغلاق (Esc، اختيار عنصر، اختصار، زر خارجي)
+  // — بديل عن effect يضبط الحالة تزامنياً (react-hooks/set-state-in-effect)
+  const changeOpen = useCallback(
+    (v: boolean) => {
+      setOpen(v);
+      if (!v) setQuery("");
+    },
+    [setOpen, setQuery]
+  );
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen(!open);
+        changeOpen(!open);
       }
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [open, setOpen]);
+  }, [open, changeOpen]);
 
-  const [query, setQuery] = useState("");
-  useEffect(() => {
-    if (!open) setQuery("");
-  }, [open]);
   const hits = useMemo(() => smartSearch(query), [query]);
   const en = lang === "en";
   const searching = query.trim().length > 0;
 
   const go = (r: AppRoute) => {
-    setOpen(false);
+    changeOpen(false);
     navigate(r);
   };
 
   const openHit = (h: SearchHit) => {
     if (h.route) go(h.route);
     else if (h.url) {
-      setOpen(false);
+      changeOpen(false);
       window.open(h.url, "_blank", "noopener");
     }
   };
@@ -95,7 +101,7 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
   return (
     <CommandDialog
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={changeOpen}
       shouldFilter={false}
       title={s.title}
       description={s.description}
@@ -249,7 +255,7 @@ export function CommandPalette({ open, setOpen }: { open: boolean; setOpen: (v: 
           <CommandItem
             onSelect={() => {
               setTheme(theme === "dark" ? "light" : "dark");
-              setOpen(false);
+              changeOpen(false);
             }}
           >
             {theme === "dark" ? (

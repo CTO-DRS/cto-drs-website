@@ -115,8 +115,11 @@ export function GoogleIdButton({ context = "signin" }: { context?: "signin" | "s
   const [attempt, setAttempt] = useState(0);
 
   // نُبقي أحدث النصوص/الدوال في ref كي لا يُعاد تهيئة GIS عند كل تصيير
+  // — التحديث داخل effect (تحديث الـ ref أثناء التصيير ممنوع: react-hooks/refs)
   const live = useRef({ a, errText, navigate });
-  live.current = { a, errText, navigate };
+  useEffect(() => {
+    live.current = { a, errText, navigate };
+  });
 
   const onCredential = useCallback(async (resp: GsiCredentialResponse) => {
     const { a: tx, errText: errOf, navigate: nav } = live.current;
@@ -133,7 +136,8 @@ export function GoogleIdButton({ context = "signin" }: { context?: "signin" | "s
       nonce: rawNonceRef.current,
     });
     if (error || !data.user) {
-      setStatus("ready");
+      // "loading" وليس "ready": الـ effect سيعاد التنفيذ (nonce جديد) — نُظهر التحميل خلال إعادة التهيئة
+      setStatus("loading");
       setAttempt((n) => n + 1); // nonce جديد للمحاولة التالية
       toast({ title: tx.googleFailTitle, description: errOf(error), variant: "destructive" });
       return;
@@ -150,7 +154,6 @@ export function GoogleIdButton({ context = "signin" }: { context?: "signin" | "s
   useEffect(() => {
     if (!SUPABASE_GOOGLE) return;
     let cancelled = false;
-    setStatus((s) => (s === "busy" ? s : "loading"));
     (async () => {
       try {
         const api = await loadGsi();
