@@ -45,7 +45,7 @@ Timeline: 2024 أساسيات هندسة الويب (PHP, JavaScript, SQL, Pytho
 9. لغة عربي / Arabi Lang (v1.37.0): لغة برمجة قوامها العربية مبنية على Python. https://github.com/CTO-DRS/arabi-lang
 10. DRS AI (main, Web): منصة ذكاء اصطناعي ذاتية الاستضافة self-hosted. https://github.com/CTO-DRS/DRS-AI-Web
 
-كل التطبيقات مجانية ومفتوحة المصدر، وروابط التنزيل المباشرة من https://cto-drs.com/downloads/
+كل التطبيقات مجانية ومفتوحة المصدر، وروابط التنزيل المباشرة من https://cto-drs.com/#/downloads
 
 ## الأسئلة الشائعة | FAQ
 
