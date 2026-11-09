@@ -8,7 +8,7 @@
 البريد العام | General: info@cto-drs.com · الدعم الفني | Support: support@cto-drs.com · المشاريع | Projects: contact@cto-drs.com · الأكاديمية | Academy: academy@cto-drs.com
 GitHub: https://github.com/CTO-DRS
 لينك تري | Linktree: https://linktr.ee/cto.drs
-أكاديمية الرشيد | Al-Rasheed Academy (LMS — مسارات في الأمن السيبراني والبرمجة والاختراق الأخلاقي، 15 دورة و120 درس | cybersecurity, programming & ethical hacking paths, 15 courses, 120 lessons): https://academy.cto-drs.com
+أكاديمية الرشيد | Al-Rasheed Academy (LMS — مسارات في الأمن السيبراني والبرمجة والاختراق الأخلاقي، 8 مسارات و41 دورة و82 تحدياً | cybersecurity & programming paths, 8 tracks, 41 courses, 82 challenges): https://academy.cto-drs.com
 
 ## الصفحات الرئيسية | Key Pages
 
@@ -17,7 +17,7 @@ GitHub: https://github.com/CTO-DRS
 - [مركز التحميل | Downloads](https://cto-drs.com/#/downloads): تنزيل مباشر لكل التطبيقات من GitHub Releases
 - [الأسئلة الشائعة | FAQ](https://cto-drs.com/#/faq): مدة التنفيذ، الضمان، الدفعات، الصيانة
 - [تواصل معي | Contact](https://cto-drs.com/#/contact): نموذج تواصل + واتساب + تيليجرام
-- [أكاديمية الرشيد | Al-Rasheed Academy](https://cto-drs.com/#/academy): 5 مسارات، 15 دورة، 120 درساً، 240 سؤال اختبار، 6 تحديات CTF — مجاناً | 5 tracks, 15 courses, 120 lessons, 240 quiz questions, 6 CTF challenges — free
+- [أكاديمية الرشيد | Al-Rasheed Academy](https://cto-drs.com/#/academy): 8 مسارات، 41 دورة، 82 تحدياً، 42 مقالاً، 69 مورداً — مجاناً | 8 tracks, 41 courses, 82 challenges, 42 articles, 69 resources — free
 - [من أنا | About](https://cto-drs.com/#/about): الملف المهني والمهارات
 - [المشاريع | Projects](https://cto-drs.com/#/projects): مشاريع مفتوحة المصدر على GitHub
 - [English version](https://cto-drs.com/?lang=en): English pages (?lang=en#/about/, #/services/, #/projects/, #/downloads/, #/academy/, #/faq/, #/contact/)
