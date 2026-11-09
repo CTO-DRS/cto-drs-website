@@ -4,17 +4,19 @@ import Image from "next/image";
 import { PlayCircle, Clock3 } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
-import { VIDEOS } from "@/lib/data";
+import { useI18n, useContent } from "@/i18n";
 
 export function VideosSection() {
+  const { t } = useI18n();
+  const { VIDEOS } = useContent();
   return (
     <section id="blog" className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           badge="VIDEOS • 06"
-          title="أحدث"
-          highlight="الفيديوهات"
-          subtitle="شروحات ودروس مرئية في البرمجة والأمن السيبراني"
+          title={t.videosSection.title}
+          highlight={t.videosSection.highlight}
+          subtitle={t.videosSection.subtitle}
         />
         <div className="grid gap-5 md:grid-cols-3">
           {VIDEOS.map((v, i) => (

@@ -3,19 +3,22 @@
 import { ShieldCheck, Bot, FileCode2, Download, Tag, HardDrive, ArrowDownToLine, Github, type LucideIcon } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
-import { TOOLS } from "@/lib/data";
+import { useI18n, useContent } from "@/i18n";
 
 const ICONS: Record<string, LucideIcon> = { ShieldCheck, Bot, FileCode2 };
 
 export function ToolsSection() {
+  const { t: tr } = useI18n();
+  const ts = tr.toolsSection;
+  const { TOOLS } = useContent();
   return (
     <section className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           badge="OPEN SOURCE • 08"
-          title="أدوات"
-          highlight="ومكتبات"
-          subtitle="أدوات برمجية أطورها وأشاركها مع المجتمع"
+          title={ts.title}
+          highlight={ts.highlight}
+          subtitle={ts.subtitle}
         />
         <div className="grid gap-5 md:grid-cols-3">
           {TOOLS.map((t, i) => {
@@ -50,19 +53,19 @@ export function ToolsSection() {
                     <a
                       href="#/downloads"
                       className="btn-gradient flex h-10 flex-1 items-center justify-center gap-2 rounded-full text-xs font-bold"
-                      aria-label={`تحميل ${t.name} من مركز التحميل`}
+                      aria-label={ts.downloadAria(t.name)}
                     >
-                      <ArrowDownToLine className="h-3.5 w-3.5" />
-                      تحميل الأداة
+                      <ArrowDownToLine className="h-3.5 w-3.5" aria-hidden="true" />
+                      {ts.download}
                     </a>
                     <a
                       href="https://github.com/CTO-DRS?tab=repositories"
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="مستودعات الأدوات على GitHub"
+                      aria-label={ts.githubAria}
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-strong bg-elev-2/50 text-sec transition hover:border-cyber/40 hover:text-cyber"
                     >
-                      <Github className="h-4 w-4" />
+                      <Github className="h-4 w-4" aria-hidden="true" />
                     </a>
                   </div>
                 </article>

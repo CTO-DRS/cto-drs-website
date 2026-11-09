@@ -21,15 +21,11 @@ import { useAppRouter } from "@/lib/router";
 import { useAppStore } from "@/lib/store";
 import { sendJson } from "@/lib/use-api";
 import type { AuthUser } from "@/lib/types";
+import { useI18n } from "@/i18n";
 
 const INPUT_CLS =
   "h-11 w-full rounded-xl border border-border-strong bg-elev-2/60 px-4 text-sm text-main outline-none transition placeholder:text-mute focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.15)]";
 
-const BENEFITS = [
-  "متابعة طلباتك وحجوزاتك من لوحة واحدة",
-  "تنبيهات فورية عند تحديث حالة الخدمات",
-  "عروض حصرية لأعضاء شبكة CTO-DRS",
-];
 
 interface FormErrors {
   name?: string;
@@ -41,6 +37,8 @@ interface FormErrors {
 export function RegisterScreen() {
   const { navigate } = useAppRouter();
   const { user, setUser } = useAppStore();
+  const { t } = useI18n();
+  const rg = t.register;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -54,16 +52,16 @@ export function RegisterScreen() {
 
   function validate(): boolean {
     const next: FormErrors = {};
-    if (!name.trim()) next.name = "الاسم مطلوب";
-    else if (name.trim().length < 2) next.name = "الاسم يجب أن يكون حرفين على الأقل";
-    if (!email.trim()) next.email = "البريد الإلكتروني مطلوب";
+    if (!name.trim()) next.name = rg.errNameReq;
+    else if (name.trim().length < 2) next.name = rg.errNameLen;
+    if (!email.trim()) next.email = rg.errEmailReq;
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
-      next.email = "صيغة البريد الإلكتروني غير صحيحة";
-    if (!password) next.password = "كلمة المرور مطلوبة";
-    else if (password.length < 6) next.password = "كلمة المرور يجب أن تكون 6 أحرف على الأقل";
-    if (!confirmPassword) next.confirmPassword = "تأكيد كلمة المرور مطلوب";
+      next.email = rg.errEmailFmt;
+    if (!password) next.password = rg.errPassReq;
+    else if (password.length < 6) next.password = rg.errPassLen;
+    if (!confirmPassword) next.confirmPassword = rg.errConfirmReq;
     else if (confirmPassword !== password)
-      next.confirmPassword = "كلمتا المرور غير متطابقتين";
+      next.confirmPassword = rg.errMismatch;
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -81,14 +79,14 @@ export function RegisterScreen() {
       });
       setUser(res);
       toast({
-        title: `أهلاً بك في الشبكة، ${res.name}`,
-        description: "تم إنشاء حسابك بنجاح",
+        title: rg.welcome(res.name),
+        description: rg.okDesc,
       });
       navigate({ name: "account" });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "تعذر إنشاء الحساب، حاول مرة أخرى";
+      const msg = err instanceof Error ? err.message : rg.failGeneric;
       setApiError(msg);
-      toast({ title: "فشل إنشاء الحساب", description: msg, variant: "destructive" });
+      toast({ title: rg.failTitle, description: msg, variant: "destructive" });
     } finally {
       setSending(false);
     }
@@ -98,9 +96,9 @@ export function RegisterScreen() {
     <>
       <PageHero
         badge="AUTH.CREATE"
-        title="إنشاء"
-        highlight="حساب"
-        subtitle="انضم إلى شبكة عملاء CTO-DRS وتابع مشاريعك وطلباتك بسهولة"
+        title={rg.title}
+        highlight={rg.highlight}
+        subtitle={rg.subtitle}
       />
 
       <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">
@@ -108,20 +106,19 @@ export function RegisterScreen() {
           <Reveal>
             <div className="card-glow mx-auto max-w-md rounded-2xl p-8 text-center">
               <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[rgba(0,240,255,0.3)] bg-[rgba(0,240,255,0.06)] shadow-[0_0_20px_rgba(0,240,255,0.15)]">
-                <UserRound className="h-6 w-6 text-cyber" />
+                <UserRound className="h-6 w-6 text-cyber" aria-hidden="true" />
               </span>
               <h2 className="font-heading-cyber text-lg font-extrabold text-main">
-                أنت مسجل الدخول بالفعل
+                {rg.already}
               </h2>
               <p className="mt-1 text-sm text-sec">
-                مرحباً <span className="font-bold text-cyber">{user.name}</span> — حسابك جاهز
-                للاستخدام
+                {rg.hello} <span className="font-bold text-cyber">{user.name}</span> {rg.ready}
               </p>
               <Button
                 onClick={() => navigate({ name: "account" })}
                 className="btn-gradient mt-6 h-11 w-full rounded-xl"
               >
-                الانتقال إلى حسابي
+                {rg.goAccount}
               </Button>
             </div>
           </Reveal>
@@ -132,35 +129,36 @@ export function RegisterScreen() {
                 {/* header */}
                 <div className="mb-6 text-center">
                   <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-[rgba(124,58,237,0.35)] bg-[rgba(124,58,237,0.08)] shadow-[0_0_20px_rgba(124,58,237,0.2)]">
-                    <UserRoundPlus className="h-5 w-5 text-[#7c3aed]" />
+                    <UserRoundPlus className="h-5 w-5 text-[#7c3aed]" aria-hidden="true" />
                   </span>
                   <h2 className="font-heading-cyber text-xl font-extrabold text-main">
-                    حساب جديد
+                    {rg.newAccount}
                   </h2>
-                  <p className="mt-1 text-xs text-mute">املأ البيانات التالية للانضمام</p>
+                  <p className="mt-1 text-xs text-mute">{rg.fillDesc}</p>
                 </div>
 
                 {/* name */}
                 <div className="mb-4 space-y-1.5">
                   <Label htmlFor="register-name" className="text-xs text-sec">
-                    الاسم الكامل
+                    {rg.name}
                   </Label>
                   <div className="relative">
-                    <UserRound className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" />
+                    <UserRound className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" aria-hidden="true" />
                     <input
                       id="register-name"
                       type="text"
                       autoComplete="name"
-                      aria-label="الاسم الكامل"
+                      required
                       aria-invalid={!!errors.name}
-                      placeholder="مثال: أحمد العتيبي"
+                      aria-describedby={errors.name ? "register-name-err" : undefined}
+                      placeholder={rg.namePh}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className={`${INPUT_CLS} pr-10`}
+                      className={`${INPUT_CLS} ps-10`}
                     />
                   </div>
                   {errors.name && (
-                    <p className="text-[11px] font-medium text-[#ff2a6d]" role="alert">
+                    <p id="register-name-err" className="text-[11px] font-medium text-[#ff2a6d]" role="alert">
                       {errors.name}
                     </p>
                   )}
@@ -169,25 +167,26 @@ export function RegisterScreen() {
                 {/* email */}
                 <div className="mb-4 space-y-1.5">
                   <Label htmlFor="register-email" className="text-xs text-sec">
-                    البريد الإلكتروني
+                    {rg.email}
                   </Label>
                   <div className="relative">
-                    <Mail className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" />
+                    <Mail className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" aria-hidden="true" />
                     <input
                       id="register-email"
                       type="email"
                       dir="ltr"
                       autoComplete="email"
-                      aria-label="البريد الإلكتروني"
+                      required
                       aria-invalid={!!errors.email}
+                      aria-describedby={errors.email ? "register-email-err" : undefined}
                       placeholder="you@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className={`${INPUT_CLS} pr-10 text-left`}
+                      className={`${INPUT_CLS} ps-10 text-left`}
                     />
                   </div>
                   {errors.email && (
-                    <p className="text-[11px] font-medium text-[#ff2a6d]" role="alert">
+                    <p id="register-email-err" className="text-[11px] font-medium text-[#ff2a6d]" role="alert">
                       {errors.email}
                     </p>
                   )}
@@ -196,33 +195,36 @@ export function RegisterScreen() {
                 {/* password */}
                 <div className="mb-4 space-y-1.5">
                   <Label htmlFor="register-password" className="text-xs text-sec">
-                    كلمة المرور
+                    {rg.password}
                   </Label>
                   <div className="relative">
-                    <KeyRound className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" />
+                    <KeyRound className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" aria-hidden="true" />
                     <input
                       id="register-password"
                       type={showPassword ? "text" : "password"}
                       dir="ltr"
                       autoComplete="new-password"
-                      aria-label="كلمة المرور"
+                      required
                       aria-invalid={!!errors.password}
-                      placeholder="6 أحرف على الأقل"
+                      aria-describedby={errors.password ? "register-password-err" : undefined}
+                      placeholder={rg.passPh}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className={`${INPUT_CLS} pr-10 pl-11 text-left`}
+                      className={`${INPUT_CLS} ps-10 pe-11 text-left`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
-                      className="absolute left-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-mute transition hover:bg-elev-2 hover:text-cyber"
+                      aria-label={showPassword ? rg.hidePass : rg.showPass}
+                      aria-pressed={showPassword}
+                      aria-controls="register-password"
+                      className="absolute end-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-mute transition hover:bg-elev-2 hover:text-cyber"
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-[11px] font-medium text-[#ff2a6d]" role="alert">
+                    <p id="register-password-err" className="text-[11px] font-medium text-[#ff2a6d]" role="alert">
                       {errors.password}
                     </p>
                   )}
@@ -231,33 +233,36 @@ export function RegisterScreen() {
                 {/* confirm password */}
                 <div className="mb-5 space-y-1.5">
                   <Label htmlFor="register-confirm" className="text-xs text-sec">
-                    تأكيد كلمة المرور
+                    {rg.confirm}
                   </Label>
                   <div className="relative">
-                    <KeyRound className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" />
+                    <KeyRound className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mute" aria-hidden="true" />
                     <input
                       id="register-confirm"
                       type={showConfirm ? "text" : "password"}
                       dir="ltr"
                       autoComplete="new-password"
-                      aria-label="تأكيد كلمة المرور"
+                      required
                       aria-invalid={!!errors.confirmPassword}
-                      placeholder="أعد إدخال كلمة المرور"
+                      aria-describedby={errors.confirmPassword ? "register-confirm-err" : undefined}
+                      placeholder={rg.confirmPh}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className={`${INPUT_CLS} pr-10 pl-11 text-left`}
+                      className={`${INPUT_CLS} ps-10 pe-11 text-left`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm((v) => !v)}
-                      aria-label={showConfirm ? "إخفاء تأكيد كلمة المرور" : "إظهار تأكيد كلمة المرور"}
-                      className="absolute left-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-mute transition hover:bg-elev-2 hover:text-cyber"
+                      aria-label={showConfirm ? rg.hideConfirm : rg.showConfirm}
+                      aria-pressed={showConfirm}
+                      aria-controls="register-confirm"
+                      className="absolute end-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-mute transition hover:bg-elev-2 hover:text-cyber"
                     >
-                      {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showConfirm ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                     </button>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="text-[11px] font-medium text-[#ff2a6d]" role="alert">
+                    <p id="register-confirm-err" className="text-[11px] font-medium text-[#ff2a6d]" role="alert">
                       {errors.confirmPassword}
                     </p>
                   )}
@@ -281,13 +286,13 @@ export function RegisterScreen() {
                 >
                   {sending ? (
                     <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      جارٍ إنشاء الحساب...
+                      <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                      {rg.creating}
                     </>
                   ) : (
                     <>
-                      <UserRoundPlus className="h-5 w-5" />
-                      إنشاء الحساب
+                      <UserRoundPlus className="h-5 w-5" aria-hidden="true" />
+                      {rg.create}
                     </>
                   )}
                 </Button>
@@ -297,11 +302,11 @@ export function RegisterScreen() {
             {/* benefits */}
             <Reveal delay={100}>
               <div className="glass rounded-xl p-4">
-                <p className="mb-2.5 text-xs font-bold text-sec">لماذا تنشئ حساباً؟</p>
+                <p className="mb-2.5 text-xs font-bold text-sec">{rg.why}</p>
                 <ul className="space-y-2 text-xs leading-6 text-sec">
-                  {BENEFITS.map((benefit) => (
+                  {rg.benefits.map((benefit) => (
                     <li key={benefit} className="flex items-center gap-2">
-                      <Check className="h-3.5 w-3.5 shrink-0 text-[#00ff88]" />
+                      <Check className="h-3.5 w-3.5 shrink-0 text-[#00ff88]" aria-hidden="true" />
                       {benefit}
                     </li>
                   ))}
@@ -311,13 +316,13 @@ export function RegisterScreen() {
 
             {/* footer link */}
             <p className="text-center text-sm text-sec">
-              لديك حساب بالفعل؟{" "}
+              {rg.haveAccount}{" "}
               <button
                 type="button"
                 onClick={() => navigate({ name: "login" })}
                 className="font-bold text-cyber transition hover:underline"
               >
-                سجّل دخولك
+                {rg.signIn}
               </button>
             </p>
           </div>

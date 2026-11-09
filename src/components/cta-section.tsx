@@ -2,8 +2,11 @@
 
 import { Send, ListChecks } from "lucide-react";
 import { Reveal } from "@/components/reveal";
+import { useI18n } from "@/i18n";
 
 export function CtaSection() {
+  const { t } = useI18n();
+  const c = t.cta;
   return (
     <section id="contact" className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-5xl">
@@ -13,23 +16,22 @@ export function CtaSection() {
               <div className="grid-bg pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
               <div className="relative">
                 <h2 className="font-heading-cyber text-3xl font-extrabold sm:text-4xl">
-                  جاهز لبدء <span className="text-gradient-static">مشروعك القادم؟</span>
+                  {c.title1} <span className="text-gradient-static">{c.title2}</span>
                 </h2>
                 <p className="mx-auto mt-5 max-w-xl text-sm leading-8 text-sec sm:text-base">
-                  سواء كنت تحتاج إلى موقع احترافي، نظام متكامل، أو استشارة أمنية — أنا هنا لتحويل
-                  أفكارك إلى حلول رقمية تعمل بثبات وأمان.
+                  {c.body}
                 </p>
                 <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                   <a href="#contact-form" className="btn-gradient flex h-12 items-center gap-2 rounded-full px-8 text-sm">
-                    <Send className="h-4 w-4" />
-                    تواصل معي الآن
+                    <Send className="h-4 w-4" aria-hidden="true" />
+                    {c.contactNow}
                   </a>
                   <a
                     href="#services"
                     className="flex h-12 items-center gap-2 rounded-full border border-border-strong bg-elev-2/40 px-8 text-sm font-bold text-sec transition hover:border-[rgba(0,240,255,0.4)] hover:text-cyber"
                   >
-                    <ListChecks className="h-4 w-4" />
-                    استعرض الخدمات
+                    <ListChecks className="h-4 w-4" aria-hidden="true" />
+                    {c.viewServices}
                   </a>
                 </div>
               </div>

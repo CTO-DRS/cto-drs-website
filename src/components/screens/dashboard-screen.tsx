@@ -917,7 +917,7 @@ export function DashboardScreen() {
                             </div>
                             <p className="mt-1 truncate text-xs text-mute">
                               {message.name} · <span dir="ltr">{message.email}</span>
-                              {cFlag && <span className="mr-1" title={message.country}> {cFlag}</span>}
+                              {cFlag && <span className="mr-1" title={message.country ?? undefined}> {cFlag}</span>}
                             </p>
                             <p className="mt-2 line-clamp-2 text-xs leading-6 text-sec">
                               {message.message}

@@ -23,6 +23,10 @@ import { useAppRouter } from "@/lib/router";
 import { cartTotal, useAppStore } from "@/lib/store";
 import { sendJson } from "@/lib/use-api";
 import type { Order } from "@/lib/types";
+import { STATIC_MODE } from "@/lib/static-mode";
+import { useI18n } from "@/i18n";
+import { Honeypot } from "@/components/honeypot";
+import { sendContactEmail, KIND_EMAIL, mailtoHref, shortRef } from "@/lib/contact-email";
 
 const fmtPrice = (n: number) => n.toLocaleString("en-US") + " ر.س";
 
@@ -64,6 +68,10 @@ export function CheckoutScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [lastOrder, setLastOrder] = useState<Order | null>(null);
   const [discountRate, setDiscountRate] = useState(0);
+  const { lang } = useI18n();
+  const en = lang === "en";
+  const [hp, setHp] = useState("");
+  const [mailFail, setMailFail] = useState<string | null>(null);
 
   /* prefill from authenticated user once available */
   useEffect(() => {
@@ -107,27 +115,77 @@ export function CheckoutScreen() {
     if (Object.keys(errs).length > 0) return;
 
     setSubmitting(true);
+    setMailFail(null);
     try {
-      const order = await sendJson<Order>("/api/orders", {
-        customerName: name.trim(),
+      const items = cart.map(({ id, name, price, qty }) => ({ id, name, price, qty }));
+      let order: Order | null = null;
+      if (!STATIC_MODE) {
+        order = await sendJson<Order>("/api/orders", {
+          customerName: name.trim(),
+          email: email.trim(),
+          items,
+          total: Math.round(total),
+        }).catch(() => null);
+      }
+      const ref = order?.id ?? shortRef("ORD");
+      const payLabel = PAYMENT_METHODS.find((m) => m.value === payment)?.label ?? payment;
+      const itemLines = items.map((it) => `${it.name} × ${it.qty} — ${fmtPrice(it.price * it.qty)}`).join("\n");
+      /* طلبات المتجر → contact@ (يُحدَّد في الخادم) */
+      const mail = await sendContactEmail({
+        kind: "order",
+        name: name.trim(),
         email: email.trim(),
-        items: cart.map(({ id, name, price, qty }) => ({ id, name, price, qty })),
-        total: Math.round(total),
+        phone: phone.trim() || undefined,
+        subject: `طلب ${ref} — ${fmtPrice(total)}`,
+        message: notes.trim() || undefined,
+        details: [
+          { label: "رقم الطلب", value: ref },
+          { label: "المنتجات", value: itemLines },
+          { label: "المجموع الفرعي", value: fmtPrice(subtotal) },
+          ...(discount > 0 ? [{ label: "الخصم", value: `-${fmtPrice(discount)}` }] : []),
+          { label: "ضريبة القيمة المضافة 15%", value: fmtPrice(vat) },
+          { label: "الإجمالي", value: fmtPrice(total) },
+          { label: "طريقة الدفع المفضلة", value: payLabel },
+        ],
+        lang: en ? "en" : "ar",
+        website: hp,
       });
-      setLastOrder(order);
+      if (!mail.ok) {
+        setMailFail(
+          [`رقم الطلب: ${ref}`, `الاسم: ${name.trim()}`, `البريد: ${email.trim()}`, phone.trim() ? `الجوال: ${phone.trim()}` : "", itemLines, `الإجمالي: ${fmtPrice(total)}`, `الدفع: ${payLabel}`, notes.trim()].filter(Boolean).join("\n")
+        );
+        toast({
+          title: en ? "Order not sent" : "تعذّر إرسال الطلب",
+          description: `${en ? "Email us directly at" : "راسلنا مباشرة على"} ${KIND_EMAIL.order}`,
+          variant: "destructive",
+        });
+        return;
+      }
+      setLastOrder(
+        order ?? {
+          id: ref,
+          customerName: name.trim(),
+          email: email.trim(),
+          items,
+          total: Math.round(total),
+          status: "pending",
+          createdAt: new Date().toISOString(),
+        }
+      );
       clearCart();
+      setHp("");
       try {
         sessionStorage.removeItem("cto-drs-discount");
       } catch {
         /* ignore */
       }
       toast({
-        title: "تم استلام طلبك بنجاح!",
-        description: `رقم الطلب: ${order.id}`,
+        title: en ? "Order request received!" : "تم استلام طلبك بنجاح!",
+        description: `${en ? "Order no." : "رقم الطلب"}: ${ref}`,
       });
     } catch (err) {
       toast({
-        title: "فشل إتمام الطلب",
+        title: en ? "Order not sent" : "فشل إتمام الطلب",
         description: err instanceof Error ? err.message : "خطأ غير معروف",
         variant: "destructive",
       });
@@ -197,6 +255,12 @@ export function CheckoutScreen() {
               <h2 className="font-heading-cyber mt-4 text-2xl font-extrabold text-main">
                 تم استلام طلبك بنجاح!
               </h2>
+              <p className="mt-2 text-sm text-sec">
+                {en ? "We'll email you payment and delivery details from" : "سنراسلك بتفاصيل الدفع والتسليم من"}{" "}
+                <a href={`mailto:${KIND_EMAIL.order}`} dir="ltr" className="text-cyber underline decoration-dotted">
+                  {KIND_EMAIL.order}
+                </a>
+              </p>
               <p className="mt-2 text-sm text-sec">
                 رقم الطلب:{" "}
                 <span dir="ltr" className="font-mono-cyber font-bold text-cyber">
@@ -268,7 +332,7 @@ export function CheckoutScreen() {
       />
 
       <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSubmit} noValidate className="relative">
           <div className="grid gap-6 lg:grid-cols-3">
             {/* form card */}
             <Reveal className="lg:col-span-2">
@@ -451,6 +515,19 @@ export function CheckoutScreen() {
                     {fmtPrice(total)}
                   </span>
                 </div>
+
+                <Honeypot value={hp} onChange={setHp} />
+                {mailFail && (
+                  <div role="alert" className="mb-1 mt-4 rounded-xl border border-[rgba(255,42,109,0.45)] bg-[rgba(255,42,109,0.07)] p-3.5 text-xs leading-6 text-sec">
+                    <p className="font-bold text-main">{en ? "Your order didn't reach us" : "لم يصلنا طلبك بعد"}</p>
+                    <p>
+                      {en ? "Send it directly to" : "أرسله مباشرة إلى"}{" "}
+                      <a href={mailtoHref("order", "طلب من المتجر — CTO.DRS", mailFail)} dir="ltr" className="font-bold text-cyber underline decoration-dotted">
+                        {KIND_EMAIL.order}
+                      </a>
+                    </p>
+                  </div>
+                )}
 
                 <button
                   type="submit"
