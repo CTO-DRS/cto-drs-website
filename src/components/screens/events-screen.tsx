@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/screen-state";
 import { Button } from "@/components/ui/button";
 import { useAppRouter } from "@/lib/router";
 import { EVENTS } from "@/lib/data";
+import { splitEvents } from "@/lib/events";
 
 const MODE_COLOR: Record<string, string> = {
   أونلاين: "#00f0ff",
@@ -14,12 +15,13 @@ const MODE_COLOR: Record<string, string> = {
   حضوري: "#00ff88",
 };
 
-/** شاشة الفعاليات والورش — البيانات من المصدر الرسمي (data.ts) */
+/** شاشة الفعاليات والورش — البيانات من المصدر الرسمي (data.ts)
+ *  التصنيف تلقائي بالتاريخ (splitEvents): فعالية تمرّ تاريخها تنتقل لـ«السابقة»
+ *  حتى لو بقيت status=upcoming في البيانات — يمنع بقاء المنتهية ضمن القادمة. */
 export function EventsScreen() {
   const { navigate } = useAppRouter();
 
-  const upcoming = EVENTS.filter((e) => e.status === "upcoming");
-  const past = EVENTS.filter((e) => e.status === "past");
+  const { upcoming, past } = splitEvents(EVENTS);
 
   const renderEvent = (ev: (typeof EVENTS)[number], i: number, isPast = false) => {
     const color = MODE_COLOR[ev.mode] ?? "#00f0ff";
@@ -103,7 +105,20 @@ export function EventsScreen() {
       <section className="px-4 py-14">
         <div className="mx-auto max-w-4xl">
           {upcoming.length === 0 ? (
-            <EmptyState icon={Hourglass} title="لا توجد فعاليات قادمة حالياً" description="تابع التنبيهات ليصلك الجدول القادم." />
+            <EmptyState
+              icon={Hourglass}
+              title="لا توجد فعاليات قادمة حالياً"
+              description="تابع قنواتنا ليصلك الجدول القادم — أو اطلب ورشة مخصصة لفريقك تُقدَّم عن بُعد أو في الرياض."
+              action={
+                <button
+                  type="button"
+                  onClick={() => navigate({ name: "booking" })}
+                  className="btn-gradient rounded-xl px-6 py-2.5 text-sm font-bold"
+                >
+                  احجز ورشة لفريقك
+                </button>
+              }
+            />
           ) : (
             <>
               <h2 className="font-heading-cyber mb-5 flex items-center gap-2 text-sm font-bold text-main">
