@@ -1,0 +1,54 @@
+# تذكير مجدول — مراجعة دورة تدوير مفاتيح Supabase (F-15 / بطاقة P2 البند 14)
+# يفتح مسألة تذكير سنوياً في 1 يناير؛ الإجراء الكامل في docs/KEY-ROTATION-AR.md
+name: Key rotation reminder
+
+on:
+  schedule:
+    - cron: "0 9 1 1 *" # 1 يناير 09:00 UTC سنوياً
+  workflow_dispatch: {} # يسمح بتشغيله يدوياً للاختبار
+
+permissions:
+  issues: write
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open annual rotation reminder issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const year = new Date().getFullYear();
+            const title = `🔐 استعراض تدوير مفتاح Supabase anon — ${year}`;
+            const body = [
+              `تذكير سنوي مجدول (F-15 — بطاقة P2 البند 14).`,
+              ``,
+              `**الموعد النهائي لتدوير المفتاح الحالي: قبل 1 أكتوبر 2036.**`,
+              ``,
+              `### قائمة التحقق`,
+              `- [ ] فتح docs/KEY-ROTATION-AR.md واتخاذ القرار: تدوير فعلي هذا العام أو تأجيل موثق بالسبب`,
+              `- [ ] إن كان التدوير: اتبع الإجراء في الوثيقة (Dashboard → Rotate JWT secret → إعادة بناء النسخة الثابتة → إعلان إعادة الدخول)`,
+              `- [ ] إن كان تأجيلاً: تأكد أن الموعد الجديد لا يتجاوز أكتوبر 2036`,
+              `- [ ] تشغيل supabase/verify-rls.sql والتأكد من 5/5`,
+              `- [ ] تحديث تاريخ آخر تدوير في docs/KEY-ROTATION-AR.md`,
+              ``,
+              `_أُنشئت هذه المسألة آلياً بواسطة سير العمل key-rotation-reminder.yml_`
+            ].join("\n");
+            // تجنب فتح مسألة مكررة إن أُعيد تشغيل السير في نفس السنة
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100,
+            });
+            if (existing.data.some(i => i.title.includes(String(year)))) {
+              console.log("مسألة التذكير لهذه السنة مفتوحة بالفعل — لا تكرار.");
+              return;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ["maintenance", "security"],
+            });
