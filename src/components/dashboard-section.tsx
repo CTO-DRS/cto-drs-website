@@ -5,7 +5,7 @@ import { FolderGit2, Clock, Users, Cpu, Globe, Network, Sparkles, ShieldCheck } 
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { Counter } from "@/components/counter";
-import { DASHBOARD_METRICS, MASTERY_BARS, ACHIEVEMENTS } from "@/lib/data";
+import { useI18n, useContent } from "@/i18n";
 
 const ICONS: Record<string, typeof FolderGit2> = {
   FolderGit2,
@@ -100,14 +100,17 @@ function KnowledgeCanvas() {
 }
 
 export function DashboardSection() {
+  const { t } = useI18n();
+  const d = t.dashboardSection;
+  const { DASHBOARD_METRICS, MASTERY_BARS, ACHIEVEMENTS } = useContent();
   return (
     <section id="dashboard" className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           badge="LIVE METRICS • 01"
-          title="لوحة"
-          highlight="البيانات الحية"
-          subtitle="مراقبة لحظية للأداء والقدرات التقنية"
+          title={d.title}
+          highlight={d.highlight}
+          subtitle={d.subtitle}
         />
 
         {/* metric cards */}
@@ -143,10 +146,10 @@ export function DashboardSection() {
               <KnowledgeCanvas />
               <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5">
                 <span className="font-mono-cyber flex items-center gap-2 text-xs tracking-widest text-sec">
-                  <Globe className="h-4 w-4 text-cyber" />
-                  شبكة المعرفة التقنية
+                  <Globe className="h-4 w-4 text-cyber" aria-hidden="true" />
+                  {d.knowledge}
                 </span>
-                <Network className="h-4 w-4 text-mute" />
+                <Network className="h-4 w-4 text-mute" aria-hidden="true" />
               </div>
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-5 pt-10">
                 <span className="font-mono-cyber text-[10px] tracking-[0.25em] text-cyber/80">
@@ -160,8 +163,8 @@ export function DashboardSection() {
           <Reveal delay={120} className="lg:col-span-2">
             <div className="card-glow flex h-full flex-col rounded-2xl p-5">
               <span className="font-mono-cyber mb-5 flex items-center gap-2 text-xs tracking-widest text-sec">
-                <Sparkles className="h-4 w-4 text-cyber" />
-                مستوى الإتقان
+                <Sparkles className="h-4 w-4 text-cyber" aria-hidden="true" />
+                {d.mastery}
               </span>
               <div className="flex flex-1 flex-col justify-between gap-4">
                 {MASTERY_BARS.map((s, i) => (
@@ -183,7 +186,7 @@ export function DashboardSection() {
                 href="#skills"
                 className="mt-5 inline-flex items-center justify-center gap-1.5 text-xs font-bold text-cyber transition hover:gap-3"
               >
-                عرض كل المهارات ←
+                {d.allSkills}
               </a>
             </div>
           </Reveal>
@@ -193,7 +196,7 @@ export function DashboardSection() {
         <Reveal className="mt-6">
           <div className="card-glow rounded-2xl p-5 sm:p-6">
             <div className="mb-6 flex items-center justify-between">
-              <span className="font-mono-cyber text-xs tracking-widest text-sec">آخر الإنجازات</span>
+              <span className="font-mono-cyber text-xs tracking-widest text-sec">{d.achievements}</span>
               <span className="font-mono-cyber text-[10px] tracking-[0.25em] text-cyber/70">
                 SCANNING SKILLS...
               </span>

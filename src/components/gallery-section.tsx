@@ -4,17 +4,19 @@ import Image from "next/image";
 import { Camera } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
-import { GALLERY } from "@/lib/data";
+import { useI18n, useContent } from "@/i18n";
 
 export function GallerySection() {
+  const { t } = useI18n();
+  const { GALLERY } = useContent();
   return (
     <section className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           badge="GALLERY • 09"
-          title="معرض"
-          highlight="الأعمال"
-          subtitle="لقطات من المشاريع والشهادات ومساحة العمل"
+          title={t.gallerySection.title}
+          highlight={t.gallerySection.highlight}
+          subtitle={t.gallerySection.subtitle}
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {GALLERY.map((g, i) => (

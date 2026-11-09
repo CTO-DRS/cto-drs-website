@@ -3,6 +3,7 @@
 import { ChevronLeft, Home } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { useAppRouter, routeHref } from "@/lib/router";
+import { useI18n } from "@/i18n";
 
 /**
  * Shared hero/banner for every sub-screen:
@@ -20,6 +21,7 @@ export function PageHero({
   subtitle: string;
 }) {
   const { navigate } = useAppRouter();
+  const { t } = useI18n();
 
   return (
     <section className="relative overflow-hidden border-b border-border-soft">
@@ -47,7 +49,7 @@ export function PageHero({
         </Reveal>
         <Reveal delay={220}>
           <nav
-            aria-label="مسار التنقل"
+            aria-label={t.common.breadcrumb}
             className="font-mono-cyber mt-6 flex items-center gap-1.5 text-[11px] text-mute"
           >
             <a
@@ -58,11 +60,11 @@ export function PageHero({
               }}
               className="flex items-center gap-1 transition hover:text-cyber"
             >
-              <Home className="h-3 w-3" />
-              الرئيسية
+              <Home className="h-3 w-3" aria-hidden="true" />
+              {t.common.home}
             </a>
-            <ChevronLeft className="h-3 w-3" />
-            <span className="text-cyber">{title}</span>
+            <ChevronLeft className="h-3 w-3" aria-hidden="true" />
+            <span className="text-cyber" aria-current="page">{highlight ? `${title} ${highlight}` : title}</span>
           </nav>
         </Reveal>
       </div>

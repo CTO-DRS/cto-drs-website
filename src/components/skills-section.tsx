@@ -19,6 +19,7 @@ import {
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
 import { SKILLS } from "@/lib/data";
+import { useI18n } from "@/i18n";
 
 const ICONS: Record<string, LucideIcon> = {
   Code2,
@@ -81,10 +82,18 @@ function SkillCard({
             </p>
           </div>
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[rgba(0,240,255,0.07)] text-cyber transition-all duration-300 group-hover:bg-[rgba(0,240,255,0.15)] group-hover:shadow-[0_0_16px_rgba(0,240,255,0.35)]">
-            <Icon className="h-5 w-5" />
+            <Icon className="h-5 w-5" aria-hidden="true" />
           </span>
         </div>
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-elev-2" dir="ltr">
+        <div
+          className="mt-4 h-2 overflow-hidden rounded-full bg-elev-2"
+          dir="ltr"
+          role="progressbar"
+          aria-label={name}
+          aria-valuenow={percent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
           <div
             className="progress-cyber h-full transition-[width] duration-1000 ease-out"
             style={{ width: `${w}%`, transitionDelay: `${delay}ms` }}
@@ -99,14 +108,15 @@ function SkillCard({
 }
 
 export function SkillsSection() {
+  const { t } = useI18n();
   return (
     <section id="services" className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           badge="CAPABILITIES • 03"
-          title="المهارات"
-          highlight="التقنية"
-          subtitle="مجموعة التقنيات والمجالات الواردة في الملف التعريفي الرسمي على GitHub"
+          title={t.skills.title}
+          highlight={t.skills.highlight}
+          subtitle={t.skills.subtitle}
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {SKILLS.map((s, i) => (
@@ -115,8 +125,8 @@ export function SkillsSection() {
         </div>
         <Reveal className="mt-10 text-center">
           <a href="#projects" className="btn-gradient-pink inline-flex h-12 items-center gap-2 rounded-full px-8 text-sm">
-            <BarChart3 className="h-4 w-4" />
-            استعرض كل المهارات
+            <BarChart3 className="h-4 w-4" aria-hidden="true" />
+            {t.skills.viewAll}
           </a>
         </Reveal>
       </div>

@@ -3,7 +3,7 @@
 import { Calculator, CalendarClock, Presentation, Tags, Download, ArrowLeft, type LucideIcon } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
-import { QUICK_TOOLS } from "@/lib/data";
+import { useI18n, useContent } from "@/i18n";
 
 const ICONS: Record<string, LucideIcon> = { Calculator, CalendarClock, Presentation, Tags, Download };
 
@@ -16,14 +16,16 @@ const COLOR: Record<string, string> = {
 };
 
 export function QuickAccess() {
+  const { t: tr } = useI18n();
+  const { QUICK_TOOLS } = useContent();
   return (
     <section className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           badge="QUICK ACCESS • TOOLS"
-          title="أدوات"
-          highlight="ومميزات"
-          subtitle="وصول سريع لأهم الأدوات والخدمات التفاعلية"
+          title={tr.quickAccess.title}
+          highlight={tr.quickAccess.highlight}
+          subtitle={tr.quickAccess.subtitle}
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {QUICK_TOOLS.map((t, i) => {

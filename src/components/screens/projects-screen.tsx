@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Code2, Download, ExternalLink, Github, Search, Star } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
@@ -16,10 +16,19 @@ import {
 import { useApi } from "@/lib/use-api";
 import type { Project } from "@/lib/types";
 import { APPS, directReleaseUrl, sourceZipUrl } from "@/lib/apps";
+import { useI18n, localizeApiProject } from "@/i18n";
+
+const ALL = "__all__";
 
 export function ProjectsScreen() {
-  const { data: projects, loading, error, reload } = useApi<Project[]>("/api/projects");
-  const [activeCategory, setActiveCategory] = useState("الكل");
+  const { data: rawProjects, loading, error, reload } = useApi<Project[]>("/api/projects");
+  const { t, lang } = useI18n();
+  const pj = t.projects;
+  const projects = useMemo(() => rawProjects?.map((p) => localizeApiProject(lang, p)), [rawProjects, lang]);
+  const [activeCategory, setActiveCategory] = useState(ALL);
+  useEffect(() => {
+    queueMicrotask(() => setActiveCategory(ALL));
+  }, [lang]);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Project | null>(null);
 
@@ -33,7 +42,7 @@ export function ProjectsScreen() {
   const filtered = useMemo(() => {
     if (!projects) return [] as Project[];
     return projects.filter((p) => {
-      const inCat = activeCategory === "الكل" || p.category === activeCategory;
+      const inCat = activeCategory === ALL || p.category === activeCategory;
       if (!inCat) return false;
       if (!q) return true;
       return (
@@ -45,7 +54,7 @@ export function ProjectsScreen() {
   }, [projects, activeCategory, q]);
 
   const resetFilters = () => {
-    setActiveCategory("الكل");
+    setActiveCategory(ALL);
     setQuery("");
   };
 
@@ -62,9 +71,9 @@ export function ProjectsScreen() {
     <>
       <PageHero
         badge="PROJECTS.ARCHIVE"
-        title="سجل"
-        highlight="المشاريع"
-        subtitle="مشاريع مفتوحة المصدر منشورة على GitHub — من تطبيقات أندرويد الأصلية إلى أدوات الأمن والذكاء الاصطناعي"
+        title={pj.title}
+        highlight={pj.highlight}
+        subtitle={pj.subtitle}
       />
 
       <section className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-12">
@@ -72,42 +81,44 @@ export function ProjectsScreen() {
         <div className="mb-8 flex flex-col gap-4">
           <div className="relative w-full sm:max-w-md">
             <Search
-              className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-mute"
+              className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-mute"
               aria-hidden="true"
             />
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="ابحث عن مشروع، تقنية أو وسم..."
-              aria-label="ابحث في المشاريع"
-              className="h-11 w-full rounded-xl border border-border-strong bg-elev-2/60 px-4 pr-11 text-sm outline-none transition placeholder:text-mute focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.15)]"
+              placeholder={pj.searchPh}
+              aria-label={pj.searchAria}
+              className="h-11 w-full rounded-xl border border-border-strong bg-elev-2/60 px-4 ps-11 text-sm outline-none transition placeholder:text-mute focus:border-[rgba(0,240,255,0.5)] focus:shadow-[0_0_16px_rgba(0,240,255,0.15)]"
             />
           </div>
-          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="تصفية المشاريع حسب التصنيف">
-            {["الكل", ...categories].map((cat) =>
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label={pj.filterAria}>
+            {[ALL, ...categories].map((cat) =>
               activeCategory === cat ? (
                 <button
                   key={cat}
+                  type="button"
                   onClick={() => setActiveCategory(cat)}
                   className="btn-gradient rounded-full px-4 py-1.5 text-xs font-bold"
                   aria-pressed="true"
                 >
-                  {cat}
+                  {cat === ALL ? t.common.all : cat}
                 </button>
               ) : (
                 <button
                   key={cat}
+                  type="button"
                   onClick={() => setActiveCategory(cat)}
                   className="tag-pill cursor-pointer transition hover:border-[rgba(0,240,255,0.6)] hover:bg-[rgba(0,240,255,0.1)]"
                   aria-pressed="false"
                 >
-                  {cat}
+                  {cat === ALL ? t.common.all : cat}
                 </button>
               )
             )}
-            <span className="font-mono-cyber mr-auto text-[11px] text-mute">
-              {filtered.length} مشروع
+            <span className="font-mono-cyber ms-auto text-[11px] text-mute" aria-live="polite">
+              {pj.count(filtered.length)}
             </span>
           </div>
         </div>
@@ -118,14 +129,15 @@ export function ProjectsScreen() {
         {!loading && !error && filtered.length === 0 && (
           <EmptyState
             icon={Search}
-            title="لا توجد نتائج مطابقة"
-            description="لم نعثر على مشاريع تطابق بحثك — جرّب كلمة أخرى أو أعد ضبط الفلاتر."
+            title={pj.emptyTitle}
+            description={pj.emptyDesc}
             action={
               <button
+                type="button"
                 onClick={resetFilters}
                 className="btn-gradient rounded-full px-5 py-2 text-xs font-bold"
               >
-                إعادة ضبط الفلاتر
+                {pj.reset}
               </button>
             }
           />
@@ -151,13 +163,13 @@ export function ProjectsScreen() {
                         <Code2 className="h-14 w-14 text-cyber" aria-hidden="true" />
                       </div>
                     )}
-                    <span className="font-mono-cyber glass-strong absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-bold text-main">
+                    <span className="font-mono-cyber glass-strong absolute end-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-bold text-main">
                       {project.year}
                     </span>
                     {project.featured && (
-                      <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full border border-[rgba(255,215,0,0.4)] bg-[rgba(255,215,0,0.15)] px-2.5 py-1 text-[10px] font-bold text-[#ffd700]">
+                      <span className="absolute start-3 top-3 flex items-center gap-1 rounded-full border border-[rgba(255,215,0,0.4)] bg-[rgba(255,215,0,0.15)] px-2.5 py-1 text-[10px] font-bold text-[#ffd700]">
                         <Star className="h-3 w-3 fill-[#ffd700]" aria-hidden="true" />
-                        مميز
+                        {t.common.featuredM}
                       </span>
                     )}
                   </div>
@@ -186,10 +198,10 @@ export function ProjectsScreen() {
                             href={project.demoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={`معاينة مشروع ${project.title}`}
+                            aria-label={pj.previewAria(project.title)}
                             className="btn-outline-cyber flex h-8 w-8 items-center justify-center rounded-full"
                           >
-                            <ExternalLink className="h-3.5 w-3.5" />
+                            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                           </a>
                         )}
                         {project.githubUrl &&
@@ -208,10 +220,10 @@ export function ProjectsScreen() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 download
-                                aria-label={`تنزيل ${app.titleEn} مباشرة من GitHub Releases`}
+                                aria-label={pj.downloadAria(app.titleEn)}
                                 className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(0,240,255,0.35)] text-cyber transition hover:bg-[rgba(0,240,255,0.1)]"
                               >
-                                <Download className="h-3.5 w-3.5" />
+                                <Download className="h-3.5 w-3.5" aria-hidden="true" />
                               </a>
                             );
                           })()}
@@ -220,17 +232,20 @@ export function ProjectsScreen() {
                             href={project.githubUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={`مصدر مشروع ${project.title} على GitHub`}
+                            aria-label={pj.sourceAria(project.title)}
                             className="flex h-8 w-8 items-center justify-center rounded-full border border-border-strong text-sec transition hover:border-[rgba(255,42,109,0.4)] hover:text-[#ff2a6d]"
                           >
-                            <Github className="h-3.5 w-3.5" />
+                            <Github className="h-3.5 w-3.5" aria-hidden="true" />
                           </a>
                         )}
                         <button
+                          type="button"
                           onClick={() => setSelected(project)}
+                          aria-haspopup="dialog"
+                          aria-label={pj.detailsAria(project.title)}
                           className="rounded-full px-3 py-1.5 text-xs font-bold text-cyber transition hover:bg-[rgba(0,240,255,0.08)]"
                         >
-                          التفاصيل
+                          {pj.details}
                         </button>
                       </div>
                     </div>
@@ -261,7 +276,7 @@ export function ProjectsScreen() {
                     <Code2 className="h-16 w-16 text-cyber" aria-hidden="true" />
                   </div>
                 )}
-                <span className="font-mono-cyber glass-strong absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-bold text-main">
+                <span className="font-mono-cyber glass-strong absolute end-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-bold text-main">
                   {selected.year}
                 </span>
               </div>
@@ -283,7 +298,7 @@ export function ProjectsScreen() {
                 </div>
 
                 <div className="mt-4 flex items-center gap-2">
-                  <span className="text-xs text-mute">التصنيف:</span>
+                  <span className="text-xs text-mute">{pj.category}</span>
                   <span className="tag-pill">{selected.category}</span>
                 </div>
 
@@ -295,8 +310,8 @@ export function ProjectsScreen() {
                       rel="noopener noreferrer"
                       className="btn-outline-cyber inline-flex h-10 items-center gap-2 rounded-full px-5 text-xs font-bold"
                     >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      معاينة مباشرة
+                      <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                      {pj.livePreview}
                     </a>
                   )}
                   {selected.githubUrl && (
@@ -306,13 +321,13 @@ export function ProjectsScreen() {
                       rel="noopener noreferrer"
                       className="btn-outline-cyber inline-flex h-10 items-center gap-2 rounded-full px-5 text-xs font-bold"
                     >
-                      <Github className="h-3.5 w-3.5" />
-                      الكود المصدري
+                      <Github className="h-3.5 w-3.5" aria-hidden="true" />
+                      {pj.sourceCode}
                     </a>
                   )}
                   <DialogClose asChild>
-                    <button className="h-10 rounded-full border border-border-strong px-5 text-xs font-bold text-sec transition hover:border-[rgba(255,42,109,0.4)] hover:text-[#ff2a6d]">
-                      إغلاق
+                    <button type="button" className="h-10 rounded-full border border-border-strong px-5 text-xs font-bold text-sec transition hover:border-[rgba(255,42,109,0.4)] hover:text-[#ff2a6d]">
+                      {t.common.close}
                     </button>
                   </DialogClose>
                   {selected.githubUrl && (
@@ -329,8 +344,8 @@ export function ProjectsScreen() {
                       download
                       className="btn-gradient inline-flex h-10 items-center gap-2 rounded-full px-5 text-xs font-bold"
                     >
-                      <Download className="h-3.5 w-3.5" />
-                      {appForSelected?.fileType === "APK" ? "تحميل APK مباشر" : "تحميل ZIP مباشر"}
+                      <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                      {appForSelected?.fileType === "APK" ? t.common.directApk : t.common.directZip}
                     </a>
                   )}
                 </div>

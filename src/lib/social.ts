@@ -17,8 +17,18 @@ export const BRAND = {
   handle: "cto-drs",
   website: "https://cto-drs.com/",
   websiteLabel: "cto-drs.com",
-  email: "admin@ctodrs.com",
+  /** البريد العام */
+  email: "info@cto-drs.com",
+  /** الدعم الفني */
+  supportEmail: "support@cto-drs.com",
+  /** المشاريع والاستشارات (العنوان القديم — ما زال فعّالاً) */
+  contactEmail: "contact@cto-drs.com",
+  /** أكاديمية الرشيد */
+  academyEmail: "academy@cto-drs.com",
 } as const;
+
+/** أكاديمية الرشيد — منصة التعلّم (LMS) على نطاق فرعي مستقل */
+export const ACADEMY_URL = "https://academy.cto-drs.com";
 
 export const SOCIALS: SocialLink[] = [
   {
@@ -33,7 +43,7 @@ export const SOCIALS: SocialLink[] = [
     id: "telegram",
     label: "تيليجرام",
     handle: "@CTO_DRS",
-    url: "https://t.me/CTO_DRS",
+    url: "https://t.me/ctodrs",
     color: "#2aabee",
     glow: "rgba(42,171,238,0.22)",
   },
@@ -78,6 +88,14 @@ export const SOCIALS: SocialLink[] = [
     glow: "rgba(201,209,217,0.18)",
   },
   {
+    id: "linktree",
+    label: "لينك تري",
+    handle: "linktr.ee/cto.drs",
+    url: "https://linktr.ee/cto.drs",
+    color: "#43e660",
+    glow: "rgba(67,230,96,0.22)",
+  },
+  {
     id: "website",
     label: "الموقع الرسمي",
     handle: "cto-drs.com",
@@ -90,4 +108,4 @@ export const SOCIALS: SocialLink[] = [
 export const SOCIAL_BY_ID = Object.fromEntries(SOCIALS.map((s) => [s.id, s])) as Record<string, SocialLink>;
 
 /** القنوات السريعة الظاهرة كأيقونات مدمجة (الهيرو / الملف المهني) */
-export const SOCIAL_ROW_IDS = ["whatsapp", "telegram", "tiktok", "x", "instagram", "youtube", "github"] as const;
+export const SOCIAL_ROW_IDS = ["whatsapp", "telegram", "tiktok", "x", "instagram", "youtube", "github", "linktree"] as const;

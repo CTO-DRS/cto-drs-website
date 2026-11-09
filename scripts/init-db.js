@@ -5,7 +5,7 @@
    - ينشئ حساب المدير إن لم يوجد (idempotent — لا يحذف شيئاً)
    البيئة:
      DATABASE_URL   (افتراضي: file:/app/db/custom.db)
-     ADMIN_EMAIL    (افتراضي: admin@ctodrs.com)
+     ADMIN_EMAIL    (افتراضي: contact@cto-drs.com)
      ADMIN_PASSWORD (افتراضي: admin123)
    ═══════════════════════════════════════════════════════════ */
 "use strict";
@@ -34,7 +34,7 @@ async function main() {
   const { PrismaClient } = require("@prisma/client");
   const prisma = new PrismaClient();
 
-  const email = process.env.ADMIN_EMAIL || "admin@ctodrs.com";
+  const email = process.env.ADMIN_EMAIL || "contact@cto-drs.com";
   const password = process.env.ADMIN_PASSWORD || "admin123";
 
   const existing = await prisma.user.findUnique({ where: { email } });

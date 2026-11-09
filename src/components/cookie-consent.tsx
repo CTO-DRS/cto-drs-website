@@ -3,9 +3,12 @@
 import { useEffect, useState } from "react";
 import { Cookie, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n";
 
 export function CookieConsent() {
   const [show, setShow] = useState(false);
+  const { t } = useI18n();
+  const c = t.cookie;
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -24,18 +27,18 @@ export function CookieConsent() {
   return (
     <div
       role="region"
-      aria-label="إشعار ملفات تعريف الارتباط"
+      aria-label={c.aria}
       className="glass-strong fixed bottom-5 right-1/2 z-[130] flex w-[calc(100vw-2rem)] max-w-2xl translate-x-1/2 flex-col items-center gap-3 rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:flex-row"
     >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(255,153,0,0.12)] text-[#ff9900]">
-        <Cookie className="h-5 w-5" />
+        <Cookie className="h-5 w-5" aria-hidden="true" />
       </span>
-      <div className="flex-1 text-center sm:text-right">
-        <p className="text-xs font-bold text-main">نحن نستخدم ملفات تعريف الارتباط (Cookies)</p>
+      <div className="flex-1 text-center sm:text-start">
+        <p className="text-xs font-bold text-main">{c.title}</p>
         <p className="mt-1 text-[11px] leading-5 text-sec">
-          نستخدم الكوكيز لتحسين تجربتك وتحليل أداء الموقع، بما يتوافق مع{" "}
-          <a href="#" className="text-cyber underline underline-offset-4">
-            سياسة الخصوصية
+          {c.body}{" "}
+          <a href="#/privacy" className="text-cyber underline underline-offset-4">
+            {c.privacy}
           </a>
           .
         </p>
@@ -47,10 +50,10 @@ export function CookieConsent() {
           onClick={() => decide("rejected")}
           className="h-9 rounded-full px-5 text-xs"
         >
-          رفض
+          {c.reject}
         </Button>
         <Button size="sm" onClick={() => decide("accepted")} className="btn-gradient h-9 rounded-full px-6 text-xs">
-          موافق
+          {c.accept}
         </Button>
       </div>
       <ShieldCheck className="hidden h-4 w-4 text-mute sm:block" aria-hidden="true" />

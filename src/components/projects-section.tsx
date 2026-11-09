@@ -5,7 +5,8 @@ import Image from "next/image";
 import { Eye, Info, FolderGit2, Star, GitFork, X, CalendarDays, Layers, Github, Code2, Download, type LucideIcon } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Reveal } from "@/components/reveal";
-import { PROJECTS, type Project } from "@/lib/data";
+import { type Project } from "@/lib/data";
+import { useI18n, useContent } from "@/i18n";
 import { APPS, directReleaseUrl, sourceZipUrl, type AppEntry } from "@/lib/apps";
 import {
   Dialog,
@@ -17,6 +18,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 function ProjectDialog({ project, onClose }: { project: Project | null; onClose: () => void }) {
+  const { t } = useI18n();
+  const ps = t.projectsSection;
   const appEntry: AppEntry | undefined = APPS.find((a) => a.id === project?.id);
 
   return (
@@ -33,7 +36,7 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
                 sizes="(max-width: 640px) 100vw, 500px"
               />
             </div>
-            <DialogHeader className="mt-4 text-right">
+            <DialogHeader className="mt-4 text-start">
               <DialogTitle className="font-heading-cyber text-lg font-bold text-main">
                 {project.title}
               </DialogTitle>
@@ -54,19 +57,19 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
                   {project.language ?? "—"}
                 </p>
                 <p className="flex items-center justify-center gap-1 text-[11px] text-mute">
-                  <Code2 className="h-3 w-3" /> اللغة
+                  <Code2 className="h-3 w-3" aria-hidden="true" /> {ps.language}
                 </p>
               </div>
               <div>
                 <p className="font-heading-cyber text-lg font-bold text-main">{project.stars ?? 0}</p>
                 <p className="flex items-center justify-center gap-1 text-[11px] text-mute">
-                  <Star className="h-3 w-3" /> نجوم
+                  <Star className="h-3 w-3" aria-hidden="true" /> {ps.stars}
                 </p>
               </div>
               <div>
                 <p className="font-heading-cyber text-lg font-bold text-main">{project.tags.length}</p>
                 <p className="flex items-center justify-center gap-1 text-[11px] text-mute">
-                  <Layers className="h-3 w-3" /> تقنيات
+                  <Layers className="h-3 w-3" aria-hidden="true" /> {ps.techs}
                 </p>
               </div>
             </div>
@@ -78,8 +81,8 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
                   rel="noopener noreferrer"
                   className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-border-strong bg-elev-2/50 text-sm font-bold text-sec transition hover:border-cyber/40 hover:text-cyber"
                 >
-                  <Github className="h-4 w-4" />
-                  عرض على GitHub
+                  <Github className="h-4 w-4" aria-hidden="true" />
+                  {ps.viewOnGithub}
                 </a>
                 {appEntry && (
                   <a
@@ -89,8 +92,8 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
                     download
                     className="btn-gradient flex h-11 flex-1 items-center justify-center gap-2 rounded-full text-sm font-bold"
                   >
-                    <Download className="h-4 w-4" />
-                    {appEntry.fileType === "APK" ? "تحميل APK مباشر" : "تحميل ZIP مباشر"}
+                    <Download className="h-4 w-4" aria-hidden="true" />
+                    {appEntry.fileType === "APK" ? t.common.directApk : t.common.directZip}
                   </a>
                 )}
               </div>
@@ -104,15 +107,18 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
 
 export function ProjectsSection() {
   const [selected, setSelected] = useState<Project | null>(null);
+  const { t } = useI18n();
+  const ps = t.projectsSection;
+  const { PROJECTS } = useContent();
 
   return (
     <section id="projects" className="relative px-4 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           badge="PORTFOLIO • 04"
-          title="المشاريع"
-          highlight="المميزة"
-          subtitle="مشاريع حقيقية منشورة على GitHub — اختر المستودع لعرض الكود المصدري"
+          title={ps.title}
+          highlight={ps.highlight}
+          subtitle={ps.subtitle}
         />
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -127,9 +133,9 @@ export function ProjectsSection() {
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" aria-hidden="true" />
                   {p.featured && (
-                    <span className="font-mono-cyber absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[9px] tracking-[0.2em] text-[#ffd700] backdrop-blur-sm">
+                    <span className="font-mono-cyber absolute end-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[9px] tracking-[0.2em] text-[#ffd700] backdrop-blur-sm">
                       FEATURED
                     </span>
                   )}
@@ -154,18 +160,21 @@ export function ProjectsSection() {
                       href={p.url ?? "#projects"}
                       target={p.url ? "_blank" : undefined}
                       rel="noopener noreferrer"
-                      aria-label={`مستودع مشروع ${p.title} على GitHub`}
+                      aria-label={ps.repoAria(p.title)}
                       className="btn-outline-cyber flex h-9 items-center gap-1.5 rounded-full px-4 text-xs font-bold"
                     >
-                      <Github className="h-3.5 w-3.5" />
-                      المستودع
+                      <Github className="h-3.5 w-3.5" aria-hidden="true" />
+                      {t.common.repo}
                     </a>
                     <button
+                      type="button"
                       onClick={() => setSelected(p)}
+                      aria-haspopup="dialog"
+                      aria-label={`${ps.details}: ${p.title}`}
                       className="flex h-9 items-center gap-1.5 rounded-full border border-border-strong bg-elev-2/50 px-4 text-xs font-bold text-sec transition hover:border-[rgba(255,42,109,0.4)] hover:text-[#ff2a6d]"
                     >
-                      <Info className="h-3.5 w-3.5" />
-                      تفاصيل
+                      <Info className="h-3.5 w-3.5" aria-hidden="true" />
+                      {ps.details}
                     </button>
                   </div>
                 </div>
@@ -176,8 +185,8 @@ export function ProjectsSection() {
 
         <Reveal className="mt-10 text-center">
           <a href="#projects" className="btn-gradient inline-flex h-12 items-center gap-2 rounded-full px-8 text-sm">
-            <FolderGit2 className="h-4 w-4" />
-            استعرض كل المشاريع
+            <FolderGit2 className="h-4 w-4" aria-hidden="true" />
+            {ps.viewAll}
           </a>
         </Reveal>
       </div>

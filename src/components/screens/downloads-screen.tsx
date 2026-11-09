@@ -43,11 +43,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useApi } from "@/lib/use-api";
 import { toast } from "@/hooks/use-toast";
-import { useAppRouter } from "@/lib/router";
+import { useI18n, useContent } from "@/i18n";
 import {
-  APPS,
   SOURCE_REPOS,
-  CATEGORY_LABELS,
   type AppCategory,
   type AppEntry,
   directReleaseUrl,
@@ -99,18 +97,12 @@ interface LiveResponse {
 
 type Filter = "all" | AppCategory;
 
-const FILTERS: { id: Filter; label: string }[] = [
-  { id: "all", label: "الكل" },
-  { id: "android", label: "تطبيقات أندرويد" },
-  { id: "web", label: "تطبيقات ويب" },
-  { id: "language", label: "لغات برمجة" },
-  { id: "tool", label: "أدوات مطورين" },
-];
+const FILTERS: Filter[] = ["all", "android", "web", "language", "tool"];
 
-function formatDate(iso: string | null): string {
+function formatDate(iso: string | null, locale: string): string {
   if (!iso) return "";
   try {
-    return new Intl.DateTimeFormat("ar", { year: "numeric", month: "long", day: "numeric" }).format(new Date(iso));
+    return new Intl.DateTimeFormat(locale, { year: "numeric", month: "long", day: "numeric" }).format(new Date(iso));
   } catch {
     return "";
   }
@@ -120,30 +112,31 @@ function formatDate(iso: string | null): string {
 function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
   const [openAssets, setOpenAssets] = useState(false);
   const [copied, setCopied] = useState(false);
-  const { navigate } = useAppRouter();
+  const { t } = useI18n();
+  const dl = t.downloads;
   const a = ACCENT[app.accent] ?? ACCENT.cyan;
   const Icon = ICONS[app.icon] ?? Package;
   const CatIcon = CATEGORY_ICONS[app.category];
 
   const version = live?.ok && live.tag ? live.tag : app.version;
-  const downloads = live?.ok && live.totalDownloads > 0 ? `${live.totalDownloads.toLocaleString("en")} تنزيل` : app.downloads;
-  const published = live?.ok ? formatDate(live.publishedAt) : "";
+  const downloads = live?.ok && live.totalDownloads > 0 ? dl.downloadsCount(live.totalDownloads.toLocaleString("en")) : app.downloads;
+  const published = live?.ok ? formatDate(live.publishedAt, t.meta.locale) : "";
 
   const hasDirect = !!app.directFile;
   const directUrl = hasDirect ? directReleaseUrl(app.repo, app.directFile) : sourceZipUrl(app.repo);
 
   const extraAssets = live?.ok && live.assets.length
-    ? live.assets.filter((x) => x.name !== app.directFile).map((x) => ({ file: x.name, label: `${x.sizeMb} MB • ${x.downloads} تنزيل` }))
+    ? live.assets.filter((x) => x.name !== app.directFile).map((x) => ({ file: x.name, label: dl.assetLabel(x.sizeMb, x.downloads) }))
     : app.extraAssets;
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(directUrl);
       setCopied(true);
-      toast({ title: "تم نسخ رابط التنزيل المباشر", description: directUrl });
+      toast({ title: dl.copiedTitle, description: directUrl });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast({ title: "تعذر النسخ", description: "جرّب نسخ الرابط يدوياً" });
+      toast({ title: dl.copyFailTitle, description: dl.copyFailDesc });
     }
   };
 
@@ -155,16 +148,16 @@ function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
           className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ${a.text} ${a.bg} group-hover:shadow-[var(--glow)]`}
           style={{ "--glow": a.glow } as React.CSSProperties}
         >
-          <Icon className="h-6 w-6" />
+          <Icon className="h-6 w-6" aria-hidden="true" />
         </span>
         <div className="flex flex-col items-end gap-1.5">
           <span className="font-mono-cyber flex items-center gap-1 rounded-full border border-border-strong bg-elev-2/60 px-2.5 py-1 text-[10px] font-bold text-cyber" dir="ltr">
-            <Tag className="h-3 w-3" />
+            <Tag className="h-3 w-3" aria-hidden="true" />
             {version}
           </span>
           <span className="flex items-center gap-1 text-[10px] text-mute">
-            <CatIcon className="h-3 w-3" />
-            {CATEGORY_LABELS[app.category]}
+            <CatIcon className="h-3 w-3" aria-hidden="true" />
+            {dl.categoryLabels[app.category]}
           </span>
         </div>
       </div>
@@ -212,22 +205,22 @@ function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
           rel="noopener noreferrer"
           download
           className="btn-gradient flex h-10 flex-1 items-center justify-center gap-2 rounded-full text-xs font-bold"
-          aria-label={`تنزيل ${app.titleEn} مباشرة من GitHub Releases`}
+          aria-label={dl.downloadAria(app.titleEn)}
         >
           {app.fileType === "APK" ? (
             <>
-              <Smartphone className="h-3.5 w-3.5" />
-              تحميل APK مباشر
+              <Smartphone className="h-3.5 w-3.5" aria-hidden="true" />
+              {t.common.directApk}
             </>
           ) : app.fileType === "ZIP" ? (
             <>
-              <FileArchive className="h-3.5 w-3.5" />
-              تحميل ZIP مباشر
+              <FileArchive className="h-3.5 w-3.5" aria-hidden="true" />
+              {t.common.directZip}
             </>
           ) : (
             <>
-              <FileArchive className="h-3.5 w-3.5" />
-              تنزيل الكود المصدري
+              <FileArchive className="h-3.5 w-3.5" aria-hidden="true" />
+              {dl.sourceBtn}
             </>
           )}
         </a>
@@ -236,9 +229,9 @@ function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
           size="icon"
           className="h-10 w-10 shrink-0 rounded-full border-border-strong hover:border-cyber hover:text-cyber"
           onClick={copyLink}
-          aria-label="نسخ رابط التنزيل المباشر"
+          aria-label={dl.copyAria}
         >
-          {copied ? <Check className="h-4 w-4 text-[#00ff88]" /> : <Copy className="h-4 w-4" />}
+          {copied ? <Check className="h-4 w-4 text-[#00ff88]" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
         </Button>
       </div>
 
@@ -246,18 +239,20 @@ function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
       {extraAssets.length > 0 && (
         <div className="mt-2">
           <button
+            type="button"
             onClick={() => setOpenAssets((v) => !v)}
+            aria-controls={`assets-${app.id}`}
             className="flex h-8 w-full items-center justify-between rounded-full border border-border-strong bg-elev-2/40 px-4 text-[11px] font-bold text-sec transition hover:border-cyber/40 hover:text-cyber"
             aria-expanded={openAssets}
           >
             <span className="flex items-center gap-1.5">
-              <FolderOpen className="h-3.5 w-3.5" />
-              ملفات أخرى في هذا الإصدار ({extraAssets.length})
+              <FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
+              {dl.otherFiles(extraAssets.length)}
             </span>
-            <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${openAssets ? "rotate-180" : ""}`} />
+            <ChevronDown aria-hidden="true" className={`h-3.5 w-3.5 transition-transform duration-300 ${openAssets ? "rotate-180" : ""}`} />
           </button>
           {openAssets && (
-            <ul className="mt-2 max-h-40 space-y-1.5 overflow-y-auto rounded-xl border border-border-soft bg-elev/60 p-2.5">
+            <ul id={`assets-${app.id}`} className="mt-2 max-h-40 space-y-1.5 overflow-y-auto rounded-xl border border-border-soft bg-elev/60 p-2.5">
               {extraAssets.map((asset) => {
                 const url = live?.ok && live.assets.find((x) => x.name === asset.file)?.url
                   ? live.assets.find((x) => x.name === asset.file)!.url
@@ -276,8 +271,8 @@ function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
                         {asset.file}
                       </span>
                       <span className="flex shrink-0 items-center gap-1 text-cyber">
-                        <Download className="h-3 w-3" />
-                        تنزيل
+                        <Download className="h-3 w-3" aria-hidden="true" />
+                        {dl.download}
                       </span>
                     </a>
                   </li>
@@ -296,8 +291,8 @@ function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
           rel="noopener noreferrer"
           className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-full border border-border-strong bg-elev-2/40 text-[11px] font-bold text-sec transition hover:border-[rgba(255,42,109,0.4)] hover:text-[#ff2a6d]"
         >
-          <ExternalLink className="h-3 w-3" />
-          كل الإصدارات
+          <ExternalLink className="h-3 w-3" aria-hidden="true" />
+          {dl.allReleases}
         </a>
         <a
           href={repoPageUrl(app.repo)}
@@ -305,8 +300,8 @@ function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
           rel="noopener noreferrer"
           className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-full border border-border-strong bg-elev-2/40 text-[11px] font-bold text-sec transition hover:border-cyber/40 hover:text-cyber"
         >
-          <Github className="h-3 w-3" />
-          المستودع
+          <Github className="h-3 w-3" aria-hidden="true" />
+          {t.common.repo}
         </a>
       </div>
     </article>
@@ -315,6 +310,7 @@ function AppCard({ app, live }: { app: AppEntry; live?: LiveApp }) {
 
 /* ═════════════ بطاقة مستودع مصدر ═════════════ */
 function SourceRepoCard({ repo }: { repo: (typeof SOURCE_REPOS)[number] }) {
+  const { t } = useI18n();
   const a = ACCENT[repo.accent] ?? ACCENT.cyan;
   const Icon = SOURCE_ICONS[repo.icon] ?? Boxes;
   return (
@@ -324,13 +320,13 @@ function SourceRepoCard({ repo }: { repo: (typeof SOURCE_REPOS)[number] }) {
       rel="noopener noreferrer"
       download
       className="card-glow group flex items-center gap-4 rounded-2xl p-5"
-      aria-label={`تنزيل الكود المصدري لـ ${repo.title}`}
+      aria-label={t.downloads.sourceAria(repo.title)}
     >
       <span
         className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ${a.text} ${a.bg} group-hover:shadow-[var(--glow)]`}
         style={{ "--glow": a.glow } as React.CSSProperties}
       >
-        <Icon className="h-5 w-5" />
+        <Icon className="h-5 w-5" aria-hidden="true" />
       </span>
       <div className="min-w-0 flex-1">
         <h4 className="font-heading-cyber truncate text-sm font-bold text-main transition group-hover:text-cyber" dir="ltr">
@@ -339,7 +335,7 @@ function SourceRepoCard({ repo }: { repo: (typeof SOURCE_REPOS)[number] }) {
         <p className="mt-0.5 line-clamp-1 text-[11px] text-sec">{repo.description}</p>
       </div>
       <span className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-[rgba(0,240,255,0.35)] bg-[rgba(0,240,255,0.05)] px-3.5 text-[11px] font-bold text-cyber transition group-hover:bg-[rgba(0,240,255,0.12)]">
-        <FileArchive className="h-3.5 w-3.5" />
+        <FileArchive className="h-3.5 w-3.5" aria-hidden="true" />
         ZIP
       </span>
     </a>
@@ -350,6 +346,9 @@ function SourceRepoCard({ repo }: { repo: (typeof SOURCE_REPOS)[number] }) {
 export function DownloadsScreen() {
   const { data, loading, reload } = useApi<LiveResponse>("/api/github/apps");
   const [filter, setFilter] = useState<Filter>("all");
+  const { t } = useI18n();
+  const dl = t.downloads;
+  const { APPS, SOURCE_REPOS } = useContent();
 
   const liveByRepo = useMemo(() => {
     const map: Record<string, LiveApp> = {};
@@ -364,29 +363,29 @@ export function DownloadsScreen() {
 
   const filtered = useMemo(
     () => (filter === "all" ? APPS : APPS.filter((a) => a.category === filter)),
-    [filter]
+    [filter, APPS]
   );
 
   const latestTag = useMemo(() => {
     const withTags = (data?.apps ?? []).filter((a) => a.ok && a.tag);
     if (!withTags.length) return APPS[0]?.version ?? "—";
     return withTags[0].tag as string;
-  }, [data]);
+  }, [data, APPS]);
 
   const stats = [
-    { label: "تطبيق جاهز للتنزيل", value: String(APPS.length), suffix: "" },
-    { label: "إجمالي التنزيلات", value: totalDownloads > 0 ? totalDownloads.toLocaleString("en") : "—", suffix: "" },
-    { label: "مستودعات المصدر", value: String(SOURCE_REPOS.length + APPS.length), suffix: "+" },
-    { label: "أحدث إصدار", value: latestTag, suffix: "", ltr: true },
+    { label: dl.statApps, value: String(APPS.length), suffix: "" },
+    { label: dl.statDownloads, value: totalDownloads > 0 ? totalDownloads.toLocaleString("en") : "—", suffix: "" },
+    { label: dl.statRepos, value: String(SOURCE_REPOS.length + APPS.length), suffix: "+" },
+    { label: dl.statLatest, value: latestTag, suffix: "", ltr: true },
   ];
 
   return (
     <>
       <PageHero
         badge="DOWNLOADS • GITHUB RELEASES"
-        title="مركز"
-        highlight="التحميل"
-        subtitle="جميع تطبيقاتي وأدواتي المفتوحة المصدر — روابط تنزيل مباشرة من GitHub Releases، محدثة تلقائياً مع كل إصدار جديد"
+        title={dl.title}
+        highlight={dl.highlight}
+        subtitle={dl.subtitle}
       />
 
       {/* شريط الإحصائيات */}
@@ -406,40 +405,42 @@ export function DownloadsScreen() {
       </section>
 
       {/* الفلاتر */}
-      <section className="relative px-4 pt-10" aria-label="فلترة التطبيقات">
+      <section className="relative px-4 pt-10" aria-label={dl.filterSectionAria}>
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="اختر فئة التطبيقات">
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label={dl.filterAria}>
             {FILTERS.map((f) => (
               <button
-                key={f.id}
-                onClick={() => setFilter(f.id)}
-                aria-pressed={filter === f.id}
+                key={f}
+                type="button"
+                onClick={() => setFilter(f)}
+                aria-pressed={filter === f}
                 className={`flex h-9 items-center gap-1.5 rounded-full px-4 text-xs font-bold transition-all duration-300 ${
-                  filter === f.id
+                  filter === f
                     ? "border border-[rgba(0,240,255,0.5)] bg-[rgba(0,240,255,0.1)] text-cyber shadow-[0_0_14px_rgba(0,240,255,0.25)]"
                     : "border border-border-strong bg-elev-2/50 text-sec hover:border-cyber/40 hover:text-cyber"
                 }`}
               >
-                {f.label}
+                {dl.filters[f]}
               </button>
             ))}
           </div>
           <button
+            type="button"
             onClick={() => {
               reload();
-              toast({ title: "جارٍ التحديث", description: "جلب أحدث الإصدارات من GitHub…" });
+              toast({ title: dl.refreshingTitle, description: dl.refreshingDesc });
             }}
             className="flex h-9 items-center gap-1.5 rounded-full border border-border-strong bg-elev-2/50 px-4 text-xs font-bold text-sec transition hover:border-cyber/40 hover:text-cyber"
-            aria-label="تحديث بيانات الإصدارات"
+            aria-label={dl.refreshAria}
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-            تحديث
+            <RefreshCw aria-hidden="true" className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+            {dl.refresh}
           </button>
         </div>
       </section>
 
       {/* شبكة التطبيقات */}
-      <section className="relative px-4 py-10" aria-label="التطبيقات المتاحة للتنزيل">
+      <section className="relative px-4 py-10" aria-label={dl.appsAria}>
         <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-2">
           {filtered.map((app, i) => (
             <Reveal key={app.id} delay={(i % 2) * 90}>
@@ -463,34 +464,31 @@ export function DownloadsScreen() {
       </section>
 
       {/* تنبيه أمني */}
-      <section className="relative px-4 pb-4" aria-label="تنبيه أمني">
+      <section className="relative px-4 pb-4" aria-label={dl.secAria}>
         <Reveal className="mx-auto max-w-6xl">
           <div className="flex flex-col items-start gap-3 rounded-2xl border border-[rgba(0,255,136,0.3)] bg-[rgba(0,255,136,0.04)] p-5 sm:flex-row sm:items-center">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[rgba(0,255,136,0.08)] text-[#00ff88]">
-              <ShieldCheck className="h-5 w-5" />
+              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
             </span>
             <div className="flex-1">
-              <h3 className="font-heading-cyber text-sm font-bold text-main">تنزيل آمن وموثوق</h3>
-              <p className="mt-1 text-xs leading-6 text-sec">
-                جميع الملفات تُنزّل مباشرة من الإصدارات الرسمية على GitHub (حساب CTO-DRS) دون أي وسيط.
-                تحقق من امتداد الملف وحجمه بعد التحميل، ولا تشغّل سوى ملفات APK/ZIP من هذه الصفحة أو من صفحات الإصدارات الرسمية.
-              </p>
+              <h3 className="font-heading-cyber text-sm font-bold text-main">{dl.secTitle}</h3>
+              <p className="mt-1 text-xs leading-6 text-sec">{dl.secBody}</p>
             </div>
           </div>
         </Reveal>
       </section>
 
       {/* مستودعات المصدر */}
-      <section className="relative px-4 pb-20 pt-8" aria-label="مستودعات الكود المصدري">
+      <section className="relative px-4 pb-20 pt-8" aria-label={dl.sourceSectionAria}>
         <div className="mx-auto max-w-6xl">
           <Reveal>
             <div className="mb-6 flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(0,240,255,0.07)] text-cyber">
-                <FolderGit2 className="h-5 w-5" />
+                <FolderGit2 className="h-5 w-5" aria-hidden="true" />
               </span>
               <div>
-                <h2 className="font-heading-cyber text-lg font-bold text-main">مستودعات أخرى — تنزيل الكود المصدري</h2>
-                <p className="text-xs text-mute">تحميل ZIP مباشر من الفرع الرئيسي لأي مستودع</p>
+                <h2 className="font-heading-cyber text-lg font-bold text-main">{dl.sourceTitle}</h2>
+                <p className="text-xs text-mute">{dl.sourceDesc}</p>
               </div>
             </div>
           </Reveal>
@@ -508,15 +506,15 @@ export function DownloadsScreen() {
                 className="card-glow group flex items-center gap-4 rounded-2xl p-5"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[rgba(201,209,217,0.08)] text-[#c9d1d9] transition-all duration-300 group-hover:shadow-[0_0_18px_rgba(201,209,217,0.25)]">
-                  <Github className="h-5 w-5" />
+                  <Github className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h4 className="font-heading-cyber text-sm font-bold text-main transition group-hover:text-cyber">
-                    كل المستودعات على GitHub
-                  </h4>
-                  <p className="mt-0.5 text-[11px] text-sec">أكثر من 26 مستودعاً مفتوح المصدر — استعرضها كلها</p>
+                  <h3 className="font-heading-cyber text-sm font-bold text-main transition group-hover:text-cyber">
+                    {dl.allReposTitle}
+                  </h3>
+                  <p className="mt-0.5 text-[11px] text-sec">{dl.allReposDesc}</p>
                 </div>
-                <ExternalLink className="h-4 w-4 shrink-0 text-mute transition group-hover:-translate-x-1 group-hover:text-cyber" />
+                <ExternalLink aria-hidden="true" className="h-4 w-4 shrink-0 text-mute transition group-hover:-translate-x-1 group-hover:text-cyber" />
               </a>
             </Reveal>
           </div>

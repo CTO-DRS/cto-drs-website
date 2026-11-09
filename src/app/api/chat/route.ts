@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     const messages = incoming
       .slice(-10)
       .filter((m) => (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
-      .map((m) => ({ role: m.role, content: m.content.slice(0, 2000) }));
+      .map((m) => ({ role: m.role as "user" | "assistant", content: m.content.slice(0, 2000) }));
 
     const zai = await ZAI.create();
     const completion = await zai.chat.completions.create({

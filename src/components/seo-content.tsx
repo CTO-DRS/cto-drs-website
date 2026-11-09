@@ -1,5 +1,5 @@
 import { Terminal, ArrowDownToLine, ShieldCheck } from "lucide-react";
-import { APPS, directReleaseUrl } from "@/lib/apps";
+import { APPS, directReleaseUrl, sourceZipUrl } from "@/lib/apps";
 import { FAQS } from "@/lib/faq-data";
 import { SERVICES } from "@/lib/data";
 import { BRAND, SOCIALS } from "@/lib/social";
@@ -14,6 +14,8 @@ export function SeoContent() {
   return (
     <section
       id="site-directory"
+      lang="ar"
+      dir="rtl"
       aria-label="دليل موقع CTO-DRS الكامل"
       className="relative z-10 mx-auto w-full max-w-4xl px-4 pb-14"
     >
@@ -97,7 +99,7 @@ export function SeoContent() {
                   </h3>
                   <p className="mt-1.5 text-[13px] leading-6 text-sec">{app.description}</p>
                   <a
-                    href={directReleaseUrl(app)}
+                    href={app.directFile ? directReleaseUrl(app.repo, app.directFile) : sourceZipUrl(app.repo)}
                     className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-cyber hover:underline"
                     rel="noopener"
                   >
@@ -126,9 +128,17 @@ export function SeoContent() {
           <article>
             <h2 className="font-heading-cyber text-lg font-extrabold text-main">تواصل مع CTO-DRS</h2>
             <p className="mt-2 text-sm text-sec">
-              البريد الرسمي:{" "}
+              البريد العام:{" "}
               <a href={`mailto:${BRAND.email}`} className="text-cyber underline decoration-dotted">
                 {BRAND.email}
+              </a>
+              {" "}· الدعم الفني:{" "}
+              <a href={`mailto:${BRAND.supportEmail}`} className="text-cyber underline decoration-dotted">
+                {BRAND.supportEmail}
+              </a>
+              {" "}· الأكاديمية:{" "}
+              <a href={`mailto:${BRAND.academyEmail}`} className="text-cyber underline decoration-dotted">
+                {BRAND.academyEmail}
               </a>{" "}
               — أو عبر أي قناة أدناه. للحالات العاجلة استخدم واتساب أو تيليجرام.
             </p>
@@ -137,7 +147,8 @@ export function SeoContent() {
                 <li key={s.id}>
                   <a
                     href={s.url}
-                    rel="noopener"
+                    target="_blank"
+                    rel="noopener noreferrer me"
                     className="inline-block rounded-full border border-[rgba(0,240,255,0.2)] px-3 py-1.5 text-xs font-bold text-sec transition-colors hover:text-cyber"
                   >
                     {s.label} — {s.handle}
@@ -145,6 +156,12 @@ export function SeoContent() {
                 </li>
               ))}
             </ul>
+            <p className="mt-3 text-sm text-sec">
+              أكاديمية الرشيد — مسارات في الأمن السيبراني والبرمجة والاختراق الأخلاقي:{" "}
+              <a href="https://academy.cto-drs.com" target="_blank" rel="noopener" className="text-cyber underline decoration-dotted">
+                academy.cto-drs.com
+              </a>
+            </p>
             <p className="mt-4 flex items-center gap-1.5 text-[11px] text-mute">
               <ShieldCheck className="h-3.5 w-3.5 text-[#00ff88]" aria-hidden="true" />
               جميع بيانات التواصل تُعالج بسرية تامة، وتوقّع اتفاقيات NDA عند الطلب.
